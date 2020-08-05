@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="SEO Search Engine Optimization 搜尋引擎優化，是一種透過了解搜尋引擎的運作規則來調整網站，以及提高目的網站在有關搜尋引擎內排名的方式。[1]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[HTML] 設置 html 標籤達成 SEO">
+<meta property="og:url" content="https://ulahsieh.github.io/HTML-SEO.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="SEO Search Engine Optimization 搜尋引擎優化，是一種透過了解搜尋引擎的運作規則來調整網站，以及提高目的網站在有關搜尋引擎內排名的方式。[1]">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/2EAfGvU.png">
+<meta property="og:image" content="https://imgur.com/3zYVPix.png">
+<meta property="og:image" content="https://imgur.com/slB8jwM.png">
+<meta property="article:published_time" content="2020-07-12T14:51:00.000Z">
+<meta property="article:modified_time" content="2020-07-21T13:15:41.683Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="html">
+<meta property="article:tag" content="SEO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/2EAfGvU.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/HTML-SEO.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[HTML] 設置 html 標籤達成 SEO | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/HTML-SEO.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [HTML] 設置 html 標籤達成 SEO
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-12 22:51:00" itemprop="dateCreated datePublished" datetime="2020-07-12T22:51:00+08:00">2020-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Frontend/" itemprop="url" rel="index">
+                    <span itemprop="name">Frontend</span>
+                  </a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Frontend/HTML/" itemprop="url" rel="index">
+                    <span itemprop="name">HTML</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="SEO">SEO</h2>
+<p>Search Engine Optimization 搜尋引擎優化，是一種透過了解搜尋引擎的運作規則來調整網站，以及提高目的網站在有關搜尋引擎內排名的方式。[1]</p>
+<a id="more"></a>
+<p>SEO 優化的是指不須付費的原生流量。<br>
+<img src="https://imgur.com/2EAfGvU.png" alt><br>
+以下提供幾種簡單的方式來達成</p>
+<h3 id="meta-tag"><code>&lt;meta&gt;</code> tag</h3>
+<p>HTML meta 標籤可以用來提供網頁內容的資訊給瀏覽器或是搜尋引擎。</p>
+<ul>
+<li><code>&lt;title&gt;頁面標題&lt;/title&gt;</code>：頁面標題是爬蟲第一個檢索到的要素。</li>
+<li><code>&lt;meta name=&quot;description&quot; content=&quot;網頁說明&quot; /&gt;</code>：是在搜尋結果頁中呈現的網頁說明。<br>
+<img src="https://imgur.com/3zYVPix.png" alt><br>
+針對不同社群網站的 meta tag，</li>
+<li>facebook<br>
+例如下面這四行是寫給 facebook 看的，分享到 facebook 上會呈現指定畫面：</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"網站名稱或標題"</span> &gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"網址"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"要顯示的縮圖網址"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"網頁描述"</span> &gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>app link<br>
+在手機瀏覽網頁時，會自動偵測是否有安裝 app，以下以 iOS 舉例：</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 當使用者未安裝 App，會跳出的建議下載文字 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"al:ios:app_name"</span> <span class="attr">content</span>=<span class="string">"TripAdvisor"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 這可以讓使用者在未安裝 App 時，連結至安裝位置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"al:ios:app_store_id"</span> <span class="attr">content</span>=<span class="string">"284876795"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="JSON-ld">JSON-ld</h3>
+<p>JavaScript Object Notation for Linked Data，JSON 格式的結構化資料，簡單來說就是在描述這個網頁的型態及內容，Google 會較傾向去讀取網頁中這樣的結構化資料，並顯示在搜尋結果上。</p>
+<h4 id="JSON-ld用法">JSON-ld用法</h4>
+<p>由 @context  定義 JSON-LD 使用的各種類別，@type 宣告應用的屬性，再選擇<a href="https://schema.org/docs/full.html" target="_blank" rel="external nofollow noopener noreferrer">schema.org</a>中有提到的種類，例如: WebSite, Organization, Product等，後續再根據後續屬性，如：“name”,“url” 對應填入描述的格式即可。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"application/ld+json"</span>&gt;</span></span><br><span class="line">[&#123;</span><br><span class="line"><span class="actionscript">	<span class="string">"@context"</span>: <span class="string">"http://schema.org"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"@type"</span>: <span class="string">"NewsArticle"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"thumbnailUrl"</span>: <span class="string">"https://uc.udn.com.tw/photo/2020/07/12/91/8174102.jpg"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"url"</span>: <span class="string">"https://udn.com/news/story/6813/4695186"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"mainEntityOfPage"</span>: <span class="string">"https://udn.com/news/story/6813/4695186"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"headline"</span>: <span class="string">"川普終於戴口罩了 首次公開亮相！"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"articleSection"</span>: <span class="string">"全球"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"datePublished"</span>: <span class="string">"2020-07-12T07:19:07+08:00"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"dateModified"</span>: <span class="string">"2020-07-12T21:06:13+08:00"</span>,</span></span><br><span class="line"><span class="actionscript">	<span class="string">"keywords"</span>: <span class="string">"口罩,疫情,川普,福特"</span>,	</span></span><br><span class="line"><span class="actionscript">	<span class="string">"image"</span>: &#123;</span></span><br><span class="line"><span class="actionscript">		<span class="string">"@type"</span>: <span class="string">"ImageObject"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"contentUrl"</span>: <span class="string">"https://uc.udn.com.tw/photo/2020/07/12/91/8174102.jpg"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"url"</span>: <span class="string">"https://pgw.udn.com.tw/gw/photo.php?u=https://uc.udn.com.tw/photo/2020/07/12/91/8174102.jpg&amp;s=Y&amp;x=0&amp;y=0&amp;sw=652&amp;sh=435&amp;exp=3600"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"name"</span>: <span class="string">"在疫情期間一直抗拒戴口罩的川普總統，11日訪問華特里德軍醫院時，難得地戴上口罩；這是他自新冠疫情爆發以來，首度戴著口罩公開亮相。美聯社"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"height"</span>: <span class="string">"1000"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"width"</span>: <span class="string">"800"</span></span></span><br><span class="line">	&#125;,</span><br><span class="line"><span class="actionscript">	<span class="string">"author"</span>: &#123;</span></span><br><span class="line"><span class="actionscript">		<span class="string">"@type"</span>: <span class="string">"Person"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"name"</span>: <span class="string">"世界新聞網／即時報導"</span></span></span><br><span class="line">	&#125;,</span><br><span class="line"><span class="actionscript">	<span class="string">"publisher"</span>: &#123;</span></span><br><span class="line"><span class="actionscript">		<span class="string">"@type"</span>: <span class="string">"Organization"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"name"</span>: <span class="string">"聯合新聞網 | 聯合新聞網"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"url"</span>: <span class="string">"https://udn.com"</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"sameAs"</span>: <span class="string">""</span>,</span></span><br><span class="line"><span class="actionscript">		<span class="string">"logo"</span>: &#123;</span></span><br><span class="line"><span class="actionscript">			<span class="string">"@type"</span>: <span class="string">"ImageObject"</span>,</span></span><br><span class="line"><span class="actionscript">			<span class="string">"url"</span>: <span class="string">"https://udn.com/static/img/UDN_BABY.png"</span>,</span></span><br><span class="line"><span class="actionscript">			<span class="string">"height"</span>: <span class="string">"1000"</span>,</span></span><br><span class="line"><span class="actionscript">			<span class="string">"width"</span>: <span class="string">"800"</span></span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;]</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>[3]<br>
+呈現在 Google 搜尋結果則會像下面這樣：<br>
+<img src="https://imgur.com/slB8jwM.png" alt></p>
+<h4 id="JSON-ld-相關資源">JSON-ld 相關資源</h4>
+<p>在 <a href="https://developers.google.com/search/docs/data-types/article" target="_blank" rel="external nofollow noopener noreferrer">Google 開發者文件</a>中有提供了 20 多種的類型可以在搜尋結果有不一樣的呈現，其中都有範例以及欄位說明，而 JSON-LD 標準的欄位其實多到數不完，詳細可以參考<a href="https://schema.org/" target="_blank" rel="external nofollow noopener noreferrer">schema.org</a>。</p>
+<h4 id="JSON-ld-測試工具">JSON-ld 測試工具</h4>
+<p>另外 Google 也提供了<a href="https://search.google.com/structured-data/testing-tool" target="_blank" rel="external nofollow noopener noreferrer">結構化資料測試工具</a>可以讓開發者快速的檢查是否有欄位缺漏。</p>
+<hr>
+<h3 id="robot-txt">robot.txt</h3>
+<p>給網頁爬蟲看的檔案，可以標記出那些是要爬的哪些不是。如果你有特定頁面（例如未完成或測試用的頁面）會傷害使用者體驗（UX），則可以透過 robot.txt 去阻止該頁面出現在搜尋結果中。以下是標示在檔案內的資訊</p>
+<ul>
+<li>User-agent：填入搜尋引擎爬蟲（* 號代表全部）</li>
+<li>Disallow：填入你希望搜尋引擎<strong>別</strong>檢索的頁面路徑</li>
+<li>Allow：若你禁止檢索的頁面路徑裡面又有特定路徑你希望搜尋引擎檢索，則填入。<br>
+[5]</li>
+</ul>
+<hr>
+<h3 id="sitemap-xml">sitemap.xml</h3>
+<p>網站地圖 sitemap.xml 包含了網站內所有網頁的目錄檔案，提供給搜尋引擎的爬蟲閱讀，讓搜尋引擎可以知道網站內到底有哪些網頁。另外當你在網站中新增了一篇文章，從新增到被搜爬蜘蛛搜爬可能已經過了好幾天。只要更新 sitemap 並重新提交，就可以讓爬蟲知道你的網站有進行更新，進而重新檢索網頁。<br>
+sitemap 會上傳到網站的根目錄，輸入網址 <code>http://www.example.com/sitemap.xml</code>，就可以看到。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">urlset</span> <span class="attr">xmlns</span>=<span class="string">"http://www.sitemaps.org/schemas/sitemap/0.9"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">loc</span>&gt;</span>https://www.example.com.tw<span class="tag">&lt;/<span class="name">loc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">loc</span>&gt;</span>https://www.example.com.tw/a.html<span class="tag">&lt;/<span class="name">loc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">loc</span>&gt;</span>https://www.example.com.tw/b.html<span class="tag">&lt;/<span class="name">loc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">urlset</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h6 id="Reference">Reference</h6>
+<p>[1]<a href="https://zh.wikipedia.org/wiki/%E6%90%9C%E5%B0%8B%E5%BC%95%E6%93%8E%E6%9C%80%E4%BD%B3%E5%8C%96" target="_blank" rel="external nofollow noopener noreferrer">https://zh.wikipedia.org/wiki/搜尋引擎最佳化</a><br>
+[2]<a href="https://www.webdesigns.com.tw/structured-data-JSON-LD.asp" target="_blank" rel="external nofollow noopener noreferrer">https://www.webdesigns.com.tw/structured-data-JSON-LD.asp</a><br>
+[3]view-source:<a href="https://udn.com/news/story/6813/4695186" target="_blank" rel="external nofollow noopener noreferrer">https://udn.com/news/story/6813/4695186</a><br>
+[4]<a href="https://medium.com/@z3388638/%E4%BD%BF%E7%94%A8-json-ld-%E8%99%95%E7%90%86-seo-%E4%B8%A6%E8%AE%93-google-%E9%87%9D%E5%B0%8D%E4%B8%8D%E5%90%8C%E5%BD%A2%E5%BC%8F%E7%B6%B2%E7%AB%99%E5%81%9A%E7%8D%A8%E7%89%B9%E7%9A%84%E6%90%9C%E5%B0%8B%E7%B5%90%E6%9E%9C%E5%91%88%E7%8F%BE-9c74783c017a" target="_blank" rel="external nofollow noopener noreferrer">https://medium.com/@z3388638/使用-json-ld-處理-seo-並讓-google-針對不同形式網站做獨特的搜尋結果呈現-9c74783c017a</a><br>
+[5]<a href="https://www.yesharris.com/meta-robots-and-robots-txt/" target="_blank" rel="external nofollow noopener noreferrer">https://www.yesharris.com/meta-robots-and-robots-txt/</a><br>
+[all] 此篇為觀看 Lidemy FE101 的筆記，部分內容取自上課影片</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/html/" rel="tag"># html</a>
+              <a href="/tags/SEO/" rel="tag"># SEO</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/HTML-Basic1.html" rel="prev" title="[HTML] 介紹 & 基礎標籤">
+      <i class="fa fa-chevron-left"></i> [HTML] 介紹 & 基礎標籤
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/CSS-Selector.html" rel="next" title="[CSS] 簡介- Selector & Selector Specificity">
+      [CSS] 簡介- Selector & Selector Specificity <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SEO"><span class="nav-number">1.</span> <span class="nav-text">SEO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#meta-tag"><span class="nav-number">1.1.</span> <span class="nav-text">&lt;meta&gt; tag</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-ld"><span class="nav-number">1.2.</span> <span class="nav-text">JSON-ld</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JSON-ld用法"><span class="nav-number">1.2.1.</span> <span class="nav-text">JSON-ld用法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSON-ld-相關資源"><span class="nav-number">1.2.2.</span> <span class="nav-text">JSON-ld 相關資源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSON-ld-測試工具"><span class="nav-number">1.2.3.</span> <span class="nav-text">JSON-ld 測試工具</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#robot-txt"><span class="nav-number">1.3.</span> <span class="nav-text">robot.txt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sitemap-xml"><span class="nav-number">1.4.</span> <span class="nav-text">sitemap.xml</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">1.4.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/HTML-SEO.html",
+            identifier: "HTML-SEO.html",
+            title: "[HTML] 設置 html 標籤達成 SEO"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="Javascript Runtime Javascript 需要有執行環境（Runtime）才能執行，最早期只能跑在瀏覽器上面，我們會透過 Javasrcipt 去操控瀏覽器畫面上的東西，例如表單驗證… 等等。 但 Node.js 誕生後，就可以當成是 JS 除了瀏覽器外的 runtime，下載 Node.js 後便可以直接在 CMD 內下指令 $ node &lt; fileName.js &amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Javascript] runtime、運算子、變數">
+<meta property="og:url" content="https://ulahsieh.github.io/Javascript-basic1.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="Javascript Runtime Javascript 需要有執行環境（Runtime）才能執行，最早期只能跑在瀏覽器上面，我們會透過 Javasrcipt 去操控瀏覽器畫面上的東西，例如表單驗證… 等等。 但 Node.js 誕生後，就可以當成是 JS 除了瀏覽器外的 runtime，下載 Node.js 後便可以直接在 CMD 內下指令 $ node &lt; fileName.js &amp;g">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/JO9wNhB.png">
+<meta property="og:image" content="https://imgur.com/GBOSvdZ.png">
+<meta property="og:image" content="https://imgur.com/QgrSadW.png">
+<meta property="og:image" content="https://imgur.com/9Rxoz0m.png">
+<meta property="og:image" content="https://imgur.com/UIHNws3.png">
+<meta property="og:image" content="https://imgur.com/86A8sXv.png">
+<meta property="og:image" content="https://imgur.com/tEqfcJK.png">
+<meta property="article:published_time" content="2020-06-16T11:03:00.000Z">
+<meta property="article:modified_time" content="2020-06-24T02:35:53.790Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="javascript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/JO9wNhB.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Javascript-basic1.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Javascript] runtime、運算子、變數 | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Javascript-basic1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Javascript] runtime、運算子、變數
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-16 19:03:00" itemprop="dateCreated datePublished" datetime="2020-06-16T19:03:00+08:00">2020-06-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">Javascript</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>2 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="Javascript-Runtime">Javascript Runtime</h3>
+<p>Javascript 需要有執行環境（Runtime）才能執行，最早期只能跑在瀏覽器上面，我們會透過 Javasrcipt 去操控瀏覽器畫面上的東西，例如表單驗證… 等等。<br>
+但 <strong>Node.js</strong> 誕生後，就可以當成是 JS 除了瀏覽器外的 runtime，下載 Node.js 後便可以直接在 CMD 內下指令</p>
+<p><code>$ node &lt; fileName.js &gt;</code></p>
+<a id="more"></a>
+<p>不過兩個執行環境可以操控的東西不是完全一樣的，例如瀏覽器提供了 JS 操控文件的 API <code>document</code>，Node.js 提供 JS 操控檔案的 API <code>fs</code> module，這兩個 API 對於另外一個 runtime 都沒有。 但還是有共同都有的，例如 <code>console</code>，但呈現方式不同，瀏覽器的 console 如下圖，Node.js 的 console 就是 cmd 本身。</p>
+<p><img src="https://imgur.com/JO9wNhB.png" alt></p>
+<h3 id="運算子的種類">運算子的種類</h3>
+<h4 id="算數運算">算數運算</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">運算</th>
+<th style="text-align:center">運算子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">加</td>
+<td style="text-align:center">+</td>
+</tr>
+<tr>
+<td style="text-align:center">減</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">乘</td>
+<td style="text-align:center">*</td>
+</tr>
+<tr>
+<td style="text-align:center">除</td>
+<td style="text-align:center">/</td>
+</tr>
+<tr>
+<td style="text-align:center">餘數</td>
+<td style="text-align:center">%</td>
+</tr>
+<tr>
+<td style="text-align:center">遞增</td>
+<td style="text-align:center">++</td>
+</tr>
+<tr>
+<td style="text-align:center">遞減</td>
+<td style="text-align:center">–</td>
+</tr>
+</tbody>
+</table>
+<h6 id="i-跟-i-的差別">i++ 跟 ++i 的差別</h6>
+<p>把 ++ 放後面代表 ++ 為<code>後運算</code>，如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i=<span class="number">0</span>;</span><br><span class="line"><span class="built_in">console</span>.log(i++ &amp;&amp; <span class="number">30</span>);</span><br></pre></td></tr></table></figure>
+<p>會先執行 console.log(i &amp;&amp; 30)，再執行 i + 1。</p>
+<h4 id="指派">指派</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">運算</th>
+<th style="text-align:center">運算子</th>
+<th style="text-align:center">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">賦予值</td>
+<td style="text-align:center">=</td>
+<td style="text-align:center">i = i + 1，將 i+1 指派回 i</td>
+</tr>
+<tr>
+<td style="text-align:center">加法指派</td>
+<td style="text-align:center">+=</td>
+<td style="text-align:center"><code>i += 1</code> 意即 <code>i = i + 1</code></td>
+</tr>
+</tbody>
+</table>
+<p>以此類推。</p>
+<h4 id="邏輯運算">邏輯運算</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">運算</th>
+<th style="text-align:center">運算子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">AND</td>
+<td style="text-align:center">&amp;&amp;</td>
+</tr>
+<tr>
+<td style="text-align:center">OR</td>
+<td style="text-align:center">||</td>
+</tr>
+<tr>
+<td style="text-align:center">NOT</td>
+<td style="text-align:center">!</td>
+</tr>
+</tbody>
+</table>
+<h6 id="邏輯的短路性質">邏輯的短路性質</h6>
+<p><code>3 || 10</code> 回傳 <code>3</code>；<code>0 || 10</code> 回傳 <code>10</code>。<br>
+第一個運算元是 true 的話，就回傳第一個參數（短路），否則傳第二個。<br>
+<code>3 &amp;&amp; 10</code> 回傳 <code>10</code>；<code>0 &amp;&amp; 10</code> 回傳 <code>0</code>。  第一個運算元是 true 的話，由第二個決定，第一個運算元是 false 的話，直接回傳第一個 false（短路）。<br>
+<font color="darkred">p.s. 在 Javascript 中，<code>0</code>、<code>false</code> 都代表 false。</font></p>
+<h4 id="位元運算">位元運算</h4>
+<p>將運算元<strong>變成二進位</strong>後，對每個位元(bit)做操作。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">運算</th>
+<th style="text-align:center">運算子</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:center">結果</th>
+<th>補充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">左移</td>
+<td style="text-align:center">&lt;&lt;</td>
+<td style="text-align:center">8 &lt;&lt; 1</td>
+<td style="text-align:center">16</td>
+<td>左移就是乘以二</td>
+</tr>
+<tr>
+<td style="text-align:center">右移</td>
+<td style="text-align:center">&gt;&gt;</td>
+<td style="text-align:center">1024 &gt;&gt; 1</td>
+<td style="text-align:center">512</td>
+<td>右移就是除以二</td>
+</tr>
+<tr>
+<td style="text-align:center">AND</td>
+<td style="text-align:center">&amp;</td>
+<td style="text-align:center">10 &amp; 1</td>
+<td style="text-align:center">1</td>
+<td><code>偶數 &amp; 1</code> 會等於 1；<code>奇數 &amp; 1</code> 會等於 0</td>
+</tr>
+<tr>
+<td style="text-align:center">OR</td>
+<td style="text-align:center">|</td>
+<td style="text-align:center">2 | 9</td>
+<td style="text-align:center">11</td>
+<td><code>1 &amp;#124; 1 == 1</code>、<code>1 &amp;#124; 0 == 1</code>、<code>0 &amp;#124; 0 == 0</code></td>
+</tr>
+<tr>
+<td style="text-align:center">NOR</td>
+<td style="text-align:center">^</td>
+<td style="text-align:center">3 ^ 10</td>
+<td style="text-align:center">9</td>
+<td><code>0 ^ 0</code> 以及 <code>1 ^ 1</code> 等於 0，其他等於 1</td>
+</tr>
+<tr>
+<td style="text-align:center">NOT</td>
+<td style="text-align:center">~</td>
+<td style="text-align:center">~1</td>
+<td style="text-align:center">-2</td>
+<td>00000001 變成 11111110</td>
+</tr>
+</tbody>
+</table>
+<p>因為二進位是電腦最原始的表示方式，<font color="darkred">所以以二進位去運算，速度會比一般數學運算還快</font>，例如 <code>n &lt;&lt; 1</code> 會比 <code>n * 2</code> 還要來得快，以 <code>n &amp; 1</code> 判斷奇偶會比 <code>n % 2 == 0</code> 還快。</p>
+<hr>
+<h3 id="變數">變數</h3>
+<h4 id="變數宣告">變數宣告</h4>
+<p>使用 <code>var</code> 宣告變數，把它想成創造一個箱子存放東西。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> test = <span class="number">1</span> <span class="comment">//宣告一個變數 test 並賦予值 1</span></span><br></pre></td></tr></table></figure>
+<h4 id="命名規範">命名規範</h4>
+<ul>
+<li>不能以數字開頭命名</li>
+<li>大小寫不同視為不同變數</li>
+<li>如果沒有宣告就使用變數的話會出錯並顯示 <code>undefined</code></li>
+<li>可以直接拿變數來做運算 (+, &amp;&amp;, ||, &amp;, | …)</li>
+<li>命名變數要有語意，有兩種方式，且選擇一種後就要統一。
+<ul>
+<li>底線式： api_response</li>
+<li>駝峰式：apiResponse</li>
+</ul>
+</li>
+</ul>
+<h4 id="變數型態">變數型態</h4>
+<p>七種原始型態 (primitive type)</p>
+<ul>
+<li>null</li>
+<li>undefined</li>
+<li>string</li>
+<li>number</li>
+<li>boolean</li>
+<li>symbol (ES6)</li>
+</ul>
+<p>其他都是 Object 物件</p>
+<ul>
+<li>array</li>
+<li>object</li>
+<li>function</li>
+<li>date</li>
+<li>…</li>
+</ul>
+<p>使用 <code>typeof</code> 可以查看變數的型態：<br>
+<img src="https://imgur.com/GBOSvdZ.png" alt><br>
+所以使用 typeof 陣列會回傳他的底層型態- object<br>
+<img src="https://imgur.com/QgrSadW.png" alt><br>
+想確定變數是否為 array 時可以使用 <code>arr.isARRAY([])</code>。</p>
+<p>另外使用 typeof null 會出先 Object，是 javascripy 的 bug，不須理會</p>
+<h4 id="陣列">陣列</h4>
+<p>如果變數是一個個不同的箱子的話，那麼陣列就是很多個差不多的箱子，放<strong>同樣類型</strong>的東西。</p>
+<ul>
+<li>陣列的第一個元素索引式從 <code>0</code> 開始。</li>
+<li>陣列在宣告的時候就可以給初始值。<code>var arr=[1, 3, 5, 7]</code></li>
+<li>要取得陣列的長度可以用 <code>length</code>，如 <code>console.log(arr.length)</code>，所以 <code>arr[arr.length-1]</code> 可以取得最後一個元素的值</li>
+<li>要往陣列塞新的元素的話可以用 <code>push()</code> 方法，如</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">arr.push(<span class="number">9</span>)</span><br><span class="line"><span class="built_in">console</span>.log(arr) <span class="comment">//[1, 3, 5, 7, 9]</span></span><br></pre></td></tr></table></figure>
+<h4 id="物件-object">物件 object</h4>
+<p>物件可以有多個屬性，屬性是 <code>key-value</code> 的映射。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> student = []</span><br><span class="line"><span class="keyword">var</span> peter = &#123;</span><br><span class="line">    name : <span class="string">'peter'</span>,</span><br><span class="line">    score : <span class="number">100</span>,</span><br><span class="line">    phone: <span class="string">'1234567'</span></span><br><span class="line">&#125;</span><br><span class="line">student.push(peter) <span class="comment">//把 peter 這個物件加入 student 陣列中</span></span><br><span class="line"><span class="built_in">console</span>.log(student[<span class="number">0</span>].score) <span class="comment">// 100</span></span><br><span class="line"><span class="built_in">console</span>.log(peter.name) <span class="comment">//peter</span></span><br><span class="line"><span class="built_in">console</span>.log(peter[<span class="string">'name'</span>]) <span class="comment">//peter</span></span><br></pre></td></tr></table></figure>
+<p><code>arrayName.push(sth)</code> 可以往陣列後面塞元素。<br>
+使用 <code>物件.屬性</code> 可以取得物件的屬性值；<br>
+使用<code>物件['屬性']</code>，也可以取得物件的屬性值。<br>
+這邊說明一下第二種方式主要是用來把 <code>[]</code> 中的屬性代入變數使用。例如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> key = <span class="string">'name'</span></span><br><span class="line"><span class="built_in">console</span>.log(peter[key])</span><br></pre></td></tr></table></figure>
+<h6 id="物件裡面可以放陣列、物件、或是函數">物件裡面可以放陣列、物件、或是函數</h6>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> peter = &#123;</span><br><span class="line">    name : <span class="string">'peter'</span>,</span><br><span class="line">    score : [<span class="number">80</span>, <span class="number">100</span>, <span class="number">70</span>, <span class="number">100</span>]</span><br><span class="line">    phone: <span class="string">'1234567'</span>,</span><br><span class="line">    contact: &#123;</span><br><span class="line">        name: <span class="string">'nick'</span>,</span><br><span class="line">        phone: <span class="string">'7654321'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    sayhi: funciton()&#123;</span><br><span class="line">        <span class="comment">//do sth.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(peter.father.name)</span><br><span class="line"><span class="built_in">console</span>.log(peter[<span class="string">'father'</span>][<span class="string">'name'</span>])</span><br></pre></td></tr></table></figure>
+<h4 id="變數運算陷阱">變數運算陷阱</h4>
+<h6 id="不同型態相加">不同型態相加</h6>
+<p>同時有字串跟數字做相加的話，會變成兩個字串相加</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">10</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="string">'20'</span></span><br><span class="line"><span class="built_in">console</span>.log(a+b) <span class="comment">//1020</span></span><br></pre></td></tr></table></figure>
+<p>字串轉數字可以使用：</p>
+<ol>
+<li><code>Number(str)</code></li>
+<li><code>parseInt(str,10)</code>，第二的參數代表十進位。</li>
+</ol>
+<h4 id="浮點數誤差">浮點數誤差</h4>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">0.1</span> + <span class="number">0.2</span></span><br><span class="line"><span class="built_in">console</span>.log(a == o<span class="number">.3</span>) <span class="comment">//false</span></span><br><span class="line"><span class="built_in">console</span>.log(a) <span class="comment">//0.3000000000000004</span></span><br></pre></td></tr></table></figure>
+<p>原因是電腦在存小數的時候沒辦法存得這麼精準。</p>
+<h4 id="和-的差別">== 和 === 的差別</h4>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">0</span> == <span class="string">'0'</span>) <span class="comment">//true, 判斷相等不判斷型態</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">0</span> === <span class="string">'0'</span>) <span class="comment">// false, 判斷相等也需判斷型態</span></span><br></pre></td></tr></table></figure>
+<p>有時候只有兩個等號可能會有一些注意到的型態問題導致有 Bug，<strong>所以建議永遠都用 === 三個等號做判斷</strong>。</p>
+<h4 id="從-object-的等號真正理解變數">從 object 的等號真正理解變數</h4>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">100</span>===<span class="number">100</span>) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">console</span>.log([] === []) <span class="comment">//false</span></span><br><span class="line"><span class="built_in">console</span>.log([<span class="number">1</span>]===[<span class="number">1</span>]) <span class="comment">//false</span></span><br><span class="line"><span class="built_in">console</span>.log(&#123;&#125; ===&#123;&#125;) <span class="comment">//false</span></span><br><span class="line"><span class="built_in">console</span>.log(&#123;<span class="attr">a</span>:<span class="number">1</span>&#125; ===&#123;<span class="attr">a</span>:<span class="number">1</span>&#125;) <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+<p>造成以上陣列或物件比較結果為 false 的原因是，javascript 底層真正在儲存物件的內容時是儲存該物件存放的 <strong>記憶體位置</strong>，所以指向不同記憶體，相比的結果就不同。<br>
+<img src="https://imgur.com/9Rxoz0m.png" alt></p>
+<p>兩個變數指向<strong>同一個物件</strong>，兩變數去做比較就會相同，將物件內的屬性改值，兩個變數也都會改到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var obj1 &#x3D;&#123;</span><br><span class="line">	a: 1</span><br><span class="line">&#125;</span><br><span class="line">var obj2 &#x3D; obj1</span><br><span class="line">obj2.a &#x3D;2</span><br><span class="line">console.log(obj2 &#x3D;&#x3D;&#x3D; obj1) &#x2F;&#x2F;true</span><br><span class="line">console.log(obj1.a) &#x2F;&#x2F;2</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/UIHNws3.png" alt></p>
+<p><img src="https://imgur.com/86A8sXv.png" alt></p>
+<p>如果指派另一個新的物件給變數 obj2，則會新建另一個記憶體位置存放。此時 obj1 就<strong>不等於</strong> obj2 了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">obj2&#x3D;&#123;b:1&#125;</span><br><span class="line">console.log(obj2 &#x3D;&#x3D;&#x3D; obj1) &#x2F;&#x2F;false</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/tEqfcJK.png" alt></p>
+<p>陣列的底層儲存也跟物件同理！</p>
+<h3 id="Source">Source</h3>
+<p>[All] 此篇文章 Lidemy JS101 的筆記，內容及圖片大部分取自上課影片</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Mentor-CS101-Note.html" rel="prev" title="程式初學者基礎知識 - CLI, 計概, 網路, session & cookie, 演算法">
+      <i class="fa fa-chevron-left"></i> 程式初學者基礎知識 - CLI, 計概, 網路, session & cookie, 演算法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Javascript-basic2.html" rel="next" title="[Javascript] 條件句、迴圈">
+      [Javascript] 條件句、迴圈 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Javascript-Runtime"><span class="nav-number">1.</span> <span class="nav-text">Javascript Runtime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#運算子的種類"><span class="nav-number">2.</span> <span class="nav-text">運算子的種類</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#算數運算"><span class="nav-number">2.1.</span> <span class="nav-text">算數運算</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#i-跟-i-的差別"><span class="nav-number">2.1.0.1.</span> <span class="nav-text">i++ 跟 ++i 的差別</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#指派"><span class="nav-number">2.2.</span> <span class="nav-text">指派</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#邏輯運算"><span class="nav-number">2.3.</span> <span class="nav-text">邏輯運算</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#邏輯的短路性質"><span class="nav-number">2.3.0.1.</span> <span class="nav-text">邏輯的短路性質</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#位元運算"><span class="nav-number">2.4.</span> <span class="nav-text">位元運算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#變數"><span class="nav-number">3.</span> <span class="nav-text">變數</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#變數宣告"><span class="nav-number">3.1.</span> <span class="nav-text">變數宣告</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命名規範"><span class="nav-number">3.2.</span> <span class="nav-text">命名規範</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#變數型態"><span class="nav-number">3.3.</span> <span class="nav-text">變數型態</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#陣列"><span class="nav-number">3.4.</span> <span class="nav-text">陣列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#物件-object"><span class="nav-number">3.5.</span> <span class="nav-text">物件 object</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#物件裡面可以放陣列、物件、或是函數"><span class="nav-number">3.5.0.1.</span> <span class="nav-text">物件裡面可以放陣列、物件、或是函數</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#變數運算陷阱"><span class="nav-number">3.6.</span> <span class="nav-text">變數運算陷阱</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#不同型態相加"><span class="nav-number">3.6.0.1.</span> <span class="nav-text">不同型態相加</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#浮點數誤差"><span class="nav-number">3.7.</span> <span class="nav-text">浮點數誤差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#和-的差別"><span class="nav-number">3.8.</span> <span class="nav-text">&#x3D;&#x3D; 和 &#x3D;&#x3D;&#x3D; 的差別</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#從-object-的等號真正理解變數"><span class="nav-number">3.9.</span> <span class="nav-text">從 object 的等號真正理解變數</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Source"><span class="nav-number">4.</span> <span class="nav-text">Source</span></a></li></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Javascript-basic1.html",
+            identifier: "Javascript-basic1.html",
+            title: "[Javascript] runtime、運算子、變數"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="前言 在沒有版本控制系統前，如果有一個常常在修改的檔案，又想保留每個版本狀態時，我們常會在編輯檔案前複製一個備份，時間久了就會變得非常不便且難以維護，有可能造成命名混亂，也很難比較各版本間的差異，尤其是在多人協作的狀況下時還可能會發生衝突。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Git] Basic Git (1) - Intro &amp; Init, add, commit, status... ">
+<meta property="og:url" content="https://ulahsieh.github.io/Git-Basic1.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="前言 在沒有版本控制系統前，如果有一個常常在修改的檔案，又想保留每個版本狀態時，我們常會在編輯檔案前複製一個備份，時間久了就會變得非常不便且難以維護，有可能造成命名混亂，也很難比較各版本間的差異，尤其是在多人協作的狀況下時還可能會發生衝突。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/d3kVM31.png">
+<meta property="og:image" content="https://imgur.com/0n6e7EE.png">
+<meta property="og:image" content="https://imgur.com/NssQJIh.png">
+<meta property="og:image" content="https://imgur.com/l10gh8Z.png">
+<meta property="og:image" content="https://imgur.com/OAxsNhn.png">
+<meta property="og:image" content="https://imgur.com/QxmpZZt.png">
+<meta property="og:image" content="https://imgur.com/GJawPx4.png">
+<meta property="og:image" content="https://imgur.com/r7bmS5L.png">
+<meta property="og:image" content="https://imgur.com/UIEt4tF.png">
+<meta property="og:image" content="https://imgur.com/lCUEpVZ.png">
+<meta property="og:image" content="https://imgur.com/T95UVYe.png">
+<meta property="og:image" content="https://imgur.com/iGu6x8V.png">
+<meta property="og:image" content="https://imgur.com/OB2WhIl.png">
+<meta property="article:published_time" content="2020-06-12T23:15:00.000Z">
+<meta property="article:modified_time" content="2020-06-28T02:44:11.599Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="版本控制">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/d3kVM31.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Git-Basic1.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Git] Basic Git (1) - Intro & Init, add, commit, status...  | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Git-Basic1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Git] Basic Git (1) - Intro & Init, add, commit, status... 
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-13 07:15:00" itemprop="dateCreated datePublished" datetime="2020-06-13T07:15:00+08:00">2020-06-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>2 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="前言">前言</h3>
+<p>在沒有版本控制系統前，如果有一個常常在修改的檔案，又想保留每個版本狀態時，我們常會在編輯檔案前複製一個備份，時間久了就會變得非常不便且難以維護，有可能造成命名混亂，也很難比較各版本間的差異，尤其是在多人協作的狀況下時還可能會發生衝突。</p>
+<a id="more"></a>
+<h3 id="版本控制概念－用一般資料夾闡述">版本控制概念－用一般資料夾闡述</h3>
+<p>如果是以資料夾去做版控的概念會是如下</p>
+<table><tr><td bgcolor="AliceBlue">
+  1. 需要新版本：開一個新的資料夾<br>
+  2. 不想加入版控：不要加入資料夾<br> 
+  3. 避免版本號衝突：用看似亂數的東西當作資料夾名稱<br>
+  4. 知道資料夾順序：用一個檔案來紀錄<br>
+  5. 知道最新版本：用一個檔案來存<br>
+</td></tr></table>
+<h3 id="GIT-是什麼">GIT 是什麼</h3>
+<p>git 就是個幫你做版控的程式，不用像上面那樣做很多動作！</p>
+<h3 id="開始使用">開始使用</h3>
+<h4 id="git-init">git init</h4>
+<p>進入要做版控的資料夾/專案，並下 <code>$ git init</code> 做初始化。初始化完成後可以看到目錄下多了一個 <code>.git</code> 的隱藏子資料夾，其中包含 Git 所有必需的倉儲檔案，也就是 Git 倉儲的骨架。<br>
+<img src="https://imgur.com/d3kVM31.png" alt></p>
+<h4 id="git-status">git status</h4>
+<p>用於查看目前工作目錄 (working directory) 的檔案狀態，以下是檔案可能會有的四種狀態：<br>
+<img src="https://imgur.com/0n6e7EE.png" alt></p>
+<ul>
+<li><strong>未追蹤 (Untracked)</strong>：沒有被 GIT 所追蹤控管的檔案，如新增的檔案。</li>
+<li><strong>已更改 (Modified)</strong>：已提交版本後，又再次修改的檔案。</li>
+<li><strong>等待提交 (Staged)</strong>：在工作目錄 (WD) 的檔案執行 git add 後，會放在暫存區 (Stage) 等待提交。</li>
+<li><strong>已提交 (Committed)</strong>：在暫存區的檔案執行 git commit 後，檔案便置於儲存區 (Repo)，這些放在儲存區的檔案即是已提交的狀態。</li>
+</ul>
+<p>第一次下 <code>$ git status</code> 可以發現目前目錄下的檔案狀態皆為 <font color="#FF5959">Untracked files</font>，表示這些是全新的檔案，沒有被加入版控。<br>
+<img src="https://imgur.com/NssQJIh.png" alt></p>
+<h4 id="git-add">git add</h4>
+<p>輸入 <code>$ git add &lt;filename&gt;</code> 可將檔案指定加入版控 / 暫存區 (Stage)；<br>
+輸入　<code>$ git add .</code> 可一次加入 <span class="dotunderletter">所有</span> 檔案<br>
+再查看狀態可以看到檔案狀態變為 <font color="green">Changes to be committed</font>。<br>
+<img src="https://imgur.com/l10gh8Z.png" alt></p>
+<h4 id="git-commit">git commit</h4>
+<p>輸入<code>$ git commit</code> 將建立新的版控，將放在暫存區的檔案放入 repository<br>
+如果單獨輸入<code>$ git commit</code>，則會先進入 vim 編輯器，要求在編輯器輸入 commit 訊息。<br>
+或是下<code>$ git commit -m &quot;commit message&quot;</code> 直接在後面帶訊息。如果沒有 commit 訊息的話則會 commit 失敗。<br>
+<img src="https://imgur.com/OAxsNhn.png" alt></p>
+<h4 id="git-rm">git rm</h4>
+<p><code>$ git rm --cached &lt;filename&gt;</code> 可以將檔案從 staged 或是 committed 狀態移除版控。<br>
+<img src="https://imgur.com/QxmpZZt.png" alt></p>
+<h4 id="git-log">git log</h4>
+<p>輸入 <code>$ git log</code> 可以查看所有提交紀錄。<br>
+<img src="https://imgur.com/GJawPx4.png" alt><br>
+新增參數 --oneline <code>$ git log --oneline</code>，可以顯示較為簡短的 git log。<br>
+<img src="https://imgur.com/r7bmS5L.png" alt></p>
+<h4 id="git-commit-am">git commit -am</h4>
+<p>在修改已經 commit 的檔案後，可以發現檔案變成 <font color="#FF5959">Changes not staged for commit</font> 的 <font color="#FF5959">modified</font> 狀態。<br>
+<img src="https://imgur.com/UIEt4tF.png" alt><br>
+此時可以下 <code>$ git add .</code> 並下 <code>$ git commit -m &quot;msg&quot;</code>。或是直接下 <strong><code>$ git commit -am &quot;msg&quot;</code></strong> 將兩個指令合併。 <code>-a</code> 參數表示 <code>--all</code> (git add --all)，會把 <span class="dotunderletter">已修改過</span> 的檔案加入 staged 區。</p>
+<div class="warning">
+<p>請注意，使用git commit -am 不會包含新增的檔案 newfile，需要先 git add 再 git commit 個別下。</p>
+</div>
+<p>p.s. git add 後檔案狀態會變成 <font color="green">Changes to be commited (Modified)</font><br>
+<img src="https://imgur.com/lCUEpVZ.png" alt></p>
+<h4 id="git-checkout">git checkout</h4>
+<p>使用 <code>$ git check out &lt;版本&gt;</code> 可以回到指定的版本時的狀態。例如下圖回到了 first commit 當下。<br>
+<img src="https://imgur.com/T95UVYe.png" alt></p>
+<h4 id="gitignore">.gitignore</h4>
+<p>新增 .gitignore，若有檔案名稱寫入該檔案則會被 git 忽略，專門放與專案沒什麼關係、不須版控也可以的檔案，但 .gitignore 檔案本身會加入版控，要告知其他人什麼檔案不在版控中。<br>
+<img src="https://imgur.com/iGu6x8V.png" alt></p>
+<h4 id="git-diff">git diff</h4>
+<p><code>$ git diff</code> 可以查看這次要 commit <strong>前</strong>與上一個版本的差別。<br>
+<img src="https://imgur.com/OB2WhIl.png" alt></p>
+<h6 id="source">source</h6>
+<p>[all] 大部分的內容皆來自 <a href="https://lidemy.com/" target="_blank" rel="external nofollow noopener noreferrer">Lidemy</a> [GIT101] 的課堂筆記</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/git/" rel="tag"># git</a>
+              <a href="/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/" rel="tag"># 版本控制</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Kafka-Cluster.html" rel="prev" title="[Kafka] 建立 Kafka Cluster">
+      <i class="fa fa-chevron-left"></i> [Kafka] 建立 Kafka Cluster
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Git-Basic2.html" rel="next" title="[Git] Basic Git (2) - Branch & GitHub">
+      [Git] Basic Git (2) - Branch & GitHub <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#版本控制概念－用一般資料夾闡述"><span class="nav-number">2.</span> <span class="nav-text">版本控制概念－用一般資料夾闡述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GIT-是什麼"><span class="nav-number">3.</span> <span class="nav-text">GIT 是什麼</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#開始使用"><span class="nav-number">4.</span> <span class="nav-text">開始使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-init"><span class="nav-number">4.1.</span> <span class="nav-text">git init</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-status"><span class="nav-number">4.2.</span> <span class="nav-text">git status</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-add"><span class="nav-number">4.3.</span> <span class="nav-text">git add</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-commit"><span class="nav-number">4.4.</span> <span class="nav-text">git commit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-rm"><span class="nav-number">4.5.</span> <span class="nav-text">git rm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-log"><span class="nav-number">4.6.</span> <span class="nav-text">git log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-commit-am"><span class="nav-number">4.7.</span> <span class="nav-text">git commit -am</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-checkout"><span class="nav-number">4.8.</span> <span class="nav-text">git checkout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gitignore"><span class="nav-number">4.9.</span> <span class="nav-text">.gitignore</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-diff"><span class="nav-number">4.10.</span> <span class="nav-text">git diff</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#source"><span class="nav-number">4.10.0.1.</span> <span class="nav-text">source</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Git-Basic1.html",
+            identifier: "Git-Basic1.html",
+            title: "[Git] Basic Git (1) - Intro & Init, add, commit, status... "
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="網頁是什麼 網頁背後就是一個有結構的純文字檔 html，靠瀏覽器渲染成我們現在看到的畫面。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[HTML] 介紹 &amp; 基礎標籤">
+<meta property="og:url" content="https://ulahsieh.github.io/HTML-Basic1.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="網頁是什麼 網頁背後就是一個有結構的純文字檔 html，靠瀏覽器渲染成我們現在看到的畫面。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/nv5JkQo.png">
+<meta property="og:image" content="https://imgur.com/UQbNXRe.png">
+<meta property="og:image" content="https://imgur.com/Kj8pDfB.png">
+<meta property="og:image" content="https://imgur.com/dL49EQF.png">
+<meta property="og:image" content="https://imgur.com/4KyfHRC.png">
+<meta property="og:image" content="https://imgur.com/VCAO59k.png">
+<meta property="og:image" content="https://imgur.com/Sh4udTP.png">
+<meta property="og:image" content="https://imgur.com/4tiOPPO.png">
+<meta property="og:image" content="https://imgur.com/bCz7kKF.gif">
+<meta property="og:image" content="https://imgur.com/RSjKkL0.png">
+<meta property="og:image" content="https://imgur.com/CQ5xNz2.png">
+<meta property="og:image" content="https://imgur.com/3pwe9cZ.png">
+<meta property="og:image" content="https://imgur.com/leC1UGj.png">
+<meta property="og:image" content="https://imgur.com/W3ODwqT.png">
+<meta property="og:image" content="https://imgur.com/Fr2MNXO.png">
+<meta property="article:published_time" content="2020-07-12T13:26:00.000Z">
+<meta property="article:modified_time" content="2020-07-21T13:15:54.593Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/nv5JkQo.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/HTML-Basic1.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[HTML] 介紹 & 基礎標籤 | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/HTML-Basic1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [HTML] 介紹 & 基礎標籤
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-12 21:26:00" itemprop="dateCreated datePublished" datetime="2020-07-12T21:26:00+08:00">2020-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Frontend/" itemprop="url" rel="index">
+                    <span itemprop="name">Frontend</span>
+                  </a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Frontend/HTML/" itemprop="url" rel="index">
+                    <span itemprop="name">HTML</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>3 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="網頁是什麼">網頁是什麼</h2>
+<p>網頁背後就是一個有結構的純文字檔 html，靠瀏覽器渲染成我們現在看到的畫面。</p>
+<a id="more"></a>
+<p><img src="https://imgur.com/nv5JkQo.png" alt></p>
+<h2 id="HTML">HTML</h2>
+<p>全名是 HyperText Markup Language 超文本標記語言，是一種用於建立網頁的標準標記語言，是由一堆成對的標籤組合而成的。</p>
+<h2 id="基本架構">基本架構</h2>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="撰寫規則">撰寫規則</h3>
+<p><img src="https://imgur.com/UQbNXRe.png" alt> [1]</p>
+<ol>
+<li>HTML文件裡的標籤需成對，以<code>&lt;標籤名稱&gt;</code>為開頭；<code>&lt;/標籤名稱&gt;</code>為結尾。</li>
+<li>如果標籤沒有值要包裹的話，則可以直接使用 <code>&lt;標籤名稱 /&gt;</code> 視為一組標籤。</li>
+<li>標籤內可擁屬性，<code>&lt;標籤名稱 屬性名稱=&quot;屬性值&quot;&gt;標籤內容&lt;?標籤名稱&gt;</code>，屬性可有零個或多個，以空格分開。</li>
+<li>註解文字使用 <code>&lt;!--註解--&gt;</code>。</li>
+<li>HTML標籤不分大小寫。</li>
+</ol>
+<h4 id="DOCTYPE-HTML"><code>&lt;!DOCTYPE HTML&gt;</code></h4>
+<p>告知瀏覽器要使用最新版的 HTML 5 語法解讀文件，規定<strong>必須放在第一行</strong>，否則瀏覽器會認不得。</p>
+<h4 id="html-html"><code>&lt;html&gt;&lt;/html&gt;</code></h4>
+<p>用來包裹整個 html 內含的程式碼，代表網頁的開始和結束。</p>
+<h4 id="head-head"><code>&lt;head&gt;&lt;/head&gt;</code></h4>
+<p>用來放網頁的描述。主要用來告訴搜尋引擎這個網頁有什麼樣的內容、控制網頁與外部程式碼的連結 (script)、定義網頁使用的樣式等等 (css)。常用的標籤有：</p>
+<ul>
+<li><code>&lt;title&gt;</code>: 網頁標題</li>
+<li><code>&lt;meta&gt;</code> : 提供搜尋引擎關於網頁內容的簡介</li>
+<li><code>&lt;link&gt;</code> : 網頁內與外部資源的關連</li>
+<li><code>&lt;base&gt;</code> : 設定網頁內 URL 的預設目標</li>
+<li><code>&lt;style&gt;</code> : 導入網頁樣式，如 CSS</li>
+<li><code>&lt;script&gt;</code> : 導入 javascript 程式碼</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"keywords"</span> <span class="attr">content</span>=<span class="string">"網頁關鍵字"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"description"</span> <span class="attr">content</span>=<span class="string">"網頁簡短描述"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>Hello!<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>&lt;meta charset=&quot;utf-8&quot; /&gt;</code>：告訴瀏覽器這個網頁所用的編碼方式為 utf-8。</li>
+<li><code>&lt;meta name=&quot;keywords&quot;</code>：用來放置網頁關鍵字，可增進 SEO(Search Engine Optimization)，讓搜索引擎容易找到您。</li>
+<li><code>&lt;meta name=&quot;description&quot;</code>：用來寫網頁的簡短描述，可增進 SEO。</li>
+<li><code>&lt;title&gt;Hello!&lt;/title&gt;</code>：網頁的標題，每個網頁只能有一個，會顯示在書籤頁上。</li>
+</ul>
+<h4 id="body-body"><code>&lt;body&gt;&lt;/body&gt;</code></h4>
+<p>網頁的內文，真正顯示的頁面內容放在 body 標籤內。</p>
+<h5 id="heading-paragraph"><code>heading &amp; paragraph</code></h5>
+<ul>
+<li><code>&lt;h?&gt;&lt;/h&gt;</code>：標題，其中 <code>? = 1 ~ 6</code>，由大到小 <code>&lt;h1&gt; 到 &lt;h6&gt;</code>。</li>
+<li><code>&lt;p&gt;段落文字&lt;/p&gt;</code><br>
+<img src="https://imgur.com/Kj8pDfB.png" alt></li>
+</ul>
+<h5 id="div-span"><code>div &amp; span</code></h5>
+<ul>
+<li><code>&lt;div&gt;</code> tag：division，使用 div tag 可以在網頁內創造不同的分組，可以直接使用 div 來加入 CSS 語法做排版。</li>
+<li><code>&lt;span&gt;</code> tag：span 與 div 一樣都是用來分組，但不同的是使用 span 不會換行。<br>
+<img src="https://imgur.com/dL49EQF.png" alt></li>
+</ul>
+<h5 id="img"><code>img</code></h5>
+<p>使用 <code>&lt;img src=&quot;圖片網址&quot; /&gt;</code> 來插入圖片，其中可以加入以下屬性。</p>
+<ul>
+<li>title：<code>&lt;img title=&quot;圖片敘述&quot; src=&quot;url&quot;&gt;</code>，可在網頁中當游標移到圖片上時顯示描述。</li>
+<li>alt：<code>&lt;img alt=&quot;image not found&quot; src=&quot;url&quot;&gt;</code>，當圖片無法顯示時，將以 alt 屬性值的文字取代顯示。</li>
+</ul>
+<h5 id="list"><code>list</code></h5>
+<ul>
+<li><code>&lt;ul&gt;</code>： unordered list，無序清單</li>
+<li><code>&lt;ol&gt;</code>： ordered list，有序清單</li>
+<li><code>&lt;li&gt;</code>： list item，清單項目<br>
+<img src="https://imgur.com/4KyfHRC.png" alt></li>
+</ul>
+<h5 id="pre-break"><code>pre &amp; break</code></h5>
+<p>在段落中<code>&lt;p&gt;</code>使用空行以及多個空白，都僅會被瀏覽器解析成一個空白，如下圖。<br>
+<img src="https://imgur.com/VCAO59k.png" alt></p>
+<ul>
+<li><code>&lt;pre&gt;</code>：preformatted text，可將包裹的文字保持原先的格式。</li>
+<li><code>&lt;br&gt;</code>：line break，換行，<code>&lt;br&gt;</code> 或是 <code>&lt;br/&gt;</code> 都可以。<br>
+<img src="https://imgur.com/Sh4udTP.png" alt></li>
+</ul>
+<h5 id="table"><code>table</code></h5>
+<ul>
+<li><code>&lt;table&gt;</code>：表格</li>
+<li><code>&lt;tr&gt;</code>：table row</li>
+<li><code>&lt;th&gt;</code>：table header</li>
+<li><code>&lt;td&gt;</code>：table cell<br>
+<img src="https://imgur.com/4tiOPPO.png" alt><br>
+使用以上標籤來製作表格內容，另外框線是 CSS 的工作。</li>
+</ul>
+<h5 id="anchor"><code>anchor</code></h5>
+<p><code>&lt;a&gt;</code> 錨點，有兩個用途，連結到外面的位址或是連結到網頁本身內部位置。</p>
+<ul>
+<li>herf：hypertext reference，<code>&lt;a herf=&quot;https://google.com&quot;&gt;請點我連結到google&lt;/a&gt;</code>。</li>
+<li>target：<code>&lt;a herf=&quot;https://google.com&quot; target=&quot;_self&quot;&gt;請點我連結到google&lt;/a&gt;</code>，屬性值如果是<code>_self</code>，則會在當下頁面跳轉，屬性值如果是<code>_blank</code>，則會在另外的分頁開啟。<br>
+連結到網頁本身則需要在標題標籤內加上 id 的屬性，如下圖：<br>
+<img src="https://imgur.com/bCz7kKF.gif" alt></li>
+</ul>
+<h5 id="語意化元素"><code>語意化元素</code></h5>
+<p><img src="https://imgur.com/RSjKkL0.png" alt> [2]<br>
+語意化元素 Semantic Elements，雖然在網頁上看起來不會有什麼變化，但是卻有他的意義，讓機器或開發人員更直覺的區別該區塊的作用。</p>
+<ul>
+<li><code>&lt;main&gt;</code>：指網頁最主要的部份，可用 main 標籤包起來。</li>
+<li><code>&lt;nav&gt;</code>：navigation 導覽列，至於網頁上方的選單。<br>
+<img src="https://imgur.com/CQ5xNz2.png" alt></li>
+<li><code>&lt;footer&gt;</code>：通常放在網站最下方，例如版權宣告…。<br>
+<img src="https://imgur.com/3pwe9cZ.png" alt><br>
+更多的語意化標籤可以在 <a href="https://www.w3schools.com/html/html5_semantic_elements.asp" target="_blank" rel="external nofollow noopener noreferrer">w3schools</a> 上查到。</li>
+</ul>
+<h5 id="iframe"><code>iframe</code></h5>
+<p>用來嵌入其他網頁，但很多大網站都會加入 <code>X-Frame-Option</code> 去禁止被嵌入。<br>
+下圖示範將部落格嵌入到網頁中，並設定寬為 100%，高為 250 像素。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">"https://ulahsieh.github.io/"</span> <span class="attr">width</span>=<span class="string">"100%"</span> <span class="attr">height</span>=<span class="string">"250px"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/leC1UGj.png" alt></p>
+<h5 id="form"><code>form</code></h5>
+<p><code>&lt;input&gt;</code> 輸入框，有以下不同的 <code>type</code>：</p>
+<ul>
+<li>text，一般文字輸入框。</li>
+<li>password，可自動將輸入的文字轉不可讀的點點。</li>
+<li>email，會自動驗證是否符合 email 格式（包含 ＠）。<br>
+<img src="https://imgur.com/W3ODwqT.png" alt></li>
+<li>date，可以自動產生出日期選擇器。</li>
+<li>radio，單選框，<code>&lt;input type=&quot;date&quot; name=&quot;gender&quot; id=&quot;male&quot;/&gt;&lt;label for=&quot;male&quot;&gt;男&lt;/label&gt;</code>
+<ul>
+<li>name：將選項群組化，使答案只能單選。</li>
+<li>id &amp; lable for：使得點選選項的文字也能作用，可提升使用者體驗。</li>
+</ul>
+</li>
+<li>checkbox，複選框，</li>
+<li>submit，提交的按鈕，加上 value 屬性可以修改按鈕文字。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--使用 div 隔開換行--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    姓名：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    密碼：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"password"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    Email：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"email"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    生日：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"date"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    性別：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"radio"</span> <span class="attr">name</span>=<span class="string">"gender"</span> <span class="attr">id</span>=<span class="string">"male"</span>/&gt;</span><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"male"</span>&gt;</span>男<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"radio"</span> <span class="attr">name</span>=<span class="string">"gender"</span> <span class="attr">id</span>=<span class="string">"female"</span>/&gt;</span><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"female"</span>&gt;</span>女<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"radio"</span> <span class="attr">name</span>=<span class="string">"gender"</span> <span class="attr">id</span>=<span class="string">"other"</span>/&gt;</span><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"other"</span>&gt;</span>其他<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    興趣：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">id</span>=<span class="string">"sport"</span>/&gt;</span><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"sport"</span>&gt;</span>運動<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">id</span>=<span class="string">"read"</span>/&gt;</span><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"read"</span>&gt;</span>看書<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">id</span>=<span class="string">"music"</span>/&gt;</span><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"music"</span>&gt;</span>聽音樂<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">id</span>=<span class="string">"drama"</span>/&gt;</span><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"drama"</span>&gt;</span>追劇<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">　<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"送出表單"</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/Fr2MNXO.png" alt></p>
+<h3 id="在網頁中顯示標籤">在網頁中顯示標籤</h3>
+<p>使用跳脫字元（escape）</p>
+<ul>
+<li><code>&lt;</code> 由 <code>&amp;lt;</code> 取代</li>
+<li><code>&gt;</code> 由 <code>&amp;gt;</code> 取代</li>
+<li><code>&amp;</code> 由 <code>&amp;amp;</code> 取代</li>
+</ul>
+<h6 id="Reference">Reference</h6>
+<p>[1]<a href="http://notepad.yehyeh.net/Content/WebDesign/HTML/01/1.php" target="_blank" rel="external nofollow noopener noreferrer">http://notepad.yehyeh.net/Content/WebDesign/HTML/01/1.php</a><br>
+[2]<a href="https://www.w3schools.com/html/html5_semantic_elements.asp" target="_blank" rel="external nofollow noopener noreferrer">https://www.w3schools.com/html/html5_semantic_elements.asp</a><br>
+[all] 此篇為觀看 Lidemy FE101 的筆記，部分內容取自上課影片</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/html/" rel="tag"># html</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/API-curl-%E7%94%A8%E6%B3%95.html" rel="prev" title="[API] curl 使用指南">
+      <i class="fa fa-chevron-left"></i> [API] curl 使用指南
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/HTML-SEO.html" rel="next" title="[HTML] 設置 html 標籤達成 SEO">
+      [HTML] 設置 html 標籤達成 SEO <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#網頁是什麼"><span class="nav-number">1.</span> <span class="nav-text">網頁是什麼</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTML"><span class="nav-number">2.</span> <span class="nav-text">HTML</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本架構"><span class="nav-number">3.</span> <span class="nav-text">基本架構</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#撰寫規則"><span class="nav-number">3.1.</span> <span class="nav-text">撰寫規則</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DOCTYPE-HTML"><span class="nav-number">3.1.1.</span> <span class="nav-text">&lt;!DOCTYPE HTML&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#html-html"><span class="nav-number">3.1.2.</span> <span class="nav-text">&lt;html&gt;&lt;&#x2F;html&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#head-head"><span class="nav-number">3.1.3.</span> <span class="nav-text">&lt;head&gt;&lt;&#x2F;head&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#body-body"><span class="nav-number">3.1.4.</span> <span class="nav-text">&lt;body&gt;&lt;&#x2F;body&gt;</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#heading-paragraph"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">heading &amp; paragraph</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#div-span"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">div &amp; span</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#img"><span class="nav-number">3.1.4.3.</span> <span class="nav-text">img</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#list"><span class="nav-number">3.1.4.4.</span> <span class="nav-text">list</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pre-break"><span class="nav-number">3.1.4.5.</span> <span class="nav-text">pre &amp; break</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#table"><span class="nav-number">3.1.4.6.</span> <span class="nav-text">table</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#anchor"><span class="nav-number">3.1.4.7.</span> <span class="nav-text">anchor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#語意化元素"><span class="nav-number">3.1.4.8.</span> <span class="nav-text">語意化元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#iframe"><span class="nav-number">3.1.4.9.</span> <span class="nav-text">iframe</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#form"><span class="nav-number">3.1.4.10.</span> <span class="nav-text">form</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在網頁中顯示標籤"><span class="nav-number">3.2.</span> <span class="nav-text">在網頁中顯示標籤</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">3.2.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/HTML-Basic1.html",
+            identifier: "HTML-Basic1.html",
+            title: "[HTML] 介紹 & 基礎標籤"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

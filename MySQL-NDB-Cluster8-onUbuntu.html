@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="MySQL NDB Cluster MySQL cluster 將標準的 MySQL server 與內存中叢集式儲存引擎 NDB 集成起來，允許在多個無共享的系統中部署「內存中」資料庫的叢集。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[MySQL] 在 Ubuntu18.04 建立 MySQL NDB Cluster 8.0">
+<meta property="og:url" content="https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="MySQL NDB Cluster MySQL cluster 將標準的 MySQL server 與內存中叢集式儲存引擎 NDB 集成起來，允許在多個無共享的系統中部署「內存中」資料庫的叢集。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/tk8oKQF.png">
+<meta property="og:image" content="https://imgur.com/Cyu2sP9.png">
+<meta property="og:image" content="https://imgur.com/Qw2RtaH.png">
+<meta property="og:image" content="https://imgur.com/7s7gi8C.png">
+<meta property="og:image" content="https://imgur.com/yekW0XQ.png">
+<meta property="og:image" content="https://imgur.com/eE3gWj4.png">
+<meta property="og:image" content="https://imgur.com/JfkmpZD.png">
+<meta property="article:published_time" content="2020-08-11T03:51:00.000Z">
+<meta property="article:modified_time" content="2020-08-11T03:55:59.649Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="MySQL-Cluster">
+<meta property="article:tag" content="NDB Clster">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/tk8oKQF.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[MySQL] 在 Ubuntu18.04 建立 MySQL NDB Cluster 8.0 | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [MySQL] 在 Ubuntu18.04 建立 MySQL NDB Cluster 8.0
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-11 11:51:00" itemprop="dateCreated datePublished" datetime="2020-08-11T11:51:00+08:00">2020-08-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>2 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="MySQL-NDB-Cluster">MySQL NDB Cluster</h2>
+<p>MySQL cluster 將標準的 MySQL server 與內存中叢集式儲存引擎 NDB 集成起來，允許在多個無共享的系統中部署「內存中」資料庫的叢集。</p>
+<a id="more"></a>
+<p>叢集通常會有多台機器，每台運行不同程序，包括 MySQL Server、NDB 叢集的數據節點、管理伺服器，以及可能專門的數據訪問程式，如下圖：<br>
+<img src="https://imgur.com/tk8oKQF.png" alt></p>
+<h3 id="架構中的三個角色">架構中的三個角色</h3>
+<ul>
+<li>
+<p>管理節點 Management Node<br>
+用於管理叢集內的其他節點，如提供配置數據、啟動並停止節點、運行備份等。由於這類節點負責管理其他節點的配置，應在啟動其他節點之前首先啟動這類節點。</p>
+</li>
+<li>
+<p>數據節點 Data Node<br>
+用於保存叢集的數據，資料寫在 RAM 或 Disk。當節點有 2 個以上時就能實現集群的高可用保證，不過節點增加，集群的處理速度會變慢。</p>
+</li>
+<li>
+<p>SQL 節點 (API)<br>
+用來訪問叢集數據，負責 SQL 的 Table schema，提供對外應用服務。增加 API 節點會提高整個集群的並發訪問速度和整體的吞吐量，該節點可以部署在 Web 應用伺服器上，也可以部署在專用的伺服器上。</p>
+</li>
+</ul>
+<h2 id="環境準備">環境準備</h2>
+<p>搭建 MySQL Cluster 至少要一個管理節點來管理，一個 SQL 節點來實現 MySQL server 功能和兩個資料節點實現 NDB Cluster 的功能。此篇文章將測試使用雙 SQL節點來搭建測試環境：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">a) Management Node  10.1.5.31</span><br><span class="line">b) Data Node        10.1.5.32</span><br><span class="line">c) Data Node        10.1.5.33</span><br><span class="line">d) SQL Node         10.1.5.32</span><br><span class="line">e) SQL Node         10.1.5.33</span><br></pre></td></tr></table></figure>
+<p>以上機器使用 Ubuntu 18.04 作業系統。</p>
+<h2 id="Management-Node">Management Node</h2>
+<h3 id="下載並安裝">下載並安裝</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ cd ~</span><br><span class="line">$ wget https:&#x2F;&#x2F;dev.mysql.com&#x2F;get&#x2F;Downloads&#x2F;MySQL-Cluster-8.0&#x2F;mysql-cluster-community-management-server_8.0.21-1ubuntu18.04_amd64.deb</span><br><span class="line">$ sudo dpkg -i mysql-cluster-community-management-server_8.0.21-1ubuntu18.04_amd64.deb</span><br></pre></td></tr></table></figure>
+<h3 id="編輯配置檔-config-ini">編輯配置檔 config.ini</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mkdir &#x2F;var&#x2F;lib&#x2F;mysql-cluster</span><br><span class="line">$ sudo vi &#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;config.ini</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[ndbd default]</span><br><span class="line">NoOfReplicas&#x3D;2</span><br><span class="line"></span><br><span class="line">[ndb_mgmd]</span><br><span class="line">NodeId&#x3D;1</span><br><span class="line">hostname&#x3D;10.1.5.31</span><br><span class="line">datadir&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql-cluster</span><br><span class="line"></span><br><span class="line">[ndbd]</span><br><span class="line">NodeId&#x3D;2</span><br><span class="line">hostname&#x3D;10.1.5.32</span><br><span class="line">datadir&#x3D; &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data</span><br><span class="line"></span><br><span class="line">[ndbd]</span><br><span class="line">NodeId&#x3D;3</span><br><span class="line">hostname&#x3D;10.1.5.33</span><br><span class="line">datadir&#x3D; &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">NodeId&#x3D;4</span><br><span class="line">hostname&#x3D;10.1.5.32</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">NodeId&#x3D;5</span><br><span class="line">hostname&#x3D;10.1.5.33</span><br></pre></td></tr></table></figure>
+<p>配置說明如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[ndb default]</span><br><span class="line"># data node 的配置</span><br><span class="line">NoOfReplicas&#x3D;2 # 數據節點數</span><br><span class="line"></span><br><span class="line">[ndb_mgmd]</span><br><span class="line"># 管理節點配置</span><br><span class="line">hostname&#x3D;10.1.5.31</span><br><span class="line">datadir&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql-cluster # log files 儲存目錄</span><br><span class="line"></span><br><span class="line">[ndbd] # 數據節點配置</span><br><span class="line">hostname&#x3D; # Remote IP address</span><br><span class="line">NodeId&#x3D;2 # 為管理各節點而命名的 id，從 2 依序編碼</span><br><span class="line">datadir&#x3D;&#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data  # 存放資料的目錄</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line"># SQL node</span><br><span class="line">hostname&#x3D; # Remote IP address</span><br><span class="line">NodeId&#x3D;3</span><br></pre></td></tr></table></figure>
+<h3 id="測試是否能啟動">測試是否能啟動</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo ndb_mgmd -f &#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;config.ini</span><br></pre></td></tr></table></figure>
+<p>會出現以下訊息：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MySQL Cluster Management Server mysql-8.0.21 ndb-8.0.21</span><br></pre></td></tr></table></figure>
+<p>代表啟用成功。</p>
+<p><font color="salmon"><strong>補充</strong></font><br>
+如果啟動後需要修改 cluster 內的 IP ，更新完 config.ini 後，啟動時改成下面指令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ndb_mgmd -f &#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;config.ini configdir&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql-cluster --reload --initial</span><br></pre></td></tr></table></figure>
+<h3 id="將程序設為-service">將程序設為 service</h3>
+<p>先關掉剛剛測試的程序，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo pkill -f ndb_mgmd</span><br></pre></td></tr></table></figure>
+<p>建立服務檔，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo vi &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;ndb_mgmd.service</span><br></pre></td></tr></table></figure>
+<p>貼上以下內容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;MySQL NDB Cluster Management Server</span><br><span class="line">After&#x3D;network.target auditd.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;forking</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;sbin&#x2F;ndb_mgmd -f &#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;config.ini --configdir&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;</span><br><span class="line">ExecReload&#x3D;&#x2F;bin&#x2F;kill -HUP $MAINPID</span><br><span class="line">KillMode&#x3D;process</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure>
+<p>重新載入設定檔並將服務設為開機啟動，最後啟動服務。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl daemon-reload</span><br><span class="line">$ sudo systemctl enable ndb_mgmd</span><br><span class="line">$ sudo systemctl start ndb_mgmd</span><br></pre></td></tr></table></figure>
+<p>查案服務狀態，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$sudo systemctl status ndb_mgmd</span><br></pre></td></tr></table></figure>
+<p>如果得到以下回復代表 management node 已經成功啟動。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">． ndb_mgmd.service - MySQL NDB Cluster Management Server</span><br><span class="line">   Loaded: loaded (&#x2F;etc&#x2F;systemd&#x2F;system&#x2F;ndb_mgmd.service; enabled; vendor preset: enabled)</span><br><span class="line">   Active: active (running) since Wed 2020-08-05 15:04:39 CST; 5s ago</span><br><span class="line">  Process: 8445 ExecStart&#x3D;&#x2F;usr&#x2F;sbin&#x2F;ndb_mgmd -f &#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;config.ini --configdir&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F; (code&#x3D;exited, status&#x3D;0&#x2F;SUCCESS)</span><br><span class="line"> Main PID: 8454 (ndb_mgmd)</span><br><span class="line">    Tasks: 12 (limit: 7372)</span><br><span class="line">   CGroup: &#x2F;system.slice&#x2F;ndb_mgmd.service</span><br><span class="line">           └─8454 &#x2F;usr&#x2F;sbin&#x2F;ndb_mgmd -f &#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;config.ini --configdir&#x3D;&#x2F;var&#x2F;lib&#x2F;mysql-cluster&#x2F;</span><br></pre></td></tr></table></figure>
+<p>或是看 1186 port 有沒有被 ndb_mgmd 占用：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo netstat -plntu</span><br></pre></td></tr></table></figure>
+<h2 id="Data-Node">Data Node</h2>
+<h3 id="安裝並下載依賴程式">安裝並下載依賴程式</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ cd ~</span><br><span class="line">$ wget https:&#x2F;&#x2F;dev.mysql.com&#x2F;get&#x2F;Downloads&#x2F;Mysql-Cluster-8.0&#x2F;mysql-cluster-community-data-node_8.0.21-1ubuntu18.04_amd64.deb</span><br><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt install -y libclass-methodmaker-perl</span><br><span class="line">$ sudo dpkg -i mysql-cluster-community-data-node_8.0.21-1ubuntu18.04_amd64.deb</span><br></pre></td></tr></table></figure>
+<h3 id="配置">配置</h3>
+<p>建立mysql配置檔 my.cnf</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ vi &#x2F;etc&#x2F;my.cnf</span><br></pre></td></tr></table></figure>
+<p>貼上以下內容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[mysql_cluster]</span><br><span class="line">ndb-connectstring&#x3D;10.1.5.31</span><br></pre></td></tr></table></figure>
+<p>其中 ndb-connectstrings 代表 cluster manager 的位址。</p>
+<p>根據管理者的配置，建立data node的數據存放目錄。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mkdir -p &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data</span><br></pre></td></tr></table></figure>
+<h3 id="測試是否能啟動-2">測試是否能啟動</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo ndbd</span><br></pre></td></tr></table></figure>
+<p>會出現以下訊息，代表啟用成功。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2020-08-05 15:31:59 [ndbd] INFO     -- Angel connected to &#39;10.1.5.31:1186&#39;</span><br><span class="line">2020-08-05 15:31:59 [ndbd] INFO     -- Angel allocated nodeid: 2</span><br></pre></td></tr></table></figure>
+<h3 id="將程序設為-service-2">將程序設為 service</h3>
+<p>先關掉剛剛測試的程序，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo pkill -f ndbd</span><br></pre></td></tr></table></figure>
+<p>建立服務檔，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo vi &#x2F;etc&#x2F;systemd&#x2F;system&#x2F; ndbd.service</span><br></pre></td></tr></table></figure>
+<p>貼上以下內容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;MySQL NDB Data Node Daemon</span><br><span class="line">After&#x3D;network.target auditd.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;forking</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;sbin&#x2F;ndbd</span><br><span class="line">ExecReload&#x3D;&#x2F;bin&#x2F;kill -HUP $MAINPID</span><br><span class="line">KillMode&#x3D;process</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure>
+<p>重新載入設定檔並將服務設為開機啟動，最後啟動服務。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl daemon-reload</span><br><span class="line">$ sudo systemctl enable ndbd</span><br><span class="line">$ sudo systemctl start ndbd</span><br></pre></td></tr></table></figure>
+<p>查案服務狀態，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$sudo systemctl status ndbd</span><br></pre></td></tr></table></figure>
+<p>如果得到以下回復代表 data node 已經成功啟動。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">． ndbd.service - MySQL NDB Data Node Daemon</span><br><span class="line">   Loaded: loaded (&#x2F;etc&#x2F;systemd&#x2F;system&#x2F;ndbd.service; enabled; vendor preset: enabled)</span><br><span class="line">   Active: active (running) since Wed 2020-08-05 15:47:54 CST; 7s ago</span><br><span class="line">  Process: 1883 ExecStart&#x3D;&#x2F;usr&#x2F;sbin&#x2F;ndbd (code&#x3D;exited, status&#x3D;0&#x2F;SUCCESS)</span><br><span class="line"> Main PID: 1894 (ndbd)</span><br><span class="line">    Tasks: 46 (limit: 7372)</span><br><span class="line">   CGroup: &#x2F;system.slice&#x2F;ndbd.service</span><br><span class="line">           ├─1894 &#x2F;usr&#x2F;sbin&#x2F;ndbd</span><br><span class="line">           └─1896 &#x2F;usr&#x2F;sbin&#x2F;ndbd</span><br><span class="line"></span><br><span class="line">Aug 05 15:47:54 httr2 systemd[1]: Starting MySQL NDB Data Node Daemon...</span><br><span class="line">Aug 05 15:47:54 httr2 ndbd[1883]: 2020-08-05 15:47:54 [ndbd] INFO     -- Angel connected to &#39;10.1.5.31:1186&#39;</span><br><span class="line">Aug 05 15:47:54 httr2 ndbd[1883]: 2020-08-05 15:47:54 [ndbd] INFO     -- Angel allocated nodeid: 2</span><br><span class="line">Aug 05 15:47:54 httr2 systemd[1]: Started MySQL NDB Data Node Daemon.</span><br></pre></td></tr></table></figure>
+<p>看 netstat 中是否有被 ndbd 進程占用的 port。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo netstat -plntu</span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID&#x2F;Program name</span><br><span class="line">tcp        0      0 10.1.5.32:35499          0.0.0.0:*               LISTEN      24377&#x2F;ndbd</span><br><span class="line">tcp        0      0 10.1.5.32:35189          0.0.0.0:*               LISTEN      24377&#x2F;ndbd</span><br></pre></td></tr></table></figure>
+<h2 id="SQL-Node">SQL Node</h2>
+<h3 id="下載">下載</h3>
+<p>因為也是跟 data node 一樣把壓縮檔放在家目錄下，所以另外建一個資料夾 install 存放 SQL Node 的安裝檔。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ cd ~</span><br><span class="line">$ wget https:&#x2F;&#x2F;dev.mysql.com&#x2F;get&#x2F;Downloads&#x2F;Mysql-Cluster-8.0&#x2F;mysql-cluster_8.0.21-1ubuntu18.04_amd64.deb-bundle.tar</span><br><span class="line">$ mkdir install</span><br><span class="line">$ tar -xvf mysql-cluster_8.0.21-1ubuntu18.04_amd64.deb-bundle.tar -C install&#x2F;</span><br><span class="line">$ cd install</span><br></pre></td></tr></table></figure>
+<h3 id="下載依賴包">下載依賴包</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt install -y libaio1 libmecab2</span><br></pre></td></tr></table></figure>
+<h3 id="開始安裝-MySQL-Cluster-dependencies">開始安裝 MySQL Cluster dependencies</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo dpkg -i mysql-common_8.0.21-1ubuntu18.04_amd64.deb</span><br><span class="line">$ sudo dpkg -i mysql-cluster-community-client-core_8.0.21-1ubuntu18.04_amd64.deb</span><br><span class="line">$ sudo dpkg -i mysql-cluster-community-client_8.0.21-1ubuntu18.04_amd64.deb</span><br><span class="line">$ sudo dpkg -i mysql-client_8.0.21-1ubuntu18.04_amd64.deb</span><br><span class="line">$ sudo dpkg -i mysql-cluster-community-server-core_8.0.21-1ubuntu18.04_amd64.deb</span><br><span class="line">$ sudo dpkg -i mysql-cluster-community-server_8.0.21-1ubuntu18.04_amd64.deb</span><br></pre></td></tr></table></figure>
+<p>在安裝mysql-cluster-community-server 的過程中，會要求輸入 mysql root 的密碼。<br>
+<img src="https://imgur.com/Cyu2sP9.png" alt><br>
+之後會詢問是否要使用 mysql 8.0 提供的新功能加強密碼加密，<br>
+<img src="https://imgur.com/Qw2RtaH.png" alt><br>
+這邊選擇保持原本的密碼方式, 兼容性較高。（此設置在安裝完畢後可依需求改變）<br>
+<img src="https://imgur.com/7s7gi8C.png" alt></p>
+<p>安裝 MySQL server binary。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo dpkg -i mysql-server_8.0.21-1ubuntu18.04_amd64.deb</span><br></pre></td></tr></table></figure>
+<h3 id="重配置-my-cnf-檔案">重配置 my.cnf 檔案</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo vi &#x2F;etc&#x2F;mysql&#x2F;my.cnf</span><br></pre></td></tr></table></figure>
+<p>在末端加上以下內容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">ndbcluster</span><br><span class="line"></span><br><span class="line">[mysql_cluster]</span><br><span class="line">ndb-connectstring&#x3D;10.1.5.31</span><br><span class="line">bind-address&#x3D; 0.0.0.0</span><br></pre></td></tr></table></figure>
+<p>配置檔內容說明如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line"># mysqld 程序的配置</span><br><span class="line">ndbcluster</span><br><span class="line"># 執行 ndb 儲存引擎</span><br><span class="line"></span><br><span class="line">[mysql_cluster]</span><br><span class="line">ndb-connectstring&#x3D;10.1.5.31</span><br><span class="line"># management node 位址</span><br><span class="line">bind-address&#x3D; 0.0.0.0</span><br><span class="line"># 代表可提供外部網路連線 remote 管理，若沒有此參數的話，SQL 只能在 local 端使用</span><br></pre></td></tr></table></figure>
+<h3 id="重啟-mysql-service-套用以上變更">重啟 mysql service 套用以上變更</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl restart mysql</span><br></pre></td></tr></table></figure>
+<p>加入開機啟動。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl enable mysql</span><br></pre></td></tr></table></figure>
+<h2 id="驗證集群安裝">驗證集群安裝</h2>
+<p>進入 <code>SQL node</code> 所在的機器開啟 <code>ndb_mgm</code> console 連進 management node。輸入 <code>show</code>，可列出 cluster 的整體架構。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ndb_mgm</span><br><span class="line">&gt; show</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ndb_mgm</span><br><span class="line">-- NDB Cluster -- Management Client --</span><br><span class="line">ndb_mgm&gt; show</span><br><span class="line">Connected to Management Server at: 10.1.5.31:1186</span><br><span class="line">Cluster Configuration</span><br><span class="line">---------------------</span><br><span class="line">[ndbd(NDB)]     2 node(s)</span><br><span class="line">id&#x3D;2    @10.1.5.32  (mysql-8.0.21 ndb-8.0.21, Nodegroup: 0)</span><br><span class="line">id&#x3D;3    @10.1.5.33  (mysql-8.0.21 ndb-8.0.21, Nodegroup: 0, *)</span><br><span class="line"></span><br><span class="line">[ndb_mgmd(MGM)] 1 node(s)</span><br><span class="line">id&#x3D;1    @10.1.5.31  (mysql-8.0.21 ndb-8.0.21)</span><br><span class="line"></span><br><span class="line">[mysqld(API)]   2 node(s)</span><br><span class="line">id&#x3D;4    @10.1.5.32  (mysql-8.0.21 ndb-8.0.21)</span><br><span class="line">id&#x3D;5    @10.1.5.33  (mysql-8.0.21 ndb-8.0.21)</span><br><span class="line"></span><br><span class="line">ndb_mgm&gt; 2 STATUS</span><br><span class="line">Node 2: started (mysql-8.0.21 ndb-8.0.21)</span><br><span class="line"></span><br><span class="line">ndb_mgm&gt;</span><br></pre></td></tr></table></figure>
+<p>SQL node 所在的機器開啟MySQL Server，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p>進入 mysql 後，下下面指令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; SHOW ENGINE NDB STATUS \G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">  Type: ndbclus</span><br><span class="line">  Name: connection</span><br><span class="line">Status: cluster_node_id&#x3D;4, connected_host&#x3D;10.1.5.31, connected_port&#x3D;1186, number_of_data_nodes&#x3D;2, number_of_ready_da                                                                           ta_nodes&#x3D;2, connect_count&#x3D;0</span><br><span class="line">*************************** 2. row ***************************</span><br><span class="line">  Type: ndbclus</span><br><span class="line">  Name: NdbTransaction</span><br><span class="line">Status: created&#x3D;2, free&#x3D;2, sizeof&#x3D;392</span><br><span class="line">*************************** 3. row ***************************</span><br><span class="line">  Type: ndbclus</span><br><span class="line">  Name: NdbOperation</span><br><span class="line">Status: created&#x3D;4, free&#x3D;4, sizeof&#x3D;944</span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>表示成功連到 mysql cluster。</p>
+<h2 id="使用遠端-workblench-進行連線">使用遠端 workblench 進行連線</h2>
+<p>先進入 SQL node 在本地端新建一個使用者並賦予存取所有位置的權限：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ mysql -u root -p</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql &gt; CREATE USER &#39;user&#39;@&#39;%&#39; IDENTIFIED BY &#39;password&#39;;</span><br><span class="line">mysql &gt; GRANT ALL ON *.* TO &#39;user&#39;@&#39;%&#39;;</span><br></pre></td></tr></table></figure>
+<p>開啟 MySQLworkblench 新增連線對象為 cluster 內任何一個 SQL node，便可成功連線。</p>
+<h3 id="建立資料表">建立資料表</h3>
+<p>建立資料表時須指定使用 ndbcluster 引擎，才可多點同步。<br>
+<img src="https://imgur.com/yekW0XQ.png" alt></p>
+<h3 id="確認">確認</h3>
+<p>寫入資料，<br>
+<img src="https://imgur.com/eE3gWj4.png" alt></p>
+<p>進入另一台 SQL node 查看資料是否有同步。<br>
+<img src="https://imgur.com/JfkmpZD.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySQL-Cluster/" rel="tag"># MySQL-Cluster</a>
+              <a href="/tags/NDB-Clster/" rel="tag"># NDB Clster</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/it-multi-account.html" rel="prev" title="[Git] 在同一台電腦中設置多個 Git 帳號">
+      <i class="fa fa-chevron-left"></i> [Git] 在同一台電腦中設置多個 Git 帳號
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-NDB-Cluster"><span class="nav-number">1.</span> <span class="nav-text">MySQL NDB Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#架構中的三個角色"><span class="nav-number">1.1.</span> <span class="nav-text">架構中的三個角色</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#環境準備"><span class="nav-number">2.</span> <span class="nav-text">環境準備</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Management-Node"><span class="nav-number">3.</span> <span class="nav-text">Management Node</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下載並安裝"><span class="nav-number">3.1.</span> <span class="nav-text">下載並安裝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#編輯配置檔-config-ini"><span class="nav-number">3.2.</span> <span class="nav-text">編輯配置檔 config.ini</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#測試是否能啟動"><span class="nav-number">3.3.</span> <span class="nav-text">測試是否能啟動</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#將程序設為-service"><span class="nav-number">3.4.</span> <span class="nav-text">將程序設為 service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Node"><span class="nav-number">4.</span> <span class="nav-text">Data Node</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安裝並下載依賴程式"><span class="nav-number">4.1.</span> <span class="nav-text">安裝並下載依賴程式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">4.2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#測試是否能啟動-2"><span class="nav-number">4.3.</span> <span class="nav-text">測試是否能啟動</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#將程序設為-service-2"><span class="nav-number">4.4.</span> <span class="nav-text">將程序設為 service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-Node"><span class="nav-number">5.</span> <span class="nav-text">SQL Node</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下載"><span class="nav-number">5.1.</span> <span class="nav-text">下載</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下載依賴包"><span class="nav-number">5.2.</span> <span class="nav-text">下載依賴包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#開始安裝-MySQL-Cluster-dependencies"><span class="nav-number">5.3.</span> <span class="nav-text">開始安裝 MySQL Cluster dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重配置-my-cnf-檔案"><span class="nav-number">5.4.</span> <span class="nav-text">重配置 my.cnf 檔案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重啟-mysql-service-套用以上變更"><span class="nav-number">5.5.</span> <span class="nav-text">重啟 mysql service 套用以上變更</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#驗證集群安裝"><span class="nav-number">6.</span> <span class="nav-text">驗證集群安裝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用遠端-workblench-進行連線"><span class="nav-number">7.</span> <span class="nav-text">使用遠端 workblench 進行連線</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#建立資料表"><span class="nav-number">7.1.</span> <span class="nav-text">建立資料表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#確認"><span class="nav-number">7.2.</span> <span class="nav-text">確認</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html",
+            identifier: "MySQL-NDB-Cluster8-onUbuntu.html",
+            title: "[MySQL] 在 Ubuntu18.04 建立 MySQL NDB Cluster 8.0"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

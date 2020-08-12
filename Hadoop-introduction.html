@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="Hadoop 是一個能夠儲存並管理大量資料的分散式大數據處理平臺，其包含三大模組：  HDFS MapReduce Yarn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Hadoop] HDFS、MapReduce、Yarn 介紹">
+<meta property="og:url" content="https://ulahsieh.github.io/Hadoop-introduction.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="Hadoop 是一個能夠儲存並管理大量資料的分散式大數據處理平臺，其包含三大模組：  HDFS MapReduce Yarn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/R3nEcsJ.png">
+<meta property="og:image" content="https://imgur.com/6cmcxE2.png">
+<meta property="og:image" content="https://imgur.com/ihpVFgK.png">
+<meta property="article:published_time" content="2020-08-12T06:32:00.000Z">
+<meta property="article:modified_time" content="2020-08-12T06:34:03.906Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="Hadoop">
+<meta property="article:tag" content="Yarn">
+<meta property="article:tag" content="MapReduce">
+<meta property="article:tag" content="HDFS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/R3nEcsJ.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Hadoop-introduction.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Hadoop] HDFS、MapReduce、Yarn 介紹 | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Hadoop-introduction.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Hadoop] HDFS、MapReduce、Yarn 介紹
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-12 14:32:00" itemprop="dateCreated datePublished" datetime="2020-08-12T14:32:00+08:00">2020-08-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">Hadoop</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>2 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Hadoop 是一個能夠儲存並管理大量資料的分散式大數據處理平臺，其包含三大模組：</p>
+<ul>
+<li>HDFS</li>
+<li>MapReduce</li>
+<li>Yarn</li>
+</ul>
+<a id="more"></a>
+<h2 id="HDFS">HDFS</h2>
+<p>HDFS為 Hadoop Distributed File System 的縮寫，分散式檔案系統。由 NameNode 與 DataNode 組成。</p>
+<h3 id="NameNode-DataNode">NameNode &amp; DataNode</h3>
+<p>NameNode：儲存檔案的 block 清單，稱之為 metadata。<br>
+DataNode：負責儲存實體檔案的 block。</p>
+<h3 id="HDFS-Architecture">HDFS Architecture</h3>
+<p>儲存檔案到 HDFS 前，檔案會被切成數等分小區塊 (block)，並且會將同一個 block 複製成數等分(replication, 預設值是 3 份) 再分散儲存到各個 DataNode，且相同的 block 不會同時存在於同一個 DataNode 上。<br>
+同時由 NameNode 管理記載 block 的儲存位置，當某個 Hadoop client 需要讀取這個檔案時，會先跟 NameNode 發出請求，NameNode 會根據這份清單回覆檔案的 block 位於哪幾台 DataNode，Hadoop client 再根據這份清單將各個 block 讀取出來，還原成一個完整個檔案。<br>
+<img src="https://imgur.com/R3nEcsJ.png" alt></p>
+<h3 id="特性">特性</h3>
+<p>擴充性：Hadoop 可以通過增加節點輕易的擴展儲存能力或處理效能。<br>
+可靠性：由 block 的複本機制達成，當一個 Data Node 失效、毀損造成資料遺失，可以從其他台 Data Node 可以取得該檔案的複本資料。</p>
+<hr>
+<h2 id="MapReduce">MapReduce</h2>
+<p>MapReduce是一種程式模型，用於大數據的並行運算。<br>
+HDFS 處理好的檔案資料，搭配 Map &amp; Reduce 函數，將資料片段傳送到計算節點（Mapping），由各個節點計算處理之後再做整合（Reducimg），達到分散式計算。</p>
+<h3 id="模型流程">模型流程</h3>
+<p><img src="https://imgur.com/6cmcxE2.png" alt></p>
+<ol>
+<li>fork：將要執行的 MapReduce 程式複製到 Master 與每一個 Worker 機器中。Master 與 Worker 在Hadoop 中即為 JobTracker(NameNode) 與 TaskTracker(DataNode)。</li>
+<li>assign map：Master 決定 Map 程式與 Reduce 程式，分別由哪些 Worker 機器執行。</li>
+<li>read：將所有的資料區塊，分配到執行 Map 程式的 Worker 機器中進行 Map。在 Hadoop 中 input files 會存放在 HDFS 上，要執行 Map 程式的 Worker node，就會照著 Master 分配的資料 link，到 HDFS 上去找到他要執行的資料區塊</li>
+<li>local write：將 Map 後的結果存入 Worker 機器的本地磁碟。</li>
+<li>remote read：執行 Reduce 程式的 Worker 機器，遠端讀取每一份 Map 結果，進行彙整與排序，同時執行 Reduce 程式。</li>
+<li>write：將使用者需要的運算結果輸出</li>
+</ol>
+<p>由於 MapReduce 所有運算的過程都會讀寫檔案，運算效能相較之下就比較慢。運算的功能慢慢的被 Apache Spark 所取代。</p>
+<hr>
+<h2 id="Yarn">Yarn</h2>
+<p>Yarn 是一個資源管理系統，用來管理分散式運算應用程式所使用的資源。所以在 Hadoop 平台上執行 MapReduce 的應用程式，就需藉由 Yarn 監控和分配資源來確保工作正常運作。由一個 ResourceManager，與至少一台的 NodeManager 組成，數量預設會與 DataNode 相同。</p>
+<h3 id="ResourceManagrt-NodeManager-ApplicationMaster">ResourceManagrt &amp; NodeManager &amp; ApplicationMaster</h3>
+<p>ResourceManager(RM)：用來管理與裁決 Hadoop 叢集內資源的使用，擁有絕對的控制權和對資源的分配權。<br>
+NodeManager(NM)：負責監控 Hadoop 叢集內每台機器的資源使用情況，例如memory, cpu, disk, network等，並且將資訊回報給 ResourceManager。<br>
+ApplicationMaster(AM)：負責每一個 application 的調度和協調。</p>
+<h3 id="Yarn-Architecture">Yarn Architecture</h3>
+<p><img src="https://imgur.com/ihpVFgK.png" alt><br>
+YARN 的具體工作流程為：</p>
+<ol>
+<li>client 提交 application</li>
+<li>RM 為該應用分配 Container 與對應 NM 通信，要求 NM 在Container 中啟動 AM</li>
+<li>AM 啟動後向 RM 註冊</li>
+<li>AM 通過輪詢向 RM 申請領用 Container 資源</li>
+<li>AM 申請到資源後與 NM 通信，要求啟動任務</li>
+<li>運行中的程序會向 AM 通過協議通信同步運行狀態與進度</li>
+<li>在應用執行期間，client 與 AM 通信同步任務狀態訊息</li>
+<li>應用運行結束後，AM 向 RM 註銷並關閉自己， Container 資源釋放</li>
+</ol>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a href="https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html" target="_blank" rel="external nofollow noopener noreferrer">https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html</a></li>
+<li><a href="https://ithelp.ithome.com.tw/articles/10190756" target="_blank" rel="external nofollow noopener noreferrer">https://ithelp.ithome.com.tw/articles/10190756</a></li>
+<li><a href="https://chenhh.gitbooks.io/parallel_processing/content/apache_spark/mapreduce.html" target="_blank" rel="external nofollow noopener noreferrer">https://chenhh.gitbooks.io/parallel_processing/content/apache_spark/mapreduce.html</a></li>
+<li><a href="https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html" target="_blank" rel="external nofollow noopener noreferrer">https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hadoop/" rel="tag"># Hadoop</a>
+              <a href="/tags/Yarn/" rel="tag"># Yarn</a>
+              <a href="/tags/MapReduce/" rel="tag"># MapReduce</a>
+              <a href="/tags/HDFS/" rel="tag"># HDFS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MySQL-NDB-Cluster8-onUbuntu.html" rel="prev" title="[MySQL] 在 Ubuntu18.04 建立 MySQL NDB Cluster 8.0">
+      <i class="fa fa-chevron-left"></i> [MySQL] 在 Ubuntu18.04 建立 MySQL NDB Cluster 8.0
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HDFS"><span class="nav-number">1.</span> <span class="nav-text">HDFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NameNode-DataNode"><span class="nav-number">1.1.</span> <span class="nav-text">NameNode &amp; DataNode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS-Architecture"><span class="nav-number">1.2.</span> <span class="nav-text">HDFS Architecture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特性"><span class="nav-number">1.3.</span> <span class="nav-text">特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce"><span class="nav-number">2.</span> <span class="nav-text">MapReduce</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型流程"><span class="nav-number">2.1.</span> <span class="nav-text">模型流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Yarn"><span class="nav-number">3.</span> <span class="nav-text">Yarn</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ResourceManagrt-NodeManager-ApplicationMaster"><span class="nav-number">3.1.</span> <span class="nav-text">ResourceManagrt &amp; NodeManager &amp; ApplicationMaster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Yarn-Architecture"><span class="nav-number">3.2.</span> <span class="nav-text">Yarn Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">3.2.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Hadoop-introduction.html",
+            identifier: "Hadoop-introduction.html",
+            title: "[Hadoop] HDFS、MapReduce、Yarn 介紹"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

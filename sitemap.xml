@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html</loc>
+    <loc>https://ulahsieh.github.io/Hadoop-introduction.html</loc>
     
-    <lastmod>2020-08-11T03:55:59.649Z</lastmod>
+    <lastmod>2020-08-12T06:34:03.906Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://ulahsieh.github.io/it-multi-account.html</loc>
     
-    <lastmod>2020-08-05T14:34:14.174Z</lastmod>
+    <lastmod>2020-08-12T06:30:55.438Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html</loc>
+    
+    <lastmod>2020-08-11T03:55:59.649Z</lastmod>
     
   </url>
   

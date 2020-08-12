@@ -60,7 +60,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://imgur.com/lNXpiXi.png">
 <meta property="article:published_time" content="2020-08-05T09:46:00.000Z">
-<meta property="article:modified_time" content="2020-08-05T14:34:14.174Z">
+<meta property="article:modified_time" content="2020-08-12T06:30:55.438Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="Git">
 <meta property="article:tag" content="git-ssh">
@@ -246,7 +246,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>668</span>
+              <span>675</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -265,12 +265,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h4 id="font-color-TEAL-為每個帳號產生-ssh-key-font"><font color="TEAL">為每個帳號產生 ssh key</font></h4>
+        <h4 id="為每個帳號產生-ssh-key">為每個帳號產生 ssh key</h4>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C &quot;userName@address&quot;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<h4 id="font-color-TEAL-產生完畢後，將公鑰放到對應帳號的-github-中-font"><font color="TEAL">產生完畢後，將公鑰放到對應帳號的 github 中</font></h4>
+<h4 id="產生完畢後，將公鑰放到對應帳號的-github-中">產生完畢後，將公鑰放到對應帳號的 github 中</h4>
 <p><img src="https://imgur.com/lNXpiXi.png" alt></p>
-<h4 id="font-color-TEAL-將新金鑰新增到-SSH-agent-中-font"><font color="TEAL">將新金鑰新增到 SSH agent 中</font></h4>
+<h4 id="將新金鑰新增到-SSH-agent-中">將新金鑰新增到 SSH agent 中</h4>
 <p>因為作業系統預設只讀取私鑰 id_rsa，為了讓 SSH 識別新的私鑰，需將其新增到 SSH agent中：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ssh-add ~&#x2F;.ssh&#x2F;金鑰名稱</span><br></pre></td></tr></table></figure>
 <p>如果出現 Could not open a connection to your authentication agent 的錯誤，就試著用以下命令：</p>
@@ -278,25 +278,27 @@
 <div class="warning">
 <p>重啟電腦後都需要重新 ssh-add。因為這個命令不會永久性的記住私鑰。使用 ssh-add 會把指定的私鑰新增到 ssh-agent 所管理的一個 session 當中。而 ssh-agent 是一個用於儲存私鑰的臨時性的 session 服務，也就是說當你重啟之後，ssh-agent 服務便會重置，session 會話也會失效。</p>
 </div>
-<h4 id="font-color-TEAL-解決每次重啟都要-ssh-add-的問題-font"><font color="TEAL">解決每次重啟都要 ssh-add 的問題</font></h4>
+<h4 id="解決每次重啟都要-ssh-add-的問題">解決每次重啟都要 ssh-add 的問題</h4>
 <p>在 git 安裝目錄下的 etc/bash.bashrc 文件中末加入</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">eval &quot;$(ssh-agent -s)&quot;</span><br><span class="line">ssh-add ~&#x2F;.ssh&#x2F;金鑰名稱</span><br></pre></td></tr></table></figure>
-<h4 id="font-color-TEAL-配置多個-ssh-key-font"><font color="TEAL">配置多個 ssh-key</font></h4>
+<h4 id="配置多個-ssh-key">配置多個 ssh-key</h4>
 <p>修改 <code>~/.ssh/config</code> 文件</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#default github</span><br><span class="line">Host github.com</span><br><span class="line">HostName github.com</span><br><span class="line">IdentityFile ~&#x2F;.ssh&#x2F;id_rsa</span><br><span class="line"></span><br><span class="line">Host github_second</span><br><span class="line">HostName github.com</span><br><span class="line">IdentityFile ~&#x2F;.ssh&#x2F;id_rsa_second</span><br></pre></td></tr></table></figure>
 <p>其中 <code>Host</code> 為 <code>HostName</code> 的別名。</p>
-<h4 id="font-color-TEAL-測試連線-font"><font color="TEAL">測試連線</font></h4>
+<h4 id="測試連線">測試連線</h4>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ssh -T git@[Host]</span><br></pre></td></tr></table></figure>
 <p>出現</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Hi xxx! You’ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
 <p>代表連線成功</p>
-<h4 id="font-color-TEAL-在專案下設配置使用者-font"><font color="TEAL">在專案下設配置使用者</font></h4>
+<h4 id="在專案下設配置使用者">在專案下設配置使用者</h4>
 <p>先取消 global</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git config --global --unset user.name</span><br><span class="line">$ git config --global --unset user.email</span><br></pre></td></tr></table></figure>
 <p>設置 repo 自己的 user &amp; email</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git config  user.email &quot;xxxx@xx.com&quot;</span><br><span class="line">$ git config  user.name &quot;xxxx&quot;</span><br></pre></td></tr></table></figure>
 <p>clone 遠端資料</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$git clone git@[Host]:UserName&#x2F;repositoryName</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git clone git@[Host]:UserName&#x2F;repositoryName</span><br></pre></td></tr></table></figure>
+<p>git push</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ git remote add origin git@[Host]:UserName&#x2F;repositoryName.git</span><br><span class="line">$ git add -am &quot;commit msg&quot;</span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
 <h5 id="Reference">Reference</h5>
 <p>[1] <a href="https://segmentfault.com/q/1010000000835302" target="_blank" rel="external nofollow noopener noreferrer">https://segmentfault.com/q/1010000000835302</a><br>
 [2] <a href="https://blog.csdn.net/EsonJohn/article/details/79134665" target="_blank" rel="external nofollow noopener noreferrer">https://blog.csdn.net/EsonJohn/article/details/79134665</a><br>
@@ -393,7 +395,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#font-color-TEAL-為每個帳號產生-ssh-key-font"><span class="nav-number">1.</span> <span class="nav-text">為每個帳號產生 ssh key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#font-color-TEAL-產生完畢後，將公鑰放到對應帳號的-github-中-font"><span class="nav-number">2.</span> <span class="nav-text">產生完畢後，將公鑰放到對應帳號的 github 中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#font-color-TEAL-將新金鑰新增到-SSH-agent-中-font"><span class="nav-number">3.</span> <span class="nav-text">將新金鑰新增到 SSH agent 中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#font-color-TEAL-解決每次重啟都要-ssh-add-的問題-font"><span class="nav-number">4.</span> <span class="nav-text">解決每次重啟都要 ssh-add 的問題</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#font-color-TEAL-配置多個-ssh-key-font"><span class="nav-number">5.</span> <span class="nav-text">配置多個 ssh-key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#font-color-TEAL-測試連線-font"><span class="nav-number">6.</span> <span class="nav-text">測試連線</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#font-color-TEAL-在專案下設配置使用者-font"><span class="nav-number">7.</span> <span class="nav-text">在專案下設配置使用者</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reference"><span class="nav-number">7.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#為每個帳號產生-ssh-key"><span class="nav-number">1.</span> <span class="nav-text">為每個帳號產生 ssh key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#產生完畢後，將公鑰放到對應帳號的-github-中"><span class="nav-number">2.</span> <span class="nav-text">產生完畢後，將公鑰放到對應帳號的 github 中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#將新金鑰新增到-SSH-agent-中"><span class="nav-number">3.</span> <span class="nav-text">將新金鑰新增到 SSH agent 中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解決每次重啟都要-ssh-add-的問題"><span class="nav-number">4.</span> <span class="nav-text">解決每次重啟都要 ssh-add 的問題</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置多個-ssh-key"><span class="nav-number">5.</span> <span class="nav-text">配置多個 ssh-key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#測試連線"><span class="nav-number">6.</span> <span class="nav-text">測試連線</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在專案下設配置使用者"><span class="nav-number">7.</span> <span class="nav-text">在專案下設配置使用者</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reference"><span class="nav-number">7.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -408,20 +410,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-count">67</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

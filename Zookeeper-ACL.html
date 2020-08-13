@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="ACL(Access Control List) Zookeeper 對 znode 操作採用 ACL 進行了存取權限控制，類似於UNIX&#x2F;Linux的文件權限機制。使用 scheme:id:perm 來標識，主要涵蓋 3 個方面：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Zookeeper] ACL">
+<meta property="og:url" content="https://ulahsieh.github.io/Zookeeper-ACL.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="ACL(Access Control List) Zookeeper 對 znode 操作採用 ACL 進行了存取權限控制，類似於UNIX&#x2F;Linux的文件權限機制。使用 scheme:id:perm 來標識，主要涵蓋 3 個方面：">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/IBGSdHf.png">
+<meta property="og:image" content="https://imgur.com/sdvKo1X.png">
+<meta property="og:image" content="https://imgur.com/sdvKo1X.png">
+<meta property="og:image" content="https://imgur.com/xOpBvQI.png">
+<meta property="og:image" content="https://imgur.com/vwyzUie.png">
+<meta property="article:published_time" content="2020-08-12T12:45:00.000Z">
+<meta property="article:modified_time" content="2020-08-13T03:41:14.087Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="Zookeeper">
+<meta property="article:tag" content="ACL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/IBGSdHf.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Zookeeper-ACL.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Zookeeper] ACL | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Zookeeper-ACL.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Zookeeper] ACL
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-12 20:45:00" itemprop="dateCreated datePublished" datetime="2020-08-12T20:45:00+08:00">2020-08-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Big-Data/" itemprop="url" rel="index">
+                    <span itemprop="name">Big Data</span>
+                  </a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Big-Data/Zookeeper/" itemprop="url" rel="index">
+                    <span itemprop="name">Zookeeper</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>2 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="ACL-Access-Control-List">ACL(Access Control List)</h2>
+<p>Zookeeper 對 znode 操作採用 ACL 進行了存取權限控制，類似於UNIX/Linux的文件權限機制。使用 <code>scheme:id:perm</code> 來標識，主要涵蓋 3 個方面：</p>
+<a id="more"></a>
+<ul>
+<li>權限模式（Scheme）：授權的策略</li>
+<li>授權對象（ID）：授權的對象</li>
+<li>權限（Permission）：授予的權限<br>
+其特性如下：</li>
+<li>ZooKeeper 的權限控制是基於每個 znode 節點的，需要對每個節點設置權限</li>
+<li>每個 znode 支持設置多種權限控制方案和多個權限</li>
+<li>子節點<strong>不會</strong>繼承父節點的權限，客戶端無權訪問某節點，但可能可以訪問它的子節點</li>
+</ul>
+<hr>
+<h3 id="Scheme-id">Scheme:id</h3>
+<p>ZK 支持 pluggable authentication schemes，可以通過擴充套件scheme，來擴充 ACL 的機制。</p>
+<h4 id="Built-in-ACL-Schemes">Built-in ACL Schemes</h4>
+<p>ZK有以下的内置schemes：</p>
+<ul>
+<li>world：默認方式，僅對應一個 id <code>anyone</code>，為所有用戶端開發權限。</li>
+<li>auth：代表<strong>已經</strong>認證通過的用戶 (cli中可以通過 <code>addauth digest user:pwd</code> 來添加當前上下文中的授權用戶；或是通過 kerberos 來進行 authencation)</li>
+<li>digest：即<code>用戶名:密碼</code>這種方式認證。用 <code>username:BASE64(SHA1(password))</code> 字符串作為 ACL ID。意思是認證是通過明文發送 <code>username:password</code> 來進行的，當用在 ACL 時，表達式為 <code>username:BASE64(SHA1(password))</code>。</li>
+<li>ip：使用客戶端的主機 IP 作為 ACL ID 。可以使用一個網段，如 10.15.0.0/16。</li>
+<li>super：在這種 scheme 情況下，對應的 id 擁有超級許可權，可以做任何事情 (cdrwa)。</li>
+<li>sasl：設置為用戶的 uid，通過 sasl Authentication 用戶的 id，在 3.4.4 版本後 sasl 是通過 Kerberos 實現（即只有通過 Kerberos 認證的用戶才可以訪問權限的 znode），使用 <code>sasl:uid:cdwra</code> 字符串作為節點 ACL 的 id（如：sasl:user:cdwra）。</li>
+</ul>
+<h3 id="Permission">Permission</h3>
+<p>5種權限簡寫為 crwda</p>
+<ul>
+<li>CREATE c 可以創建當前節點的<strong>子節點</strong></li>
+<li>DELETE d 可以刪除當前節點的<strong>子節點</strong></li>
+<li>READ r 可以讀取<strong>節點</strong>數據及顯示<strong>子節點</strong>列表</li>
+<li>WRITE w 可以向當前<strong>節點</strong>寫數據</li>
+<li>ADMIN a 可以設置<strong>節點</strong>訪問控制列表權限</li>
+</ul>
+<hr>
+<h3 id="ACL-相關命令">ACL 相關命令</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>使用方式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>addauth</td>
+<td><code>addauth &lt;scheme&gt; &lt;auth&gt;</code></td>
+<td>添加認證用戶</td>
+</tr>
+<tr>
+<td>setAcl</td>
+<td><code>setAcl &lt;path&gt; &lt;acl&gt;</code></td>
+<td>設置 ACL 權限</td>
+</tr>
+<tr>
+<td>getAcl</td>
+<td><code>getAcl &lt;path&gt;</code></td>
+<td>讀取 ACL 權限</td>
+</tr>
+</tbody>
+</table>
+<p>進入 zkCli</p>
+<h4 id="auth-舉例">auth 舉例</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ addauth digest user:123456</span><br><span class="line">$ setAcl &#x2F;test auth:user:cdrwa</span><br></pre></td></tr></table></figure>
+<p>之後使用 getAcl 查看權限時，密碼會自動轉為密文<code>BASE64(SHA1(password))</code>。<br>
+<img src="https://imgur.com/IBGSdHf.png" alt><br>
+查看節點數據之前，必須確保已驗證加入，否則會有 <code>Authentication is not valid : /test</code> 的錯誤。</p>
+<h4 id="digest-舉例">digest 舉例</h4>
+<p>digest 加密模式相對於 auth 來說要稍微麻煩一些，需要對明文密碼進行 <code>BASE64(SHA1(password))</code> 的處理。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ setAcl &lt;path&gt; digest:&lt;user&gt;:&lt;密文密碼&gt;:&lt;acl&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="對密碼進行加密的方法">對密碼進行加密的方法</h5>
+<ul>
+<li>使用 openssl 命令產生</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo -n &lt;user&gt;:&lt;password&gt; | openssl dgst -binary -sha1 | openssl base64</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/sdvKo1X.png" alt><br>
+生成 <code>&lt;user&gt;:&lt;password&gt;</code> 對應的密文。請注意，如果將 user 改掉，則生成的密文也會不一樣。</p>
+<ul>
+<li>使用 zookeeper 提供的 java class 來產生<br>
+先進入zookeeper的安裝目錄，然後執行下述命令：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ java -cp .&#x2F;lib&#x2F;*:.&#x2F;* org.apache.zookeeper.server.auth.DigestAuthenticationProvider ula:123456</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/sdvKo1X.png" alt></p>
+<p><strong>使用 digest 可直接 setAcl 設置權限，不用添加身份認證。但如果要訪問節點，仍需先身分認證</strong></p>
+<p><img src="https://imgur.com/xOpBvQI.png" alt></p>
+<hr>
+<h3 id="設置超級管理員">設置超級管理員</h3>
+<p>假如忘記了認證用戶的密碼，或者想要存取某些被保護的 znode，怎麼辦呢？可以為zookeeper 設置超級管理員，superuser 預設對所有節點有權限存取。</p>
+<ol>
+<li>取得欲設置帳號對應的密碼的密文，同上一小節<strong>對密碼進行加密的方法</strong></li>
+<li>編輯啟用 zookeeper service 的 script <code>zkServer.sh</code>，將以下參數加入下方圖片中位置或是 export 為環境變數。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;-SERVER_JVMFLAGS&#x3D;-Dzookeeper.DigestAuthenticationProvider.superDigest&#x3D;[帳號]:[密文密碼]</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/vwyzUie.png" alt></p>
+<ol start="3">
+<li>
+<p>保存文件，重啟該節點上的zookeeper service 便設置成功了。</p>
+</li>
+<li>
+<p>進入 zkCli 模式後執行</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">addauth digest [帳號]:[明文密碼]</span><br></pre></td></tr></table></figure>
+<p>認證身份，這樣就具備超級管理員角色，可以操作任意節點了。</p>
+<hr>
+<div class="info">
+<p>補充<br>
+在 Linux 中執行某些程序前會對啟動它的用戶進行認證，符合一定的要求之後才允許執行，例如 login, su 等。在 linux 中進行身份或是狀態的驗證程序是由 PAM 來進行的。<br>
+PAM（Pluggable Authentication Modules）是由 Sun 提出的一種認證機制。它通過提供一些動態鏈接庫和一套統一的 API，將系統提供的服務和該服務的認證方式分開，使得系統管理員可以靈活地根據需要給不同的服務配置不同的認證方式而無需更改服務程序，同時也便於向系統中添加新的認證手段。PAM 模塊是一種嵌入式模塊，修改後即時生效。</p>
+</div>
+<h5 id="Reference">Reference</h5>
+<ul>
+<li><a href="https://baike.baidu.com/item/PAM/3747946" target="_blank" rel="external nofollow noopener noreferrer">https://baike.baidu.com/item/PAM/3747946</a></li>
+<li><a href="https://www.cnblogs.com/qlqwjy/p/10517231.html" target="_blank" rel="external nofollow noopener noreferrer">https://www.cnblogs.com/qlqwjy/p/10517231.html</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1414462" target="_blank" rel="external nofollow noopener noreferrer">https://cloud.tencent.com/developer/article/1414462</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Zookeeper/" rel="tag"># Zookeeper</a>
+              <a href="/tags/ACL/" rel="tag"># ACL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Hadoop-introduction.html" rel="prev" title="[Hadoop] HDFS、MapReduce、Yarn 介紹">
+      <i class="fa fa-chevron-left"></i> [Hadoop] HDFS、MapReduce、Yarn 介紹
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Zookeeper-Dynamic-Configuration.html" rel="next" title="[Zookeeper] Dynamic Configuration">
+      [Zookeeper] Dynamic Configuration <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ACL-Access-Control-List"><span class="nav-number">1.</span> <span class="nav-text">ACL(Access Control List)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scheme-id"><span class="nav-number">1.1.</span> <span class="nav-text">Scheme:id</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Built-in-ACL-Schemes"><span class="nav-number">1.1.1.</span> <span class="nav-text">Built-in ACL Schemes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Permission"><span class="nav-number">1.2.</span> <span class="nav-text">Permission</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ACL-相關命令"><span class="nav-number">1.3.</span> <span class="nav-text">ACL 相關命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#auth-舉例"><span class="nav-number">1.3.1.</span> <span class="nav-text">auth 舉例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#digest-舉例"><span class="nav-number">1.3.2.</span> <span class="nav-text">digest 舉例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#對密碼進行加密的方法"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">對密碼進行加密的方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#設置超級管理員"><span class="nav-number">1.4.</span> <span class="nav-text">設置超級管理員</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reference"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">69</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Zookeeper-ACL.html",
+            identifier: "Zookeeper-ACL.html",
+            title: "[Zookeeper] ACL"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

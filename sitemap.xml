@@ -2,9 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ulahsieh.github.io/Zookeeper-ACL.html</loc>
+    
+    <lastmod>2020-08-13T03:41:14.087Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://ulahsieh.github.io/Zookeeper-Dynamic-Configuration.html</loc>
+    
+    <lastmod>2020-08-13T03:39:32.071Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://ulahsieh.github.io/Hadoop-introduction.html</loc>
     
-    <lastmod>2020-08-12T06:34:03.906Z</lastmod>
+    <lastmod>2020-08-12T12:44:01.675Z</lastmod>
     
   </url>
   

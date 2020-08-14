@@ -51,36 +51,23 @@
   };
 </script>
 
-  <meta name="description" content="Debugging 是指在一個腳本中找出錯誤。市面上大宗瀏覽器都支持開發人員工具，能幫助開發者一步步地追蹤代碼，查看當前實際運行情況。 此篇文章以常用的 Google Chrome 做說明－ 進入開發人員工具 按 F12 或是右上角選單中的 更多工具 \ 開發人員工具 開啟面板。">
+  <meta name="description" content="默認情況下，Docker 會抓所有 container 的標準輸出和標準錯誤 (stdout &amp; stderr)，並將其寫入 &#x2F;var&#x2F;lib&#x2F;docker&#x2F;containers&#x2F;[container-id]&#x2F;[container-id]-json.log 的 json 文件中。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Javascript] Debugging in Chrome">
-<meta property="og:url" content="https://ulahsieh.github.io/Javascript-Debugging-in-Chrome.html">
+<meta property="og:title" content="[Docker] 限制 log 大小以避免硬碟爆掉">
+<meta property="og:url" content="https://ulahsieh.github.io/truncate-docker-log.html">
 <meta property="og:site_name" content="UlaGraphy">
-<meta property="og:description" content="Debugging 是指在一個腳本中找出錯誤。市面上大宗瀏覽器都支持開發人員工具，能幫助開發者一步步地追蹤代碼，查看當前實際運行情況。 此篇文章以常用的 Google Chrome 做說明－ 進入開發人員工具 按 F12 或是右上角選單中的 更多工具 \ 開發人員工具 開啟面板。">
+<meta property="og:description" content="默認情況下，Docker 會抓所有 container 的標準輸出和標準錯誤 (stdout &amp; stderr)，並將其寫入 &#x2F;var&#x2F;lib&#x2F;docker&#x2F;containers&#x2F;[container-id]&#x2F;[container-id]-json.log 的 json 文件中。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://imgur.com/4kW4nnK.png">
-<meta property="og:image" content="https://imgur.com/p73UTZ9.png">
-<meta property="og:image" content="https://imgur.com/TX1JU5q.png">
-<meta property="og:image" content="https://imgur.com/GQ1VrFh.png">
-<meta property="og:image" content="https://imgur.com/cPPUvKC.png">
-<meta property="og:image" content="https://imgur.com/qNWOS6e.png">
-<meta property="og:image" content="https://imgur.com/JQnb7H3.png">
-<meta property="og:image" content="https://imgur.com/IZrFrbH.png">
-<meta property="og:image" content="https://imgur.com/lKQK3Bj.png">
-<meta property="og:image" content="https://imgur.com/MGhfpuH.png">
-<meta property="og:image" content="https://imgur.com/UZGcRJh.png">
-<meta property="og:image" content="https://imgur.com/NDSHkql.png">
-<meta property="og:image" content="https://imgur.com/tcSMSza.png">
-<meta property="og:image" content="https://imgur.com/k93iP9W.png">
-<meta property="article:published_time" content="2020-04-12T13:13:00.000Z">
-<meta property="article:modified_time" content="2020-04-13T22:20:27.319Z">
+<meta property="og:image" content="https://imgur.com/z1p61Ox.png">
+<meta property="og:image" content="https://imgur.com/ZJk0xmk.png">
+<meta property="article:published_time" content="2020-08-14T03:15:00.000Z">
+<meta property="article:modified_time" content="2020-08-14T03:22:09.596Z">
 <meta property="article:author" content="Ula Hsieh">
-<meta property="article:tag" content="javascript">
-<meta property="article:tag" content="debugging">
+<meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://imgur.com/4kW4nnK.png">
+<meta name="twitter:image" content="https://imgur.com/z1p61Ox.png">
 
-<link rel="canonical" href="https://ulahsieh.github.io/Javascript-Debugging-in-Chrome.html">
+<link rel="canonical" href="https://ulahsieh.github.io/truncate-docker-log.html">
 
 
 <script id="page-configurations">
@@ -105,7 +92,7 @@
   padding: 0 10px 0 14px;
 }
 </style>
-  <title>[Javascript] Debugging in Chrome | UlaGraphy</title>
+  <title>[Docker] 限制 log 大小以避免硬碟爆掉 | UlaGraphy</title>
   
 
 
@@ -216,7 +203,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Javascript-Debugging-in-Chrome.html">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/truncate-docker-log.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -229,7 +216,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          [Javascript] Debugging in Chrome
+          [Docker] 限制 log 大小以避免硬碟爆掉
         </h2>
 
         <div class="post-meta">
@@ -239,7 +226,7 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-04-12 21:13:00" itemprop="dateCreated datePublished" datetime="2020-04-12T21:13:00+08:00">2020-04-12</time>
+              <time title="Created: 2020-08-14 11:15:00" itemprop="dateCreated datePublished" datetime="2020-08-14T11:15:00+08:00">2020-08-14</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -247,8 +234,8 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Javascript/" itemprop="url" rel="index">
-                    <span itemprop="name">Javascript</span>
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
                   </a>
                 </span>
             </span>
@@ -259,7 +246,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.6k</span>
+              <span>1.1k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -278,103 +265,70 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Debugging 是指在一個腳本中找出錯誤。市面上大宗瀏覽器都支持開發人員工具，能幫助開發者一步步地追蹤代碼，查看當前實際運行情況。<br>
-此篇文章以常用的 Google Chrome 做說明－</p>
-<h2 id="進入開發人員工具">進入開發人員工具</h2>
-<p>按 <code>F12</code> 或是右上角選單中的 <code>更多工具</code> \ <code>開發人員工具</code> 開啟面板。</p>
+        <p>默認情況下，Docker 會抓所有 container 的標準輸出和標準錯誤 (stdout &amp; stderr)，並將其寫入 <code>/var/lib/docker/containers/[container-id]/[container-id]-json.log</code> 的 json 文件中。</p>
 <a id="more"></a>
-<p><img src="https://imgur.com/4kW4nnK.png" alt><br>
-通常 debugging 最常使用到的是 <code>source</code> 以及 <code>console</code> 面板。</p>
-<h3 id="Console">Console</h3>
-<p>控制台，可以輸入命令執行，以及用來輸出資料(如 <code>console.log</code> 將顯示於此)。<br>
-<img src="https://imgur.com/p73UTZ9.png" alt></p>
-<h3 id="Source">Source</h3>
-<p><img src="https://imgur.com/TX1JU5q.png" alt><br>
-Sources 頁面包含三個部分：</p>
-<ol>
-<li>文件導航 (File Navigator)：列出了所有依附於此頁面的文件。</li>
-<li>代碼編輯 (Code Editor)：展示程式碼。</li>
-<li>JavaScript Debugging：</li>
-</ol>
-<h4 id="debugging-操作">debugging 操作</h4>
+<p>當 container 運作時間愈長，Log 檔案會隨之變大，進而導致機器硬碟空間被 Log 佔據。因此需限制 Log 的檔案大小，以避免硬碟被塞爆。例如以下這個 log 就佔了 1G 多的磁碟空間：<br>
+<img src="https://imgur.com/z1p61Ox.png" alt></p>
+<h3 id="手動清除日誌">手動清除日誌</h3>
+<p>可以使用下列幾種方法清除該 log 檔案內容：</p>
+<h4 id="redirection-operator">redirection operator</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ &gt; &lt;log file&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>&gt;</code> 重新導向運算子，因檔案已經存在，所以重新導向後會清空原有的內容。</li>
+</ul>
+<h4 id="truncate">truncate</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ truncate --size 0 &lt;log file&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>truncate : 將文件縮小或放大到指定大小的命令。</p>
+</li>
+<li>
+<p>–size : 指定大小的參數。</p>
+</li>
+</ul>
+<h4 id="dev-null">/dev/null</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ cat &#x2F;dev&#x2F;null &gt; &lt;log file&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>/dev/null：是在類 Unix 操作系統上稱為空設備的特殊設備，當從中讀取數據時不會有任何數據，在寫入時也不存儲任何數據。</li>
+</ul>
+<p><img src="https://imgur.com/ZJk0xmk.png" alt><br>
+上圖使用第一種清除方法，可以看到 1G 的空間被釋放！</p>
+<p>但每次都手動清除是件很麻煩的事，可以考慮使用 <code>cronjob</code> 設定排程，或是直接設定 docker log 的容量上限。</p>
+<h3 id="設定自動日誌滾動">設定自動日誌滾動</h3>
+<p>docker 默認的日誌驅動程式設定可以在 <code>/etc/docker/daemon.json</code> 中定義，若無此文件，則需額外新增，設定值可參考下列內容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"log-driver"</span>: <span class="string">"json-file"</span>,</span><br><span class="line">  <span class="attr">"log-opts"</span>: &#123;</span><br><span class="line">    <span class="attr">"max-size"</span>: <span class="string">"50m"</span>,</span><br><span class="line">    <span class="attr">"max-file"</span>: <span class="string">"3"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <table>
 <thead>
 <tr>
-<th>按鈕</th>
-<th style="text-align:center">操作</th>
+<th>選項</th>
 <th>描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><img src="https://imgur.com/GQ1VrFh.png" width="35"></td>
-<td style="text-align:center">Resume</td>
-<td>繼續執行直到下一個斷點。如果沒有遇到斷點，則繼續正常執行。</td>
+<td>max-size</td>
+<td>滾動前日誌的最大大小。一個正整數加上一個代表測量單位（k，m 或 g）的修飾符。默認為 -1（代表無限制）</td>
 </tr>
 <tr>
-<td><img src="https://imgur.com/cPPUvKC.png" width="35"></td>
-<td style="text-align:center">Long Resume</td>
-<td>繼續執行，將斷點停用 500 毫秒。便於暫時跳過斷點，否則會持續暫停執行代碼，例如，循環內的斷點。點擊並按住 Resume，直到展開以顯示操作。</td>
-</tr>
-<tr>
-<td><img src="https://imgur.com/qNWOS6e.png" width="35"></td>
-<td style="text-align:center">Step Over</td>
-<td>運行下一條指令，但不會進入到函數中，會在無形中執行函數調用，跳過函數內部。執行會在該函數執行後立即暫停。如果我們對該函數的內部執行不感興趣，這命令會很有用。</td>
-</tr>
-<tr>
-<td><img src="https://imgur.com/JQnb7H3.png" width="40"></td>
-<td style="text-align:center">Step Into</td>
-<td>如果下一行包含一個函數調用，Step Into 將跳轉並在其第一行暫停該函數。</td>
-</tr>
-<tr>
-<td><img src="https://imgur.com/IZrFrbH.png" width="40"></td>
-<td style="text-align:center">Step Out</td>
-<td>函數調用後，執行當前函數剩餘部分，然後在下一個語句暫停。</td>
-</tr>
-<tr>
-<td><img src="https://imgur.com/lKQK3Bj.png" width="35"></td>
-<td style="text-align:center">Step</td>
-<td>運行下一條語句。一次接一次地點擊，整個腳本的語句會被逐個執行。</td>
-</tr>
-<tr>
-<td><img src="https://imgur.com/MGhfpuH.png" width="35"></td>
-<td style="text-align:center">Deactivate breakpoints</td>
-<td>暫時停用所有斷點。用於繼續完整執行，不會真正移除斷點。再次點擊以重新啟用斷點</td>
-</tr>
-<tr>
-<td><img src="https://imgur.com/UZGcRJh.png" width="35"></td>
-<td style="text-align:center">Activate breakpoints</td>
-<td>啟用斷點</td>
+<td>max-file</td>
+<td>可以存在的最大日誌文件數量。如果滾動日誌會創建多余文件，則會刪除最舊的文件。只有在設置了 max-size 時才有效。一個正整數。默認為 1。</td>
 </tr>
 </tbody>
 </table>
-<h4 id="debugging-狀態">debugging 狀態</h4>
-<p><img src="https://imgur.com/NDSHkql.png" alt></p>
-<ol>
-<li>Watch<br>
-顯示任意表達式的當前值。可以點擊加號 + 然後輸入一個表達式。便會隨時顯示它的值，並在執行過程中自動重新計算該表達式。(同在 scope 中看到的變數)</li>
-<li>Call Stack<br>
-檢視目前堆疊上的函式或程序呼叫。</li>
-<li>Scope<br>
-顯示當前的變量。 Local 顯示當前函數中的變量；Global 顯示全局變量（不在任何函數中）。</li>
-<li>斷點<br>
-在程式碼中設定進入中斷點有許多好處，可以讓 JavaScript 發生例外狀況的時候透過中斷點暫停執行，並檢查當下的 區域變數 (Locals)、設定監看式 (Watch) 與瀏覽呼叫堆疊 (Call Stack) 等等，對於程式的除錯非常有幫助。<br>
-Javascript 斷點添加的方式有以下：<br>
-<font color="DarkBlue"><strong>Sources 斷點</strong></font><br>
-直接在 source 頁面中，點擊　Activate breakpoints 再點欲加入段點的行號即可完成操作。當斷點添加完畢後，刷新頁面後會執行到斷點位置停住，在 sources 中會看到當前作用域(Scope)中所有變量和值。<br>
-<font color="DarkBlue"><strong>條件斷點</strong></font><br>
-在Sources里還可以設置條件斷點，在斷點位置的右鍵菜單中選擇「Edit Breakpoint…」可以設置觸發斷點的條件，就是寫一個表達式，表達式為 true 時才觸發斷點。<br>
-<font color="DarkBlue"><strong>Debugger 斷點</strong></font><br>
-Debugger斷點的添加就是通過在代碼中添加&quot;debugger;&quot;語句，當代碼執行到該語句的時候就會自動斷點。</li>
-</ol>
-<h6 id="參考資料">參考資料</h6>
-<p>[1] <a href="https://developers.google.com/web/tools/chrome-devtools/javascript/step-code" target="_blank" rel="external nofollow noopener noreferrer">https://developers.google.com/web/tools/chrome-devtools/javascript/step-code</a><br>
-[2] <a href="https://zh.javascript.info/debugging-chrome" target="_blank" rel="external nofollow noopener noreferrer">https://zh.javascript.info/debugging-chrome</a></p>
-<h6 id="補充">補充</h6>
-<p>常常在 debug 的時候會佐以 log 去查看每個階段的變數，但在 debugger 查看 array 或是 object 的變數時，Chrome 會顯示最新的值，而非這個 log 時間點的值，舉例：</p>
-<img src="https://imgur.com/tcSMSza.png">
-<p>解決方法是，在印 array 前先將 array 轉成字串</p>
-<p><img src="https://imgur.com/k93iP9W.png" alt></p>
+<p>執行以下命令來重新加載 docker daemon。<font style="background:MistyRose">新的配置將在重新啟動後適用於所有<span class="dotunderletter"><strong>新</strong>建立</span>的容器，現有容器即使重啟 Docker 也不會使用新的日誌記錄配置。</font></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ systemctl daemon-reload</span><br><span class="line"></span><br><span class="line">$ systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h3 id="個別為單一容器設置日誌滾動">個別為單一容器設置日誌滾動</h3>
+<p>若不想全局配置，也可以在個別容器啟動時，在 command 中加入參數改動。</p>
+<h4 id="docker-run">docker run</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run \</span><br><span class="line">    --<span class="built_in">log</span>-driver json-file \</span><br><span class="line">    --<span class="built_in">log</span>-opt max-size=10m \</span><br><span class="line">    --<span class="built_in">log</span>-opt max-file=10 </span><br><span class="line">    ubuntu:18.04</span><br></pre></td></tr></table></figure>
+<h4 id="docker-compose">docker-compose</h4>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.2'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">'nginx:latest'</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">'80:80'</span></span><br><span class="line">    <span class="attr">logging:</span></span><br><span class="line">      <span class="attr">driver:</span> <span class="string">"json-file"</span></span><br><span class="line">      <span class="attr">options:</span></span><br><span class="line">        <span class="attr">max-size:</span> <span class="string">"1k"</span></span><br><span class="line">        <span class="attr">max-file:</span> <span class="string">"3"</span></span><br></pre></td></tr></table></figure>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a href="https://www.rdaemon.com/truncate-files-using-command-line-tools" target="_blank" rel="external nofollow noopener noreferrer">https://www.rdaemon.com/truncate-files-using-command-line-tools</a></li>
+<li><a href="https://blog.csdn.net/kikajack/article/details/79575659" target="_blank" rel="external nofollow noopener noreferrer">https://blog.csdn.net/kikajack/article/details/79575659</a></li>
+<li><a href="https://blog.boatswain.io/zh/post/docker-container-log-rotation/" target="_blank" rel="external nofollow noopener noreferrer">https://blog.boatswain.io/zh/post/docker-container-log-rotation/</a></li>
+</ul>
 
     </div>
 
@@ -384,8 +338,7 @@ Debugger斷點的添加就是通過在代碼中添加&quot;debugger;&quot;語句
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/javascript/" rel="tag"># javascript</a>
-              <a href="/tags/debugging/" rel="tag"># debugging</a>
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
           </div>
 
         
@@ -394,13 +347,10 @@ Debugger斷點的添加就是通過在代碼中添加&quot;debugger;&quot;語句
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/Git-git-server.html" rel="prev" title="[Git] Build a Git Server on Ubuntu">
-      <i class="fa fa-chevron-left"></i> [Git] Build a Git Server on Ubuntu
+    <a href="/Zookeeper-Dynamic-Configuration.html" rel="prev" title="[Zookeeper] Dynamic Configuration">
+      <i class="fa fa-chevron-left"></i> [Zookeeper] Dynamic Configuration
     </a></div>
-      <div class="post-nav-item">
-    <a href="/Build-Zookeeper-Cluster.html" rel="next" title="[Zookeeper] 建立 Zookeeper Cluster">
-      [Zookeeper] 建立 Zookeeper Cluster <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -467,7 +417,7 @@ Debugger斷點的添加就是通過在代碼中添加&quot;debugger;&quot;語句
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#進入開發人員工具"><span class="nav-number">1.</span> <span class="nav-text">進入開發人員工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Console"><span class="nav-number">1.1.</span> <span class="nav-text">Console</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Source"><span class="nav-number">1.2.</span> <span class="nav-text">Source</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#debugging-操作"><span class="nav-number">1.2.1.</span> <span class="nav-text">debugging 操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#debugging-狀態"><span class="nav-number">1.2.2.</span> <span class="nav-text">debugging 狀態</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#參考資料"><span class="nav-number">1.2.2.0.1.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#補充"><span class="nav-number">1.2.2.0.2.</span> <span class="nav-text">補充</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#手動清除日誌"><span class="nav-number">1.</span> <span class="nav-text">手動清除日誌</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redirection-operator"><span class="nav-number">1.1.</span> <span class="nav-text">redirection operator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#truncate"><span class="nav-number">1.2.</span> <span class="nav-text">truncate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dev-null"><span class="nav-number">1.3.</span> <span class="nav-text">&#x2F;dev&#x2F;null</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#設定自動日誌滾動"><span class="nav-number">2.</span> <span class="nav-text">設定自動日誌滾動</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#個別為單一容器設置日誌滾動"><span class="nav-number">3.</span> <span class="nav-text">個別為單一容器設置日誌滾動</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-run"><span class="nav-number">3.1.</span> <span class="nav-text">docker run</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker-compose"><span class="nav-number">3.2.</span> <span class="nav-text">docker-compose</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">3.2.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -604,9 +554,9 @@ Debugger斷點的添加就是通過在代碼中添加&quot;debugger;&quot;語句
       DISQUS.reset({
         reload: true,
         config: {page: {
-            url: "https://ulahsieh.github.io/Javascript-Debugging-in-Chrome.html",
-            identifier: "Javascript-Debugging-in-Chrome.html",
-            title: "[Javascript] Debugging in Chrome"
+            url: "https://ulahsieh.github.io/truncate-docker-log.html",
+            identifier: "truncate-docker-log.html",
+            title: "[Docker] 限制 log 大小以避免硬碟爆掉"
           }
         }
       });

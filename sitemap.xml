@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ulahsieh.github.io/copy-docker-image-to-different-host.html</loc>
+    
+    <lastmod>2020-08-18T06:56:12.080Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://ulahsieh.github.io/Docker-Install-Docker-Docker-Compose-on-Ubuntu18-04.html</loc>
+    
+    <lastmod>2020-08-18T06:53:47.313Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://ulahsieh.github.io/truncate-docker-log.html</loc>
     
     <lastmod>2020-08-14T03:22:09.596Z</lastmod>

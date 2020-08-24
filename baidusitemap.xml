@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/Kafka-topic-rebalancing.html</loc>
+    <lastmod>2020-08-24</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Build-Zookeeper-Cluster.html</loc>
+    <lastmod>2020-08-24</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/CSS-Selector.html</loc>
+    <lastmod>2020-08-23</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/HTML-Basic1.html</loc>
+    <lastmod>2020-08-20</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/copy-docker-image-to-different-host.html</loc>
     <lastmod>2020-08-18</lastmod>
   </url>  <url>
@@ -29,9 +41,6 @@
     <lastmod>2020-07-31</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Kafka-Cluster.html</loc>
-    <lastmod>2020-07-31</lastmod>
-  </url>  <url>
-    <loc>https://ulahsieh.github.io/Build-Zookeeper-Cluster.html</loc>
     <lastmod>2020-07-31</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Zookeeper-error.html</loc>
@@ -67,13 +76,7 @@
     <loc>https://ulahsieh.github.io/API.html</loc>
     <lastmod>2020-07-21</lastmod>
   </url>  <url>
-    <loc>https://ulahsieh.github.io/HTML-Basic1.html</loc>
-    <lastmod>2020-07-21</lastmod>
-  </url>  <url>
     <loc>https://ulahsieh.github.io/HTML-SEO.html</loc>
-    <lastmod>2020-07-21</lastmod>
-  </url>  <url>
-    <loc>https://ulahsieh.github.io/CSS-Selector.html</loc>
     <lastmod>2020-07-21</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/CSS-background.html</loc>

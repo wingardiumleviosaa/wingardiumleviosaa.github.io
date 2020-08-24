@@ -76,7 +76,7 @@
 <meta property="og:image" content="https://imgur.com/SnnyAAs.png">
 <meta property="og:image" content="https://imgur.com/LtsCyMr.png">
 <meta property="article:published_time" content="2020-07-15T14:45:00.000Z">
-<meta property="article:modified_time" content="2020-07-21T13:15:29.879Z">
+<meta property="article:modified_time" content="2020-08-23T10:19:20.883Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="CSS">
 <meta name="twitter:card" content="summary">
@@ -267,7 +267,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.8k</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -289,16 +289,18 @@
         <h2 id="CSS">CSS</h2>
 <p>Cascading Style Sheets 階層式樣式表，是一種用來為結構化文件（如HTML文件或XML應用）添加樣式（字型、間距和顏色等）的語言。</p>
 <a id="more"></a>
-<h2 id="三種加入-CSS-的方式">三種加入 CSS 的方式</h2>
+<h2 id="幾種加入-CSS-的方式">幾種加入 CSS 的方式</h2>
 <ol>
 <li>
-<p>寫在 HTML 標籤中 (inline style)<br>
+<p>inline style<br>
+寫在 HTML 標籤中 (inline style)<br>
 例如：<br>
 <img src="https://imgur.com/70G2pbh.png" alt><br>
 但比較不建議，因為會跟 HTML 混在一起，不便修改及維護。</p>
 </li>
 <li>
-<p>在 <code>&lt;head&gt;</code> 標籤區塊中加上 <code>&lt;style&gt;</code> 標籤</p>
+<p><code>&lt;style&gt;</code><br>
+在 <code>&lt;head&gt;</code> 標籤區塊中加上 <code>&lt;style&gt;</code> 標籤</p>
 </li>
 </ol>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">    div &#123;</span><br><span class="line">        background : red;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -306,20 +308,47 @@
 <img src="https://imgur.com/D3IiYSG.png" alt></p>
 <p>但仍然不建議使用此方法，因為當 html 標籤一多，style 區塊中就要有許多 selector，也是不便於修改及維護。</p>
 <ol start="3">
-<li>將 CSS 獨立於單獨的檔案中，再從 HTML 中使用 <code>&lt;link&gt;</code> 指定 css 檔進來。</li>
+<li><code>&lt;link&gt;</code><br>
+將 CSS 獨立於單獨的檔案中，再從 HTML 中使用 <code>&lt;link&gt;</code> 指定 css 檔進來。</li>
 </ol>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"./style.css"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* style.css */</span></span><br><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">    <span class="attribute">background </span>: grey;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://imgur.com/Sk5WoUv.png" alt><br>
-如此一來 HTML 及 CSS 檔案彼此獨立，可以針對單一的需求做修改而不影響另一個。</p>
+<p><img src="https://imgur.com/Sk5WoUv.png" alt></p>
+<ol start="4">
+<li><code>@import</code><br>
+<code>@import</code> 語法有兩種：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;style&gt;</span><br><span class="line">  @import &quot;style.css&quot;;</span><br><span class="line">  @import url(&quot;style.css&quot;);</span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+<p><code>@import</code> 是 CSS 中的一個 @ 規則，必須<strong>先於</strong>所有其他類型的規則 (@charset 規則除外)，須寫在 <code>&lt;style&gt;</code> 標籤裡。</p>
+<p><strong>非模塊化開發時盡量不要用 @import</strong><br>
+使用 @import 會先導入 html 後才會加載 CSS 文件。</p>
+<ul>
+<li>
+<p>非模組化開發<br>
+正常開發時，所有的 CSS 文件都需要引入。如果在某個 CSS 文件中使用了 @import，瀏覽器要先下載使用了 @import 的 CSS，解析完後發現有另外的 CSS 文件需要下載，再去下載、解析，增加了用戶的等待時間。<br>
+如果 CSS 內容不多，可以合並到一個文件里，減少請求次數。對於多個獨立的 CSS 文件，最好直接用 link 標簽加載。</p>
+</li>
+<li>
+<p>模組化開發<br>
+在用 webpack 等工具開發時，會合併 CSS 文件。如果 CSS 文件相互之間有依賴，可以直接用也只能用 @import 引入，最後構建好的文件會合併文件，不會出現 @import。</p>
+</li>
+</ul>
+<div class="warning">
+<p>建議使用 <code>&lt;link&gt;</code> 方式引入， HTML 及 CSS 檔案彼此獨立，可以針對單一的需求做修改而不影響另一個，且</p>
+<ol>
+<li>CSS 檔案加載與 HTML 檔案同時，網頁效能較佳。</li>
+<li>載入 javascript 進行 DOM 操作只能使用 link 導入</li>
+</ol>
+</div>
 <hr>
 <h2 id="CSS-語法">CSS 語法</h2>
-<p><img src="https://imgur.com/0JwAeMX.png" alt> [1]</p>
+<p><img src="https://imgur.com/0JwAeMX.png" alt></p>
 <ul>
 <li>Selector 選擇器，用來選擇 HTML 的元素。</li>
 <li>{ } 大括號包圍了一個宣告區域，任何寫在這個區域裡的設定，會對 HTML 中符合選擇器的元素起作用。</li>
 <li>Property &amp; Value：在圖例中，我們宣告選擇器 <code>&lt;h1&gt;</code> 的 color 屬性的值是藍色、font-size 屬性的值是 12px。</li>
-<li>多條宣告用分號 ( ; ) 隔開。</li>
+<li>多條宣告用分號 ( ; ) 隔開，可以使用空格或換行增加可讀性。</li>
+<li>注釋使用 <code>/* */</code>。</li>
 </ul>
 <h2 id="Selector-的種類">Selector 的種類</h2>
 <h3 id="Universal-Selector">Universal Selector</h3>
@@ -329,7 +358,7 @@
 <p>使用特定的標籤，代表選擇所有指定標籤。</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">div</span> &#123;</span><br><span class="line">    <span class="attribute">color </span>: orange;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="ID-Selector">ID Selector</h3>
-<p>在一個 HTML 文件中單一 ID 只能被使用一次。選擇器以 <code>#</code> 開頭。</p>
+<p>在一個 HTML 文件中單一 ID 只能被使用<strong>一次</strong>。選擇器以 <code>#</code> 開頭。</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"a"</span>&gt;</span></span><br><span class="line">  test</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#a</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="Class-Selector">Class Selector</h3>
@@ -417,7 +446,8 @@
 <p>[1]<a href="https://www.w3schools.com/css/css_syntax.asp" target="_blank" rel="external nofollow noopener noreferrer">https://www.w3schools.com/css/css_syntax.asp</a><br>
 [2]<a href="https://ithelp.ithome.com.tw/questions/10183484" target="_blank" rel="external nofollow noopener noreferrer">https://ithelp.ithome.com.tw/questions/10183484</a><br>
 [3]<a href="https://ithelp.ithome.com.tw/articles/10196454" target="_blank" rel="external nofollow noopener noreferrer">https://ithelp.ithome.com.tw/articles/10196454</a><br>
-[4]<a href="http://www.standardista.com/css3/css-specificity/" target="_blank" rel="external nofollow noopener noreferrer">http://www.standardista.com/css3/css-specificity/</a></p>
+[4]<a href="http://www.standardista.com/css3/css-specificity/" target="_blank" rel="external nofollow noopener noreferrer">http://www.standardista.com/css3/css-specificity/</a><br>
+[5]<a href="https://www.itdaan.com/tw/78e32ccfaac206f9b1aab87e586f3b0a" target="_blank" rel="external nofollow noopener noreferrer">https://www.itdaan.com/tw/78e32ccfaac206f9b1aab87e586f3b0a</a></p>
 
     </div>
 
@@ -509,7 +539,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS"><span class="nav-number">1.</span> <span class="nav-text">CSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三種加入-CSS-的方式"><span class="nav-number">2.</span> <span class="nav-text">三種加入 CSS 的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS-語法"><span class="nav-number">3.</span> <span class="nav-text">CSS 語法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Selector-的種類"><span class="nav-number">4.</span> <span class="nav-text">Selector 的種類</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Universal-Selector"><span class="nav-number">4.1.</span> <span class="nav-text">Universal Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Element-Selector"><span class="nav-number">4.2.</span> <span class="nav-text">Element Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ID-Selector"><span class="nav-number">4.3.</span> <span class="nav-text">ID Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Class-Selector"><span class="nav-number">4.4.</span> <span class="nav-text">Class Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同時符合"><span class="nav-number">4.5.</span> <span class="nav-text">同時符合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#選取底下的元素"><span class="nav-number">4.6.</span> <span class="nav-text">選取底下的元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-選取左邊元素的下一層右邊元素"><span class="nav-number">4.6.1.</span> <span class="nav-text">使用 &gt; 選取左邊元素的下一層右邊元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-選取左邊元素下一層內的所有符合右邊的元素"><span class="nav-number">4.6.2.</span> <span class="nav-text">使用   選取左邊元素下一層內的所有符合右邊的元素</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#選取旁邊（同一層）的元素"><span class="nav-number">4.7.</span> <span class="nav-text">選取旁邊（同一層）的元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#右邊一個"><span class="nav-number">4.7.1.</span> <span class="nav-text">+ 右邊一個</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#右邊全部的"><span class="nav-number">4.7.2.</span> <span class="nav-text">~ 右邊全部的</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pseudo-classes-偽類"><span class="nav-number">4.8.</span> <span class="nav-text">Pseudo-classes 偽類</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hover"><span class="nav-number">4.8.1.</span> <span class="nav-text">:hover</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nth-child"><span class="nav-number">4.8.2.</span> <span class="nav-text">nth-child</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pseudo-element-偽元素"><span class="nav-number">4.9.</span> <span class="nav-text">Pseudo-element 偽元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Before"><span class="nav-number">4.9.1.</span> <span class="nav-text">Before</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#After"><span class="nav-number">4.9.2.</span> <span class="nav-text">After</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在-content-放入-selector-的-property-value"><span class="nav-number">4.10.</span> <span class="nav-text">在 content 放入 selector 的 property value</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS-Selector-的權重"><span class="nav-number">5.</span> <span class="nav-text">CSS Selector 的權重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#important"><span class="nav-number">5.1.</span> <span class="nav-text">!important</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">5.1.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS"><span class="nav-number">1.</span> <span class="nav-text">CSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#幾種加入-CSS-的方式"><span class="nav-number">2.</span> <span class="nav-text">幾種加入 CSS 的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS-語法"><span class="nav-number">3.</span> <span class="nav-text">CSS 語法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Selector-的種類"><span class="nav-number">4.</span> <span class="nav-text">Selector 的種類</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Universal-Selector"><span class="nav-number">4.1.</span> <span class="nav-text">Universal Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Element-Selector"><span class="nav-number">4.2.</span> <span class="nav-text">Element Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ID-Selector"><span class="nav-number">4.3.</span> <span class="nav-text">ID Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Class-Selector"><span class="nav-number">4.4.</span> <span class="nav-text">Class Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同時符合"><span class="nav-number">4.5.</span> <span class="nav-text">同時符合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#選取底下的元素"><span class="nav-number">4.6.</span> <span class="nav-text">選取底下的元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-選取左邊元素的下一層右邊元素"><span class="nav-number">4.6.1.</span> <span class="nav-text">使用 &gt; 選取左邊元素的下一層右邊元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-選取左邊元素下一層內的所有符合右邊的元素"><span class="nav-number">4.6.2.</span> <span class="nav-text">使用   選取左邊元素下一層內的所有符合右邊的元素</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#選取旁邊（同一層）的元素"><span class="nav-number">4.7.</span> <span class="nav-text">選取旁邊（同一層）的元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#右邊一個"><span class="nav-number">4.7.1.</span> <span class="nav-text">+ 右邊一個</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#右邊全部的"><span class="nav-number">4.7.2.</span> <span class="nav-text">~ 右邊全部的</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pseudo-classes-偽類"><span class="nav-number">4.8.</span> <span class="nav-text">Pseudo-classes 偽類</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hover"><span class="nav-number">4.8.1.</span> <span class="nav-text">:hover</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nth-child"><span class="nav-number">4.8.2.</span> <span class="nav-text">nth-child</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pseudo-element-偽元素"><span class="nav-number">4.9.</span> <span class="nav-text">Pseudo-element 偽元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Before"><span class="nav-number">4.9.1.</span> <span class="nav-text">Before</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#After"><span class="nav-number">4.9.2.</span> <span class="nav-text">After</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在-content-放入-selector-的-property-value"><span class="nav-number">4.10.</span> <span class="nav-text">在 content 放入 selector 的 property value</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS-Selector-的權重"><span class="nav-number">5.</span> <span class="nav-text">CSS Selector 的權重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#important"><span class="nav-number">5.1.</span> <span class="nav-text">!important</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">5.1.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -524,7 +554,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">53</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

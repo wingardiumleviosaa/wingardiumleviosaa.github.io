@@ -51,27 +51,22 @@
   };
 </script>
 
-  <meta name="description" content="HTTP HyperText Transfer Protocol 超文本傳輸協定，是網頁的基礎通訊協定，基於 client-server 架構來 request-reponse，用來在 client 以及 server 間傳遞超媒體文件(如 HTML) 。">
+  <meta name="description" content="簡介 官方定義: Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[TCP&#x2F;IP] 應用層 - HTTP">
-<meta property="og:url" content="https://ulahsieh.github.io/Untitled.html">
+<meta property="og:title" content="[Kubernetes] 架構, 節點及組件介紹">
+<meta property="og:url" content="https://ulahsieh.github.io/Kubernetes1.html">
 <meta property="og:site_name" content="UlaGraphy">
-<meta property="og:description" content="HTTP HyperText Transfer Protocol 超文本傳輸協定，是網頁的基礎通訊協定，基於 client-server 架構來 request-reponse，用來在 client 以及 server 間傳遞超媒體文件(如 HTML) 。">
+<meta property="og:description" content="簡介 官方定義: Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://imgur.com/D8HQAS4.png">
-<meta property="og:image" content="https://imgur.com/PTiqaMj.png">
-<meta property="og:image" content="https://imgur.com/6nI08to.png">
-<meta property="og:image" content="https://imgur.com/Ps8Jvz5.png">
-<meta property="og:image" content="https://imgur.com/AAFk2Yw.png">
-<meta property="og:image" content="https://imgur.com/GlF8sd2.png">
-<meta property="article:published_time" content="2020-06-30T15:50:00.000Z">
-<meta property="article:modified_time" content="2020-07-05T05:38:21.084Z">
+<meta property="og:image" content="https://imgur.com/0Innvot.png">
+<meta property="article:published_time" content="2020-09-07T13:13:00.000Z">
+<meta property="article:modified_time" content="2020-09-07T13:19:21.358Z">
 <meta property="article:author" content="Ula Hsieh">
-<meta property="article:tag" content="HTTP">
+<meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://imgur.com/D8HQAS4.png">
+<meta name="twitter:image" content="https://imgur.com/0Innvot.png">
 
-<link rel="canonical" href="https://ulahsieh.github.io/Untitled.html">
+<link rel="canonical" href="https://ulahsieh.github.io/Kubernetes1.html">
 
 
 <script id="page-configurations">
@@ -96,7 +91,7 @@
   padding: 0 10px 0 14px;
 }
 </style>
-  <title>[TCP/IP] 應用層 - HTTP | UlaGraphy</title>
+  <title>[Kubernetes] 架構, 節點及組件介紹 | UlaGraphy</title>
   
 
 
@@ -207,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Untitled.html">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kubernetes1.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -220,7 +215,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          [TCP/IP] 應用層 - HTTP
+          [Kubernetes] 架構, 節點及組件介紹
         </h2>
 
         <div class="post-meta">
@@ -230,7 +225,7 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-06-30 23:50:00" itemprop="dateCreated datePublished" datetime="2020-06-30T23:50:00+08:00">2020-06-30</time>
+              <time title="Created: 2020-09-07 21:13:00" itemprop="dateCreated datePublished" datetime="2020-09-07T21:13:00+08:00">2020-09-07</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -238,14 +233,8 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/" itemprop="url" rel="index">
-                    <span itemprop="name">程式初心者</span>
-                  </a>
-                </span>
-                  , 
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/TCP-IP/" itemprop="url" rel="index">
-                    <span itemprop="name">TCP/IP</span>
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
                   </a>
                 </span>
             </span>
@@ -256,7 +245,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.1k</span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -275,102 +264,47 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="HTTP">HTTP</h3>
-<p>HyperText Transfer Protocol 超文本傳輸協定，是網頁的基礎通訊協定，基於 client-server 架構來 request-reponse，用來在 client 以及 server 間傳遞超媒體文件(如 HTML) 。</p>
+        <h2 id="簡介">簡介</h2>
+<p>官方定義:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Kubernetes is an open-source system for automating deployment, scaling, and management of </span><br><span class="line">containerized applications.</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<h4 id="運作模型">運作模型</h4>
-<ol>
-<li>client 傳 <strong>http request</strong> 到 server</li>
-<li>server 回傳 <strong>http response</strong> (html)<br>
-<img src="https://imgur.com/D8HQAS4.png" alt><br>
-[1]</li>
-</ol>
+<p>Kubernetes 又稱為 k8s，最初由 google 用 golang 開發而後釋出的專案。用於操作自動化容器，包括部署，調度和節點集群間擴展。</p>
+<h2 id="架構">架構</h2>
+<p><img src="https://imgur.com/0Innvot.png" alt><br>
+上圖為一個簡易的 Kubernetes Cluster，通常一個 Cluster 中會有多個 Master 作為備援，但為了簡化我們只顯示一個。</p>
+<h2 id="運作方式">運作方式</h2>
+<p>使用者透過 User Command（kubectl）建立 Pod 時經過使用者身份的認證後，再將指令傳遞到 Master Node 中的 API Server，API Server 會把指令備份到 etcd 。接下來 controller-manager 會從 API Server 收到需要創建一個新的 Pod 的訊息，並檢查如果資源許可，就會建立一個新的 Pod。最後 Scheduler 在定期訪問 API Server 時，會詢問 controller-manager 是否有建置新的 Pod，如果發現新建立的 Pod 時，Scheduler 就會負責把 Pod 配送到最適合的一個 Node 上面。</p>
+<h2 id="節點與組件">節點與組件</h2>
+<h3 id="Master-Node">Master Node</h3>
+<p>為 Kubernetes 叢集的控制台，包含的元件如下：</p>
+<h4 id="API-Server">API Server</h4>
+<p>API Server 管理 Kubernetes 的所有 api interface，用來和集群中的各節點通訊並進行操作。</p>
+<h4 id="Scheduler">Scheduler</h4>
+<p>Scheduler 是 Pods 調度員，監視新建立但還沒有被指定要跑在哪個 Worker Node 上的 Pod，並根據每個 Node 上面資源去協調出一個最適合放置的對象給該 Pod。</p>
+<h4 id="Controller-Manager">Controller Manager</h4>
+<p>負責管理並運行 Kubernetes controller 的組件，controller 是許多負責監視 Cluster 狀態的 Process，又可分為下列不同的種類</p>
 <ul>
-<li>HTTP Client 實現程式有瀏覽器、命令列工具 … 等</li>
-<li>HTTP Server 實現程式有 httpd、nginx、apache … 等</li>
-<li>https 的 s 代表 secure，是一個比 http 更安全的連線方式</li>
+<li>Node controller - 負責通知與回應節點的狀態</li>
+<li>Replication controller - 負責每個複寫系統內維持設定的 Pod 數量</li>
+<li>End-Point controller - 負責端點的服務發布</li>
+<li>Service Account &amp; Token controller - 負責創建服務帳戶與新生成的 Namespace 的 API 存取 Token</li>
 </ul>
-<h3 id="Http-Method">Http Method</h3>
-<table>
-<thead>
-<tr>
-<th>METHOD</th>
-<th>安全性</th>
-<th>動作</th>
-<th>語意</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GET</td>
-<td>O</td>
-<td>讀取</td>
-<td>請求所需要的資源。</td>
-</tr>
-<tr>
-<td>POST</td>
-<td>O</td>
-<td>新增</td>
-<td>在請求中攜帶 request body，並執行特定資源的處理。</td>
-</tr>
-<tr>
-<td>HEAD</td>
-<td>X</td>
-<td>讀取</td>
-<td>server 僅回應狀態以及 header。</td>
-</tr>
-<tr>
-<td>PUT</td>
-<td>x</td>
-<td>完整更新</td>
-<td>請求更新一筆資源的所有內容，必須是存在的資源，資源傳遞必須完整，否則為空。</td>
-</tr>
-<tr>
-<td>PATCH</td>
-<td>X</td>
-<td>部分更新</td>
-<td>請求更新一筆資源的部分內容，必須是存在的資源。</td>
-</tr>
-<tr>
-<td>DELETE</td>
-<td>x</td>
-<td>刪除</td>
-<td>請求移除資源。</td>
-</tr>
-</tbody>
-</table>
-<p>[2]</p>
-<h3 id="Http-狀態碼">Http 狀態碼</h3>
-<p>狀態碼通常都以開頭的數字做區分，例如 2 開頭的狀態碼都是代表成功。</p>
+<h4 id="etcd">etcd</h4>
+<p>用來存放 Kubernetes Cluster 的資料作為備份，當 Master 因為某些原因而故障時，我們可以透過 etcd 幫我們還原 Kubernetes 的狀態。</p>
+<h3 id="Worker-Node">Worker Node</h3>
+<p>為 Kubernetes 的 runtime 執行環境，包含的元件如下：</p>
+<h4 id="Pod">Pod</h4>
+<p>Kubernetes pod 是 Kubernetes 管理的最小單元，裡面包含一個或多個 container，可視為一個應用程式的邏輯主機。 同一個 Pod 中的 Containers 共享相同資源及網路，彼此透過 local port number 溝通。</p>
+<h4 id="Kubelet">Kubelet</h4>
+<p>Kubelet 接受 API server 的命令，用來啟動 pod 並監測狀態，確保所有 container 都在運行。它每隔幾秒鐘向 master node 提供一次 heartbeat。如果 replication controller 未收到該消息，則將該節點標記為不正常。</p>
+<h4 id="Kube-Proxy">Kube Proxy</h4>
+<p>進行網路連線的 forwarding，負責將 request 轉發到正確的 container。</p>
+<h6 id="Resource">Resource</h6>
 <ul>
-<li>1xx Informationa - 參考資訊</li>
-<li>2xx Successful - 成功</li>
-<li>3xx Redirection - 重新導向</li>
-<li>4xx Client Error - 用戶端錯誤</li>
-<li>5xx Server Error - 伺服器錯誤<br>
-詳細代碼可參考 <a href="https://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81" target="_blank" rel="external nofollow noopener noreferrer">wiki</a>。</li>
+<li><a href="https://blog.sensu.io/how-kubernetes-works" target="_blank" rel="external nofollow noopener noreferrer">https://blog.sensu.io/how-kubernetes-works</a></li>
+<li><a href="https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0" target="_blank" rel="external nofollow noopener noreferrer">https://medium.com/@C.W.Hu/kubernetes-basic-concept-tutorial-e033e3504ec0</a></li>
+<li><a href="https://ithelp.ithome.com.tw/articles/10202135" target="_blank" rel="external nofollow noopener noreferrer">https://ithelp.ithome.com.tw/articles/10202135</a></li>
 </ul>
-<h3 id="自己的-request-自己發-實作-http-client">自己的 request 自己發 - 實作 http client</h3>
-<p>前面有提到實現 http client 有瀏覽器還有其他諸如 CLI、爬蟲 … 的程式。這邊我們來實作一個使用 <a href="https://www.npmjs.com/package/request" target="_blank" rel="external nofollow noopener noreferrer">request</a> node module 的 http client。</p>
-<ol>
-<li><code>$ npm install request</code></li>
-<li>在 index.js 檔案中貼上<br>
-<img src="https://imgur.com/PTiqaMj.png" alt></li>
-<li><code>$ node index.js</code>，就可以收到 server 的回覆<br>
-<img src="https://imgur.com/6nI08to.png" alt></li>
-</ol>
-<h3 id="架一個簡易-http-server">架一個簡易 http server</h3>
-<p>使用 Node.js 的內建模組 <code>http</code>，</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line"><span class="keyword">var</span> server = http.createServer(handelRequest)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handelRequest</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(req.url === <span class="string">'/'</span>)&#123;   <span class="comment">//根據 request 的資源</span></span><br><span class="line">        res.write(<span class="string">'welcome!'</span>) <span class="comment">//給 相對應的 response</span></span><br><span class="line">        res.end()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(req.url === <span class="string">'/hello'</span>) &#123;</span><br><span class="line">        res.write(<span class="string">'hello'</span>)</span><br><span class="line">        res.end()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(req.url === <span class="string">'/redirect'</span>) &#123;</span><br><span class="line">        res.writeHead(<span class="number">302</span>, &#123;  <span class="comment">//如果 url 是 /redirect 的話則轉址到 /hello</span></span><br><span class="line">            <span class="string">'Location'</span> : <span class="string">'/hello'</span></span><br><span class="line">        &#125;)</span><br><span class="line">        res.end()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    res.writeHead(<span class="number">404</span>) </span><br><span class="line">    res.end()</span><br><span class="line">&#125;</span><br><span class="line">server.listen(<span class="number">5000</span>) <span class="comment">//port</span></span><br></pre></td></tr></table></figure>
-<p><code>$ node index.js</code> 執行後，開啟瀏覽器輸入 <code>127.0.0.1:5000</code>，便可以看到 response 的結果。<br>
-<img src="https://imgur.com/Ps8Jvz5.png" alt></p>
-<p>第 14 行，如果網址結尾是 /redirect 的話，轉到其他位址。<br>
-<img src="https://imgur.com/AAFk2Yw.png" alt></p>
-<p>第 21 行，代表如果帶錯誤的 url 的話，回復 404 status code。<br>
-<img src="https://imgur.com/GlF8sd2.png" alt></p>
-<h6 id="Reference">Reference</h6>
-<p>[1]<a href="https://techthatmatter.com/best-fastest-bsnl-dns-servers/" target="_blank" rel="external nofollow noopener noreferrer">https://techthatmatter.com/best-fastest-bsnl-dns-servers/</a><br>
-[2]<a href="https://hackmd.io/@monkenWu/Sk9Q5VoV4/https%3A%2F%2Fhackmd.io%2F%40gen6UjQISdy0QDN62cYPYQ%2FH1yxwXyNN?type=book" target="_blank" rel="external nofollow noopener noreferrer">https://hackmd.io/@monkenWu/Sk9Q5VoV4/https%3A%2F%2Fhackmd.io%2F%40gen6UjQISdy0QDN62cYPYQ%2FH1yxwXyNN?type=book</a></p>
 
     </div>
 
@@ -380,7 +314,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/HTTP/" rel="tag"># HTTP</a>
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
           </div>
 
         
@@ -389,13 +323,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/TCP-UPD.html" rel="prev" title="[TCP/IP] 傳輸層 - TCP , UDP">
-      <i class="fa fa-chevron-left"></i> [TCP/IP] 傳輸層 - TCP , UDP
+    <a href="/Kafka-SSL-Encryption.html" rel="prev" title="[Kafka] server - client & client - server SSL 加密">
+      <i class="fa fa-chevron-left"></i> [Kafka] server - client & client - server SSL 加密
     </a></div>
-      <div class="post-nav-item">
-    <a href="/Java-what-are-JDK-JRE-JDK.html" rel="next" title="[Java] What are JDK, JRE, JDK ?">
-      [Java] What are JDK, JRE, JDK ? <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -462,7 +393,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">1.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#運作模型"><span class="nav-number">1.1.</span> <span class="nav-text">運作模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Http-Method"><span class="nav-number">2.</span> <span class="nav-text">Http Method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Http-狀態碼"><span class="nav-number">3.</span> <span class="nav-text">Http 狀態碼</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自己的-request-自己發-實作-http-client"><span class="nav-number">4.</span> <span class="nav-text">自己的 request 自己發 - 實作 http client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架一個簡易-http-server"><span class="nav-number">5.</span> <span class="nav-text">架一個簡易 http server</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#簡介"><span class="nav-number">1.</span> <span class="nav-text">簡介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#架構"><span class="nav-number">2.</span> <span class="nav-text">架構</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#運作方式"><span class="nav-number">3.</span> <span class="nav-text">運作方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#節點與組件"><span class="nav-number">4.</span> <span class="nav-text">節點與組件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Master-Node"><span class="nav-number">4.1.</span> <span class="nav-text">Master Node</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#API-Server"><span class="nav-number">4.1.1.</span> <span class="nav-text">API Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Scheduler"><span class="nav-number">4.1.2.</span> <span class="nav-text">Scheduler</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Controller-Manager"><span class="nav-number">4.1.3.</span> <span class="nav-text">Controller Manager</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#etcd"><span class="nav-number">4.1.4.</span> <span class="nav-text">etcd</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Worker-Node"><span class="nav-number">4.2.</span> <span class="nav-text">Worker Node</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Pod"><span class="nav-number">4.2.1.</span> <span class="nav-text">Pod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kubelet"><span class="nav-number">4.2.2.</span> <span class="nav-text">Kubelet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kube-Proxy"><span class="nav-number">4.2.3.</span> <span class="nav-text">Kube Proxy</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Resource"><span class="nav-number">4.2.3.0.1.</span> <span class="nav-text">Resource</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -599,9 +530,9 @@
       DISQUS.reset({
         reload: true,
         config: {page: {
-            url: "https://ulahsieh.github.io/Untitled.html",
-            identifier: "Untitled.html",
-            title: "[TCP/IP] 應用層 - HTTP"
+            url: "https://ulahsieh.github.io/Kubernetes1.html",
+            identifier: "Kubernetes1.html",
+            title: "[Kubernetes] 架構, 節點及組件介紹"
           }
         }
       });

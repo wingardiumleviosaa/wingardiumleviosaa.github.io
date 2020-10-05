@@ -66,7 +66,7 @@
 <meta property="og:image" content="https://imgur.com/xvTH4VL.png">
 <meta property="og:image" content="https://imgur.com/gILIjIx.gif">
 <meta property="article:published_time" content="2020-07-20T14:47:00.000Z">
-<meta property="article:modified_time" content="2020-07-23T13:11:27.729Z">
+<meta property="article:modified_time" content="2020-09-11T07:26:21.110Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="CSS">
 <meta name="twitter:card" content="summary">
@@ -257,7 +257,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.8k</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -306,6 +306,10 @@
 <li>text-align:justify; 使左右對齊本文，通常用於整篇文章</li>
 <li>text-align:inherit; 繼承父元素的 text-align 屬性</li>
 </ul>
+<h3 id="text-decoration">text-decoration</h3>
+<p>可能的屬性值有 <code>none/ underline/ overline/ line-through</code>，分別是 <code>無作用/ 底線/ 上划線/ 刪除線</code>。<br>
+<code>none</code> 可以使用在去除超連結自動加上的底線，使用 text-decoration: none 可將底線去除。</p>
+<hr>
 <h3 id="利用-line-hight-來達成垂直置中">利用 line-hight 來達成垂直置中</h3>
 <p>把行距與元素高度調成一致來達成垂直置中，僅適用於文字只有一行時。<br>
 <img src="https://imgur.com/AC3wncG.png" alt></p>
@@ -358,6 +362,25 @@ word-break: break-all 值如其名，斷開一切，利用上每一塊可以利�
 </div>
 <p><img src="https://imgur.com/gILIjIx.gif" alt></p>
 <hr>
+<h3 id="列表樣式">列表樣式</h3>
+<h4 id="list-style-position">list-style-position</h4>
+<p>可以用的參數值有 <code>inside/ outside</code>，<br>
+inside 指項目符號在 <code>&lt;li&gt;&lt;/li&gt;</code> 標籤範圍之內。<br>
+outside 指項目符號在 <code>&lt;li&gt;&lt;/li&gt;</code> 標籤範圍之外，為預設值。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">style</span>=<span class="string">"list-style-position:inside;"</span>&gt;</span></span><br><span class="line">　<span class="tag">&lt;<span class="name">li</span> <span class="attr">style</span>=<span class="string">"border:1px #cccccc solid"</span>&gt;</span>Test list style position inside.<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">　<span class="tag">&lt;<span class="name">li</span> <span class="attr">style</span>=<span class="string">"border:1px #cccccc solid"</span>&gt;</span>Test list style position inside.<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">style</span>=<span class="string">"list-style-position:outside;"</span>&gt;</span></span><br><span class="line">　<span class="tag">&lt;<span class="name">li</span> <span class="attr">style</span>=<span class="string">"border:1px #cccccc solid"</span>&gt;</span>Test list style position outside.<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">　<span class="tag">&lt;<span class="name">li</span> <span class="attr">style</span>=<span class="string">"border:1px #cccccc solid"</span>&gt;</span>Test list style position outside.<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul style="list-style-position:inside;">
+　<li style="border:1px #cccccc solid">Test list style position inside.</li>
+　<li style="border:1px #cccccc solid">Test list style position inside.</li>
+</ul>
+<ul style="list-style-position:outside;">
+　<li style="border:1px #cccccc solid">Test list style position outside.</li>
+　<li style="border:1px #cccccc solid">Test list style position outside.</li>
+</ul>
+<h4 id="list-style-type">list-style-type</h4>
+<p>常用的屬性值如下表：</p>
+<table><tr class="Line"><td bgcolor="#eeeeee" width="160"><b>參數</b><br></td><td bgcolor="#eeeeee"><b>定義</b><br></td></tr><tr class="Line"><td bgcolor="#eeeeee">none<br></td><td>不顯示符號<br></td></tr><tr class="Line"><td bgcolor="#eeeeee">disc<br></td><td>實心圓形<br></td></tr><tr class="Line"><td bgcolor="#eeeeee">circle<br></td><td>空心圓形<br></td></tr><tr class="Line"><td bgcolor="#eeeeee">square<br></td><td>實心正方形<br></td></tr><tr class="Line"><td bgcolor="#eeeeee">lower-alpha<br></td><td>小寫英文字母<br></td></tr><tr class="Line"><td bgcolor="#eeeeee">upper-alpha<br></td><td>大寫英文字母<br></td></tr><tr class="Line"><td bgcolor="#eeeeee">decimal</td><td>阿拉伯數字</td></tr><tr class="Line"><td bgcolor="#eeeeee">decimal-leading-zero</td><td>十進位制的阿拉伯數字，前方自動補零</td></tr></table>
+<h4 id="list-style">list-style</h4>
+<p>可以直接使用 <code>list-style</code> 簡化表示上面兩個屬性，例如 <code>list-style: circle inside;</code>。</p>
 <h5 id="Reference">Reference</h5>
 <p>[1]<a href="https://www.w3school.com.cn/" target="_blank" rel="external nofollow noopener noreferrer">https://www.w3school.com.cn/</a><br>
 [2]<a href="http://www.webtech.tw/" target="_blank" rel="external nofollow noopener noreferrer">http://www.webtech.tw/</a><br>
@@ -453,7 +476,7 @@ word-break: break-all 值如其名，斷開一切，利用上每一塊可以利�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#文字相關的-CSS-屬性"><span class="nav-number">1.</span> <span class="nav-text">文字相關的 CSS 屬性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#color"><span class="nav-number">1.1.</span> <span class="nav-text">color</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#font-size"><span class="nav-number">1.2.</span> <span class="nav-text">font-size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#font-weight"><span class="nav-number">1.3.</span> <span class="nav-text">font-weight</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#font-family"><span class="nav-number">1.4.</span> <span class="nav-text">font-family</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#letter-spacing"><span class="nav-number">1.5.</span> <span class="nav-text">letter-spacing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#line-height"><span class="nav-number">1.6.</span> <span class="nav-text">line-height</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#text-align"><span class="nav-number">1.7.</span> <span class="nav-text">text-align</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-line-hight-來達成垂直置中"><span class="nav-number">1.8.</span> <span class="nav-text">利用 line-hight 來達成垂直置中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-padding-來達成垂直置中"><span class="nav-number">1.9.</span> <span class="nav-text">利用 padding 來達成垂直置中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文字斷行"><span class="nav-number">2.</span> <span class="nav-text">文字斷行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#word-break"><span class="nav-number">2.1.</span> <span class="nav-text">word-break</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#word-wrap"><span class="nav-number">2.2.</span> <span class="nav-text">word-wrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#word-break-word-wrap-的差別"><span class="nav-number">2.3.</span> <span class="nav-text">word-break &amp; word-wrap 的差別</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#white-space"><span class="nav-number">2.4.</span> <span class="nav-text">white-space</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#overflow"><span class="nav-number">2.5.</span> <span class="nav-text">overflow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#text-overflow"><span class="nav-number">2.6.</span> <span class="nav-text">text-overflow</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reference"><span class="nav-number">2.6.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#文字相關的-CSS-屬性"><span class="nav-number">1.</span> <span class="nav-text">文字相關的 CSS 屬性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#color"><span class="nav-number">1.1.</span> <span class="nav-text">color</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#font-size"><span class="nav-number">1.2.</span> <span class="nav-text">font-size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#font-weight"><span class="nav-number">1.3.</span> <span class="nav-text">font-weight</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#font-family"><span class="nav-number">1.4.</span> <span class="nav-text">font-family</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#letter-spacing"><span class="nav-number">1.5.</span> <span class="nav-text">letter-spacing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#line-height"><span class="nav-number">1.6.</span> <span class="nav-text">line-height</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#text-align"><span class="nav-number">1.7.</span> <span class="nav-text">text-align</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#text-decoration"><span class="nav-number">1.8.</span> <span class="nav-text">text-decoration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-line-hight-來達成垂直置中"><span class="nav-number">1.9.</span> <span class="nav-text">利用 line-hight 來達成垂直置中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用-padding-來達成垂直置中"><span class="nav-number">1.10.</span> <span class="nav-text">利用 padding 來達成垂直置中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文字斷行"><span class="nav-number">2.</span> <span class="nav-text">文字斷行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#word-break"><span class="nav-number">2.1.</span> <span class="nav-text">word-break</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#word-wrap"><span class="nav-number">2.2.</span> <span class="nav-text">word-wrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#word-break-word-wrap-的差別"><span class="nav-number">2.3.</span> <span class="nav-text">word-break &amp; word-wrap 的差別</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#white-space"><span class="nav-number">2.4.</span> <span class="nav-text">white-space</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#overflow"><span class="nav-number">2.5.</span> <span class="nav-text">overflow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#text-overflow"><span class="nav-number">2.6.</span> <span class="nav-text">text-overflow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表樣式"><span class="nav-number">2.7.</span> <span class="nav-text">列表樣式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#list-style-position"><span class="nav-number">2.7.1.</span> <span class="nav-text">list-style-position</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#list-style-type"><span class="nav-number">2.7.2.</span> <span class="nav-text">list-style-type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#list-style"><span class="nav-number">2.7.3.</span> <span class="nav-text">list-style</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reference"><span class="nav-number">2.7.3.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -468,20 +491,20 @@ word-break: break-all 值如其名，斷開一切，利用上每一塊可以利�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-count">77</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

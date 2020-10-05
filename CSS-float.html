@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="HTML Normal Flow &#x2F; inline &amp; block 一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 inline 或是 block  block 元素：區塊元素，在文檔中自己佔一行。如 &lt;div&gt;、&lt;p&gt;、&lt;ul&gt;&lt;li&gt; inline 元素：行內元素或內聯元素，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CSS] float">
+<meta property="og:url" content="https://ulahsieh.github.io/CSS-float.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="HTML Normal Flow &#x2F; inline &amp; block 一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 inline 或是 block  block 元素：區塊元素，在文檔中自己佔一行。如 &lt;div&gt;、&lt;p&gt;、&lt;ul&gt;&lt;li&gt; inline 元素：行內元素或內聯元素，">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/cpUaqBE.png">
+<meta property="og:image" content="https://imgur.com/cpUaqBE.png">
+<meta property="og:image" content="https://imgur.com/cpUaqBE.png">
+<meta property="article:published_time" content="2020-09-11T09:01:00.000Z">
+<meta property="article:modified_time" content="2020-10-05T06:47:35.292Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="CSS">
+<meta property="article:tag" content="float">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/cpUaqBE.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/CSS-float.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[CSS] float | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/CSS-float.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [CSS] float
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-11 17:01:00" itemprop="dateCreated datePublished" datetime="2020-09-11T17:01:00+08:00">2020-09-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Frontend/" itemprop="url" rel="index">
+                    <span itemprop="name">Frontend</span>
+                  </a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Frontend/CSS/" itemprop="url" rel="index">
+                    <span itemprop="name">CSS</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>3 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="HTML-Normal-Flow-inline-block">HTML Normal Flow / inline &amp; block</h2>
+<p>一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 <code>inline</code> 或是 <code>block</code></p>
+<ul>
+<li>block 元素：區塊元素，在文檔中自己佔一行。如 <code>&lt;div&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;ul&gt;&lt;li&gt;</code></li>
+<li>inline 元素：行內元素或內聯元素，可以在一行顯示。如 <code>&lt;span&gt;</code>、<code>&lt;img&gt;</code>、<code>&lt;a&gt;</code></li>
+</ul>
+<a id="more"></a>
+<hr>
+<h2 id="Float-浮動">Float 浮動</h2>
+<p>因為 HTML flow 的特性四個元素會由上至下排序</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div class&#x3D;&quot;box&quot;&gt;1&lt;&#x2F;div&gt;</span><br><span class="line">&lt;div class&#x3D;&quot;box&quot;&gt;2&lt;&#x2F;div&gt;</span><br><span class="line">&lt;div class&#x3D;&quot;box&quot;&gt;3&lt;&#x2F;div&gt;</span><br><span class="line">&lt;div class&#x3D;&quot;box&quot;&gt;4&lt;&#x2F;div&gt;</span><br><span class="line">&lt;div class&#x3D;&quot;box&quot;&gt;5&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.box&#123;</span><br><span class="line">  width: 50px;</span><br><span class="line">  height: 50px;</span><br><span class="line">  background-color: orange;</span><br><span class="line">  border: 1px solid;</span><br><span class="line">  margin: 10px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<style>
+.box{
+  width: 50px;
+  height: 50px;
+  background-color: PaleGreen;
+  border: 1px solid;
+  margin: 10px;
+}   
+</style>
+<div class="box">1</div>
+<div class="box">2</div>
+<div class="box">3</div>
+<div class="box">4</div>
+<div class="box">5</div>
+<p>此時如果想要將 div box 由左至右排序，則可以使用 <code>float</code> 屬性。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.box&#123;</span><br><span class="line">  width: 50px;</span><br><span class="line">  height: 50px;</span><br><span class="line">  background-color: orange;</span><br><span class="line">  border: 1px solid;</span><br><span class="line">  margin: 10px;</span><br><span class="line">  float: left</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<style>
+.box2{
+  width: 50px;
+  height: 50px;
+  background-color: PaleGreen;
+  border: 1px solid;
+  margin: 10px;
+  float: left
+}   
+</style>
+<div class="box2">1</div>
+<div class="box2">2</div>
+<div class="box2">3</div>
+<div class="box2">4</div>
+<div class="box2">5</div>
+<p><br> <br><br><br><br></p>
+<hr>
+<h2 id="Float-應用情景">Float 應用情景</h2>
+<ol>
+<li>為了實現文字環繞效果</li>
+<li>為了設計 DIV 區塊水平排列 (後來已漸漸被 inline-block 取代)</li>
+</ol>
+<p>以下為文繞圖效果：</p>
+<style>
+img{
+    float: right
+}
+.out{
+    border: 4px solid yellow;
+    padding: 10px
+}
+.clear{
+  clear: both;
+}
+</style>
+<div class="out">
+<img src="https://imgur.com/cpUaqBE.png" style="height:100px">
+<div style="background:PapayaWhip;color:black">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cumsociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. 
+</div>
+</div>
+<h2 id="Float-可能發生的錯誤">Float 可能發生的錯誤</h2>
+<p>以下面的例子可以發現外面的框限沒有包覆到圖片，是因為浮動元素 img 在框線 div 的前面，而後面的框線 div 元素沒有使用浮動時，就會往上跑、疊在前一個元素的下方。</p>
+<style>
+img{
+    float: right
+}
+.out{
+    border: 4px solid yellow;
+    padding: 10px
+}
+</style>
+<div class="out">
+<div style="background:PapayaWhip;color:black">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cumsociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. 
+</div>
+<img src="https://imgur.com/cpUaqBE.png" style="height:100px">
+</div>
+<p><br> <br><br> <br></p>
+<h2 id="清除浮動-－-clear">清除浮動 － clear</h2>
+<p>clear 屬性用於清除浮動，可能的值有 left、right、both、none 以及 inherit（IE不支援），其中以 both 最常用。</p>
+<p>後面的元素被浮動元素覆蓋，做法是在兩元素中另外新增一個 div 標籤，並賦予屬性 clear，其值為 both。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">img&#123;</span><br><span class="line">    float: right</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-class">.out</span>&#123;</span></span><br><span class="line">    border: 4px solid yellow;</span><br><span class="line">    padding: 10px</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-class">.cleafix</span>&#123;</span></span><br><span class="line">  clear: both;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"out"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"background:PapayaWhip;color:black"</span>&gt;</span></span><br><span class="line">    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cumsociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"https://imgur.com/cpUaqBE.png"</span> <span class="attr">style</span>=<span class="string">"height:100px"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"clearfix"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<style>
+img{
+    float: right
+}
+.out{
+    border: 4px solid yellow;
+    padding: 10px;
+}
+.clearfix{
+    clear: both;
+}
+</style>
+<div class="out">
+<div style="background:PapayaWhip;color:black">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cumsociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+</div>
+<img src="https://imgur.com/cpUaqBE.png" style="height:100px">
+<div class="clearfix"></div>
+</div>
+<hr>
+<h2 id="inline-block">inline-block</h2>
+<p>上面 float 的應用場景提到，在傳統的設計 div 區塊水平排列的時候會採用 float 屬性，讓每個 div 區塊產生浮動的效果，但很容易造成這些區塊以外的區塊被覆蓋，所以還使用 clear 屬性，清除後面的浮動的效果。</p>
+<p>現在使用 display:inline-block 可以做到 div 區塊水平排列，而且不需要額外設定 clear 也不會讓後面的元素被浮上來的區塊蓋住。</p>
+<p>以下範例可以說明 block, inline 以及 inline-block 屬性的區別</p>
+<div style="background:PapayaWhip;color:black">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum <span class="ex1 style">inline</span>sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.<span class="ex2 style">block</span> Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean commodo ligula eget dolor.Cum sociis natoque penatibus et magnis dis parturien montes,  Aenean massa. Cum <span class="ex3">inline-block</span>sociis natoque penatibus tet magnis dis parturient montes, nascetur ridiculus mus.Aenean vulputate eleifend tellus. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+</div>
+<style>
+.style{
+    border:1px solid black;
+    padding:10px;
+    margin:10px;
+    background-color: yellow;
+}
+.ex1{
+    display:inline;
+} 
+
+.ex2{
+    display:block;
+} 
+
+.ex3{
+    display:inline-block;
+} 
+</style>
+<br>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.style</span>&#123;</span><br><span class="line">    <span class="attribute">border</span>:<span class="number">1px</span> solid black;</span><br><span class="line">    <span class="attribute">padding</span>:<span class="number">10px</span>;</span><br><span class="line">    <span class="attribute">margin</span>:<span class="number">10px</span>;</span><br><span class="line">    <span class="attribute">background-color</span>: yellow;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.forInline</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>:inline;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="selector-class">.forBlock</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>:block;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="selector-class">.forInline-block</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>:inline-block;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>inline 元素雖有設定 padding 及 margin，但元素上下並不會把其他行推開，會使得其他行被蓋到。</li>
+<li>block 元素雖然可以設定寬高、padding 及 margin，但其屬性會占滿整行，無法並排。</li>
+<li><strong>inline-block 可同時擁有 block 可設定寬高的屬性，但其排版仍像 inline 屬性，不會向右占滿整行。</strong></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CSS/" rel="tag"># CSS</a>
+              <a href="/tags/float/" rel="tag"># float</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Kubernetes1.html" rel="prev" title="[Kubernetes] 架構, 節點及組件介紹">
+      <i class="fa fa-chevron-left"></i> [Kubernetes] 架構, 節點及組件介紹
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/CSS-Margin-Border-Padding.html" rel="next" title="[CSS] Margin & Border & Padding 比較">
+      [CSS] Margin & Border & Padding 比較 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTML-Normal-Flow-inline-block"><span class="nav-number">1.</span> <span class="nav-text">HTML Normal Flow &#x2F; inline &amp; block</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Float-浮動"><span class="nav-number">2.</span> <span class="nav-text">Float 浮動</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Float-應用情景"><span class="nav-number">3.</span> <span class="nav-text">Float 應用情景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Float-可能發生的錯誤"><span class="nav-number">4.</span> <span class="nav-text">Float 可能發生的錯誤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#清除浮動-－-clear"><span class="nav-number">5.</span> <span class="nav-text">清除浮動 － clear</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inline-block"><span class="nav-number">6.</span> <span class="nav-text">inline-block</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">77</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/CSS-float.html",
+            identifier: "CSS-float.html",
+            title: "[CSS] float"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

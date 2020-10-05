@@ -64,7 +64,7 @@
 <meta property="og:image" content="https://imgur.com/FNmDaCa.png">
 <meta property="og:image" content="https://imgur.com/rZR6yHh.png">
 <meta property="article:published_time" content="2020-09-04T04:00:00.000Z">
-<meta property="article:modified_time" content="2020-09-04T04:06:26.211Z">
+<meta property="article:modified_time" content="2020-09-08T09:23:01.983Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="Kafka">
 <meta name="twitter:card" content="summary">
@@ -322,8 +322,9 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">keytool -keystore broker1.keystore.jks -alias broker1 -certreq -file cert-broker1</span><br></pre></td></tr></table></figure>
 <p>使用 CA 對導出的 <code>cert-broker1</code> 進行簽名</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-broker1 -out cert-signed-broker1 -days 3650 -CAcreateserial -passin pass:&lt;PEM password&gt;</span><br></pre></td></tr></table></figure>
-<p>將簽名好的 <code>cert-signed-broker1</code> 證書以及 CA 證書導回至 <code>keystore</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ keytool -keystore broker1.keystore.jks -alias broker1 -import -file cert-signed-broker1</span><br><span class="line">$ keytool -keystore broker1.keystore.jks -alias CARoot -import -file ca-cert</span><br></pre></td></tr></table></figure>
+<p>將 CA 證書以及簽名好的 <code>cert-signed-broker1</code> 證書導回至 <code>keystore</code><br>
+<strong>注意先後順序</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ keytool -keystore broker1.keystore.jks -alias CARoot -import -file ca-cert</span><br><span class="line">$ keytool -keystore broker1.keystore.jks -alias broker1 -import -file cert-signed-broker1</span><br></pre></td></tr></table></figure>
 <p>在其他 broker 以及 clinet 端重複以上動作。</p>
 <p>最後架構中的金鑰結構會長得像下面這樣<br>
 <img src="https://imgur.com/gMdBG1h.png" alt></p>
@@ -466,20 +467,20 @@ JRE/JDK有默認的偽隨機數生成器（PRNG）用於加密操作，因此不
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-count">77</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

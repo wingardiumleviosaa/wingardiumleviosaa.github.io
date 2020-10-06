@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="install nodejs and npm 安裝最新版 Nodejs 以及 npm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Vue] 安裝及基本組成簡介">
+<meta property="og:url" content="https://ulahsieh.github.io/Vue-%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%B5%84%E6%88%90%E7%B0%A1%E4%BB%8B.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="install nodejs and npm 安裝最新版 Nodejs 以及 npm">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/h7SoLPG.png">
+<meta property="og:image" content="https://imgur.com/CYuCJvb.png">
+<meta property="og:image" content="https://imgur.com/HB0ZoR1.png">
+<meta property="article:published_time" content="2020-10-06T06:59:43.000Z">
+<meta property="article:modified_time" content="2020-10-06T08:47:23.379Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/h7SoLPG.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Vue-%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%B5%84%E6%88%90%E7%B0%A1%E4%BB%8B.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Vue] 安裝及基本組成簡介 | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Vue-%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%B5%84%E6%88%90%E7%B0%A1%E4%BB%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Vue] 安裝及基本組成簡介
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-06 14:59:43" itemprop="dateCreated datePublished" datetime="2020-10-06T14:59:43+08:00">2020-10-06</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>2 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="install-nodejs-and-npm">install nodejs and npm</h3>
+<p>安裝最新版 Nodejs 以及 npm</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt install -y nodejs</span><br><span class="line">$ sudo apt install -y npm</span><br><span class="line">$ sudo npm install npm@latest -g</span><br><span class="line">$ sudo npm cache clean -f</span><br><span class="line">$ sudo npm install n -g</span><br><span class="line">$ sudo n latest stable</span><br><span class="line">$ sudo npm -v</span><br><span class="line">$ sudo node -v</span><br></pre></td></tr></table></figure>
+<h3 id="install-vue">install vue</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo npm install -g @vue&#x2F;cli</span><br><span class="line">$ sudo chown -R 1000:1000 &quot;&#x2F;home&#x2F;user&#x2F;.npm&quot;</span><br><span class="line"># let npm install without sudo</span><br><span class="line">$ sudo chown -R $USER:$(id -gn $USER) &#x2F;home&#x2F;user&#x2F;.config</span><br><span class="line"># npm update check without sudo</span><br></pre></td></tr></table></figure>
+<h3 id="new-a-vue-project">new a vue project</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ vue create . # 在當前目錄下建立</span><br><span class="line"># OR</span><br><span class="line">$ vue create myproject # 或是指定新的資料夾</span><br></pre></td></tr></table></figure>
+<p>選擇藥預安裝的套件。可以先選預設，後續還想新增其他的工具，可以再使用 npm 或是 yarn 安裝即可。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ue CLI v4.5.6</span><br><span class="line">? Please pick a preset: (Use arrow keys)</span><br><span class="line">❯ Default ([Vue 2] babel, eslint)</span><br><span class="line">  Default (Vue 3 Preview) ([Vue 3] babel, eslint)</span><br><span class="line">  Manually select features</span><br></pre></td></tr></table></figure>
+<p>按下 Enter 之後就會開始專案建立，接著等它完成。<br>
+<img src="https://imgur.com/h7SoLPG.png" alt></p>
+<p>可以看到最下方提示，進入專案目錄後下 <code>npm run serve</code> 的命令就可以開始開發。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">🎉  Successfully created project myproject.</span><br><span class="line">👉  Get started with the following commands:</span><br><span class="line"></span><br><span class="line"> $ cd myproject</span><br><span class="line"> $ npm run serve</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="npm-run-serve">npm run serve</h3>
+<p><img src="https://imgur.com/CYuCJvb.png" alt></p>
+<p>完成後，就可以用瀏覽器來打開，看到預設專案的畫面了。</p>
+<h3 id="project’s-composition">project’s composition</h3>
+<p><img src="https://imgur.com/HB0ZoR1.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">myproject&#x2F;</span><br><span class="line">├── babel.config.js     # Babel 的配置文件</span><br><span class="line">├── package.json        # 專案所用到的套件列表</span><br><span class="line">├── package-lock.json   # 紀錄套件具體的版本號</span><br><span class="line">├── node_modules        # npm 套件存放位置</span><br><span class="line">├── public              # 公開(靜態)文件目錄，在打包過程中除了 html 模板檔案，其他資源會直接複製到 dist 資料夾下，而不需要編譯和壓縮。</span><br><span class="line">│   ├── favicon.ico</span><br><span class="line">│   └── index.html      # 首頁的 HTML 檔，裡面不會有主要內容，可編輯網頁所需的 meta tag 或是引入外部的 css 或 js</span><br><span class="line">├── README.md</span><br><span class="line">└── src                 # 開發目錄</span><br><span class="line">    ├── App.vue         # 頁面最上層的根節點，綁定在 index.html 中的 &lt;div id &#x3D;&quot;app&quot;&gt;&lt;&#x2F;div&gt; ，要使用的 component 皆會掛在 App.vue 底下</span><br><span class="line">    ├── assets          # 資源，如 css、image</span><br><span class="line">    │   └── logo.png    </span><br><span class="line">    ├── components      # 不同的內容或功能分成的一個個元件，可以被互相引用</span><br><span class="line">    │   └── HelloWorld.vue</span><br><span class="line">    └── main.js         # 專案入口，影響全局，作用是引入全局使用的模組、全局的樣式和方法、設置路由等。</span><br></pre></td></tr></table></figure>
+<p><a href="https://medium.com/coding-girl-life/191010-vue-cli-285fb15aff1a" target="_blank" rel="external nofollow noopener noreferrer">https://medium.com/coding-girl-life/191010-vue-cli-285fb15aff1a</a></p>
+<h4 id="main-js">main.js</h4>
+<p>為 vue 程式的進入點。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 載入所需套件、專案檔案等...</span></span><br><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">'./App.vue'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 關閉正式環境下的提示功能，這裡可以先打開沒關係。</span></span><br><span class="line">Vue.config.productionTip = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化應用程序，創建 vue instance，使用 render 函式將 App.vue component 渲染出來，然後將程序掛載在 DOM 上面，html 中 id 為 app 的元素</span></span><br><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  render: <span class="function"><span class="params">h</span> =&gt;</span> h(App),</span><br><span class="line">&#125;).$mount(<span class="string">'#app'</span>)</span><br></pre></td></tr></table></figure>
+<p>render: h =&gt; h(App) 的最原始寫法如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">render: function(createElement)&#123;</span><br><span class="line">    return createElement(App);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根據 ES6 語法可在簡寫成</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">render(createElement)&#123;</span><br><span class="line">    return createElement(App);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再用箭頭表示法縮減成 <code>render: h =&gt; h(App)</code>。<br>
+其中把 createElement 由 h 取代，createElement 函數是用來生成 HTML DOM 元素的　h 指 hyperscript，是 HTML 的一部分，表示的是超文本標記語言，縮寫為 h 是因為方便。</p>
+<h4 id="App-vue">App.vue</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">&lt;!-- 模板標籤 --&gt;</span><br><span class="line">  &lt;div id&#x3D;&quot;app&quot;&gt;</span><br><span class="line">    &lt;img alt&#x3D;&quot;Vue logo&quot; src&#x3D;&quot;.&#x2F;assets&#x2F;logo.png&quot;&gt;</span><br><span class="line">    &lt;HelloWorld msg&#x3D;&quot;Welcome to Your Vue.js App&quot;&#x2F;&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">&lt;!-- component 的邏輯 --&gt;</span><br><span class="line">import HelloWorld from &#39;.&#x2F;components&#x2F;HelloWorld.vue&#39;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  name: &#39;App&#39;,</span><br><span class="line">  components: &#123;</span><br><span class="line">    HelloWorld</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">&lt;!-- component 的 css 樣式 --&gt;</span><br><span class="line">#app &#123;</span><br><span class="line">  font-family: Avenir, Helvetica, Arial, sans-serif;</span><br><span class="line">  -webkit-font-smoothing: antialiased;</span><br><span class="line">  -moz-osx-font-smoothing: grayscale;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: #2c3e50;</span><br><span class="line">  margin-top: 60px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="vue-檔結構">vue 檔結構</h3>
+<p><code>*.vue</code> 檔案，是一個自定義的檔案型別，每個 .vue 檔案包含三種型別的語言塊 <code>&lt;template&gt;</code>、<code>&lt;script&gt;</code> 和 <code>&lt;style&gt;</code>，分別代表了 html、js、css。<br>
+其中 <code>&lt;template&gt;</code> 和 <code>&lt;style&gt;</code> 是支援用預編譯語言來寫的，例如　<code>&lt;style lang=&quot;scss&quot;&gt;</code>，如果沒特別指定的話，就是使用原生寫法。</p>
+<h4 id="template">&lt;template&gt;</h4>
+<p>代表 html 結構，每個 .vue 文件最多包含<strong>一個</strong> <code>&lt;template&gt;</code> 模塊，必須在裡面放一個 html 標籤來包裹所有的程式碼，如 <code>&lt;div&gt;</code>。除了一般的 html 語法外，還可以使用 Vue 指令來操作、修改或是裝飾 DOM 元件。<br>
+基本語法有：</p>
+<ul>
+<li><code>v-bind:class=&quot;xxx&quot;</code> 動態綁定 class</li>
+<li><code>v-bind:style=&quot;ooo&quot;</code> 動態綁定 style</li>
+<li><code>@event</code> 綁定事件，例如 <code>@click</code> 表示綁定一個 Click 事件。</li>
+<li><code></code> 顯示某一個變數資料、數字或是文字。</li>
+<li><code>&lt;my-component&gt;</code> 使用自定義的元件，例如 <code>&lt;HelloWorld&gt;</code> 便是。</li>
+<li><code>v-if</code>、<code>v-else</code> 與 <code>v-else-if</code> 用於判斷 DOM 生成與否。</li>
+<li><code>v-show</code> 功能跟v-if很相似，不過它是改變元素的 CSS 的 display 屬性，當 v-show 的值為 false，元素則會隱藏。</li>
+<li><code>v-for</code> 產生一個迴圈，當你需要重複產生某一段 DOM 時適用。</li>
+<li><code>v-model</code> 特別用於表單元件，用以替代輸入的接收值。<br>
+其他指令可參考<a href="https://vuejs.org/v2/guide/syntax.html" target="_blank" rel="external nofollow noopener noreferrer">官方文件</a></li>
+</ul>
+<h4 id="script">&lt;script&gt;</h4>
+<p>代表 javascript 指令，每個 .vue 文件最多包含<strong>一個</strong> <code>&lt;script&gt;</code> 模塊，要使用其他 JS 套件可以使用 require()。如果有安裝 babel，則可以使用 import 語法。使用 <code>export default {...}</code> 匯出一個 Vue 物件。</p>
+<h4 id="style">&lt;style&gt;</h4>
+<p>代表 css 樣式，每個 .vue 文件可包含<strong>多個</strong> <code>&lt;style&gt;</code> 模塊，作用域預設為全局，如果想要限制為區域作用(只在該組件中有效)，可以加上 scoped 屬性 <code>&lt;style scoped&gt;...&lt;/style&gt;</code></p>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a href="https://github.com/vuejs-templates/webpack-simple/issues/29" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/vuejs-templates/webpack-simple/issues/29</a></li>
+<li><a href="https://blog.hinablue.me/2019-ithome-ironman-day-1/" target="_blank" rel="external nofollow noopener noreferrer">https://blog.hinablue.me/2019-ithome-ironman-day-1/</a></li>
+</ul>
+<h5 id="to-be-read">to be read</h5>
+<p><strong>Render Function</strong><br>
+<a href="https://medium.com/@speechless0922/vue%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B-render-function-2b3705e4a5bd" target="_blank" rel="external nofollow noopener noreferrer">https://medium.com/@speechless0922/vue的二三事-render-function-2b3705e4a5bd</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/API-OpenAPI-Swagger-%E7%B0%A1%E4%BB%8B.html" rel="prev" title="[API] OpenAPI & Swagger 簡介">
+      <i class="fa fa-chevron-left"></i> [API] OpenAPI & Swagger 簡介
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/BigData-Realtime-Streaming-Batch.html" rel="next" title="[Big Data] Real-time / Streaming / Batch ">
+      [Big Data] Real-time / Streaming / Batch  <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#install-nodejs-and-npm"><span class="nav-number">1.</span> <span class="nav-text">install nodejs and npm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#install-vue"><span class="nav-number">2.</span> <span class="nav-text">install vue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new-a-vue-project"><span class="nav-number">3.</span> <span class="nav-text">new a vue project</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#npm-run-serve"><span class="nav-number">4.</span> <span class="nav-text">npm run serve</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#project’s-composition"><span class="nav-number">5.</span> <span class="nav-text">project’s composition</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main-js"><span class="nav-number">5.1.</span> <span class="nav-text">main.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#App-vue"><span class="nav-number">5.2.</span> <span class="nav-text">App.vue</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vue-檔結構"><span class="nav-number">6.</span> <span class="nav-text">vue 檔結構</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#template"><span class="nav-number">6.1.</span> <span class="nav-text">&lt;template&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#script"><span class="nav-number">6.2.</span> <span class="nav-text">&lt;script&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#style"><span class="nav-number">6.3.</span> <span class="nav-text">&lt;style&gt;</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">6.3.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#to-be-read"><span class="nav-number">6.3.1.</span> <span class="nav-text">to be read</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Vue-%E5%AE%89%E8%A3%9D%E5%8F%8A%E7%B5%84%E6%88%90%E7%B0%A1%E4%BB%8B.html",
+            identifier: "Vue-安裝及組成簡介.html",
+            title: "[Vue] 安裝及基本組成簡介"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

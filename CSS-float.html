@@ -51,18 +51,18 @@
   };
 </script>
 
-  <meta name="description" content="HTML Normal Flow &#x2F; inline &amp; block 一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 inline 或是 block  block 元素：區塊元素，在文檔中自己佔一行。如 &lt;div&gt;、&lt;p&gt;、&lt;ul&gt;&lt;li&gt; inline 元素：行內元素或內聯元素，">
+  <meta name="description" content="HTML Normal Flow &#x2F; inline &amp; block 一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 inline 或是 block  block 元素：區塊元素，在文檔中自己佔一行。如 &lt;div&gt;、&lt;p&gt;、&lt;ol&gt;&lt;ul&gt;&lt;li&gt;、&lt;dl&gt;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[CSS] float">
 <meta property="og:url" content="https://ulahsieh.github.io/CSS-float.html">
 <meta property="og:site_name" content="UlaGraphy">
-<meta property="og:description" content="HTML Normal Flow &#x2F; inline &amp; block 一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 inline 或是 block  block 元素：區塊元素，在文檔中自己佔一行。如 &lt;div&gt;、&lt;p&gt;、&lt;ul&gt;&lt;li&gt; inline 元素：行內元素或內聯元素，">
+<meta property="og:description" content="HTML Normal Flow &#x2F; inline &amp; block 一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 inline 或是 block  block 元素：區塊元素，在文檔中自己佔一行。如 &lt;div&gt;、&lt;p&gt;、&lt;ol&gt;&lt;ul&gt;&lt;li&gt;、&lt;dl&gt;">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://imgur.com/cpUaqBE.png">
 <meta property="og:image" content="https://imgur.com/cpUaqBE.png">
 <meta property="og:image" content="https://imgur.com/cpUaqBE.png">
 <meta property="article:published_time" content="2020-09-11T09:01:00.000Z">
-<meta property="article:modified_time" content="2020-10-05T06:47:35.292Z">
+<meta property="article:modified_time" content="2020-10-16T08:29:27.972Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="CSS">
 <meta property="article:tag" content="float">
@@ -254,7 +254,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>2.9k</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -276,8 +276,9 @@
         <h2 id="HTML-Normal-Flow-inline-block">HTML Normal Flow / inline &amp; block</h2>
 <p>一般 HTML 的 normal flow 為由左至右及由上至下排列，一般取決於元素的 display 屬性是 <code>inline</code> 或是 <code>block</code></p>
 <ul>
-<li>block 元素：區塊元素，在文檔中自己佔一行。如 <code>&lt;div&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;ul&gt;&lt;li&gt;</code></li>
-<li>inline 元素：行內元素或內聯元素，可以在一行顯示。如 <code>&lt;span&gt;</code>、<code>&lt;img&gt;</code>、<code>&lt;a&gt;</code></li>
+<li>block 元素：區塊元素，在文檔中自己佔一行。如 <code>&lt;div&gt;</code>、<code>&lt;p&gt;</code>、<code>&lt;ol&gt;&lt;ul&gt;&lt;li&gt;</code>、<code>&lt;dl&gt;&lt;dt&gt;&lt;dd&gt;</code>、<code>&lt;table&gt;&lt;tr&gt;&lt;td&gt;</code>、<code>&lt;form&gt;</code>。</li>
+<li>inline 元素：行內元素或內聯元素，可以在一行顯示。如 <code>&lt;span&gt;</code>、<code>&lt;a&gt;</code>、<code>&lt;i&gt;</code>、<code>&lt;b&gt;</code>。</li>
+<li>inline-block 元素；行內塊元素。如 <code>&lt;img&gt;</code>、 <code>&lt;input&gt;</code>。</li>
 </ul>
 <a id="more"></a>
 <hr>
@@ -389,13 +390,13 @@ img{
 <p>現在使用 display:inline-block 可以做到 div 區塊水平排列，而且不需要額外設定 clear 也不會讓後面的元素被浮上來的區塊蓋住。</p>
 <p>以下範例可以說明 block, inline 以及 inline-block 屬性的區別</p>
 <div style="background:PapayaWhip;color:black">
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum <span class="ex1 style">inline</span>sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.<span class="ex2 style">block</span> Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean commodo ligula eget dolor.Cum sociis natoque penatibus et magnis dis parturien montes,  Aenean massa. Cum <span class="ex3">inline-block</span>sociis natoque penatibus tet magnis dis parturient montes, nascetur ridiculus mus.Aenean vulputate eleifend tellus. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum <span class="ex1 style">inline</span>sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.<span class="ex2 style">block</span> Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean commodo ligula eget dolor.Cum sociis natoque penatibus et magnis dis parturien montes,  Aenean massa. Cum <span class="ex3 style">inline-block</span>sociis natoque penatibus tet magnis dis parturient montes, nascetur ridiculus mus.Aenean vulputate eleifend tellus. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
 </div>
 <style>
 .style{
     border:1px solid black;
-    padding:10px;
-    margin:10px;
+    padding:20px;
+    margin:5px;
     background-color: yellow;
 }
 .ex1{
@@ -411,7 +412,7 @@ img{
 } 
 </style>
 <br>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.style</span>&#123;</span><br><span class="line">    <span class="attribute">border</span>:<span class="number">1px</span> solid black;</span><br><span class="line">    <span class="attribute">padding</span>:<span class="number">10px</span>;</span><br><span class="line">    <span class="attribute">margin</span>:<span class="number">10px</span>;</span><br><span class="line">    <span class="attribute">background-color</span>: yellow;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.forInline</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>:inline;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="selector-class">.forBlock</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>:block;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="selector-class">.forInline-block</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>:inline-block;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.style</span>&#123;</span><br><span class="line">    <span class="attribute">border</span>:<span class="number">1px</span> solid black;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">5px</span>;</span><br><span class="line">    <span class="attribute">background-color</span>: yellow;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.forInline</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>: inline;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="selector-class">.forBlock</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>: block;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="selector-class">.forInline-block</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>: inline-block;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>inline 元素雖有設定 padding 及 margin，但元素上下並不會把其他行推開，會使得其他行被蓋到。</li>
 <li>block 元素雖然可以設定寬高、padding 及 margin，但其屬性會占滿整行，無法並排。</li>
@@ -524,7 +525,7 @@ img{
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">68</span>
+          <span class="site-state-item-count">70</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -537,7 +538,7 @@ img{
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

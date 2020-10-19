@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/CSS-%E5%9E%82%E7%9B%B4%E7%BD%AE%E4%B8%AD%E5%95%8F%E9%A1%8C.html</loc>
+    <lastmod>2020-10-19</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/CSS-nav-practice.html</loc>
+    <lastmod>2020-10-16</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/CSS-transition.html</loc>
+    <lastmod>2020-10-16</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/CSS-float.html</loc>
+    <lastmod>2020-10-16</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/CSS-overflow-usecase.html</loc>
     <lastmod>2020-10-15</lastmod>
   </url>  <url>
@@ -23,9 +35,6 @@
     <lastmod>2020-10-06</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/CSS-Margin-Border-Padding.html</loc>
-    <lastmod>2020-10-05</lastmod>
-  </url>  <url>
-    <loc>https://ulahsieh.github.io/CSS-float.html</loc>
     <lastmod>2020-10-05</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Python-paramiko.html</loc>
@@ -96,9 +105,6 @@
   </url>  <url>
     <loc>https://ulahsieh.github.io/Zookeeper-error.html</loc>
     <lastmod>2020-07-31</lastmod>
-  </url>  <url>
-    <loc>https://ulahsieh.github.io/CSS-transition.html</loc>
-    <lastmod>2020-07-25</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/HTTP-content-type.html</loc>
     <lastmod>2020-07-21</lastmod>

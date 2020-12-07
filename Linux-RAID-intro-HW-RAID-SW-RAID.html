@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+  <meta name="google-site-verification" content="kmsBP_VIgMns4zdWHLmwyzlpJUzEcc2S9YAwdOBXWOA">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="RAID（Redundant Array of Independent Disks) 磁碟陣列，多個硬碟組合成為一個邏輯磁區(作業系統只會把它當作一個硬碟)。  RAID 一般分類成 Software RAID 與 Hardware RAID。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Linux] RAID 介紹及實作 (HW RAID &amp; SW RAID)">
+<meta property="og:url" content="https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="RAID（Redundant Array of Independent Disks) 磁碟陣列，多個硬碟組合成為一個邏輯磁區(作業系統只會把它當作一個硬碟)。  RAID 一般分類成 Software RAID 與 Hardware RAID。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/rJFbWVv.png">
+<meta property="article:published_time" content="2020-12-07T09:40:00.000Z">
+<meta property="article:modified_time" content="2020-12-07T09:42:23.612Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="RAID">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/rJFbWVv.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Linux] RAID 介紹及實作 (HW RAID & SW RAID) | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Linux] RAID 介紹及實作 (HW RAID & SW RAID)
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-07 17:40:00" itemprop="dateCreated datePublished" datetime="2020-12-07T17:40:00+08:00">2020-12-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OS/" itemprop="url" rel="index">
+                    <span itemprop="name">OS</span>
+                  </a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OS/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>2 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>RAID（Redundant Array of Independent Disks) 磁碟陣列，多個硬碟組合成為一個邏輯磁區(作業系統只會把它當作一個硬碟)。<br>
+<img src="https://imgur.com/rJFbWVv.png" alt><br>
+RAID 一般分類成 Software RAID 與 Hardware RAID。</p>
+<a id="more"></a>
+<hr>
+<h2 id="Hardware-RAID">Hardware RAID</h2>
+<p>Hardware RAID 用專屬 RAID 運算晶片，晶片位於介面卡或直接嵌入在主機板上。作業系統只需要驅動 RAID 晶片即可運作，RAID 任務分工是由 RAID 晶片做，較不影響CPU。</p>
+<h2 id="ATA-SATA-RAID-BIOS-RAID-Fake-RAID">ATA(SATA) RAID / BIOS RAID / Fake RAID</h2>
+<p>這類型 RAID 介於 Software RAID 與 Hardware RAID 之間，算是半個 Hardware RAID，通常由主機板晶片來「幫忙」RAID 運算，因此有 Fake RAID（假 RAID）之稱。<br>
+要啟動這個 RAID 功能，要先在 BIOS 畫面設定以後，再使作業系統能夠正確辨識裝置即可。因為這款 RAID 要在 BIOS 內開啟，所以亦有人稱之為 BIOS RAID。</p>
+<h2 id="SATA-RAID-設定">SATA RAID 設定</h2>
+<h3 id="步驟概覽">步驟概覽</h3>
+<ul>
+<li>在 BIOS 中啟用 RAID。</li>
+<li>進入 RAID configuration utility。</li>
+<li>創建 RAID。</li>
+</ul>
+<h4 id="進入-BIOS">進入 BIOS</h4>
+<p>進入 BIOS ，進入 <code>Advance</code> &gt; <code>SATA Configuration</code>，將 <code>Configure SATA as</code> 從 AHCI 更改為 <code>RAID</code>。<br>
+保存設置，並離開 BIOS。</p>
+<h4 id="進入-RAID-Configuration-Utility">進入 RAID Configuration Utility</h4>
+<p>RAID configuration utility 將在 BIOS 發布之前出現。畫面應該會先出現 RAID Volumes 以及 HDD 的列表。在該步驟中，按 <code>CTRL-I</code> 進入 RAID Configuration Utility。此工具能夠創建 RAID，修改 RAID（如果已創建），刪除 RAID 並將 HDD 還原回非 RAID。</p>
+<h4 id="開始創建">開始創建</h4>
+<p>選擇 <code>CREATE VOLUME MENU</code> ，鍵入 Volume Name、選擇 RAID 的類型（取決於選擇的 HDD 的數量）、選擇要使用的 HDD（從 2 個到全部，如果有更多的話），和最終大小。一旦完成創建 RAID 並重新引導，便完成了。</p>
+<hr>
+<h2 id="Software-RAID">Software RAID</h2>
+<p>Software RAID 是由作業系統來提供 RAID 功能，會耗用較多 CPU 運算資源，所以要運行最好是雙 CPU 以上且高時脈等級主機，不然當遇到大量運算時，整體效能會大打折扣。Linux 上 Software RAID 技術已是相當成熟，使用裝置 /dev/md0、/dev/md1、/dev/md2 依此類推，MD 表示 Mutiple Device。</p>
+<h2 id="Software-RAID-設定">Software RAID 設定</h2>
+<h3 id="步驟概覽-2">步驟概覽</h3>
+<ul>
+<li>準備並分割好兩顆硬碟</li>
+<li>安裝 mdadm utility</li>
+<li>使用 mdadm 建立 RAID array</li>
+<li>為 RAID 設備創建文件系統</li>
+</ul>
+<h4 id="準備並分割好兩顆硬碟">準備並分割好兩顆硬碟</h4>
+<p>請注意需將 partition type 設置為 <code>Linux raid autodetect</code>。<br>
+p.s. 硬碟分割之前的<a href="https://ulahsieh.github.io/Linux-disk-format.html">文章</a>就有記錄過了，這邊就不贅述。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo fdisk -l</span><br><span class="line">Disk &#x2F;dev&#x2F;sda: 120.0 GB, 120034123776 bytes</span><br><span class="line">139 heads, 49 sectors&#x2F;track, 34421 cylinders, total 234441648 sectors</span><br><span class="line">Units &#x3D; sectors of 1 * 512 &#x3D; 512 bytes</span><br><span class="line">Sector size (logical&#x2F;physical): 512 bytes &#x2F; 512 bytes</span><br><span class="line">I&#x2F;O size (minimum&#x2F;optimal): 512 bytes &#x2F; 512 bytes</span><br><span class="line">Disk identifier: 0x2d0f2eb3</span><br><span class="line"></span><br><span class="line">Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">&#x2F;dev&#x2F;sda1            2048    20973567    10485760   fd  Linux raid autodetect</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disk &#x2F;dev&#x2F;sdb: 120.0 GB, 120034123776 bytes</span><br><span class="line">139 heads, 49 sectors&#x2F;track, 34421 cylinders, total 234441648 sectors</span><br><span class="line">Units &#x3D; sectors of 1 * 512 &#x3D; 512 bytes</span><br><span class="line">Sector size (logical&#x2F;physical): 512 bytes &#x2F; 512 bytes</span><br><span class="line">I&#x2F;O size (minimum&#x2F;optimal): 512 bytes &#x2F; 512 bytes</span><br><span class="line">Disk identifier: 0xe69ef1f5</span><br><span class="line"></span><br><span class="line">Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">&#x2F;dev&#x2F;sdb1            2048    20973567    10485760   fd  Linux raid autodetect</span><br><span class="line"></span><br><span class="line">Disk &#x2F;dev&#x2F;sdc: 120.0 GB, 120034123776 bytes</span><br><span class="line">139 heads, 49 sectors&#x2F;track, 34421 cylinders, total 234441648 sectors</span><br><span class="line">Units &#x3D; sectors of 1 * 512 &#x3D; 512 bytes</span><br><span class="line">Sector size (logical&#x2F;physical): 512 bytes &#x2F; 512 bytes</span><br><span class="line">I&#x2F;O size (minimum&#x2F;optimal): 512 bytes &#x2F; 512 bytes</span><br><span class="line">Disk identifier: 0xe69ef1f5</span><br><span class="line"></span><br><span class="line">Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">&#x2F;dev&#x2F;sdc1            2048    20973567    10485760   fd  Linux raid autodetect</span><br></pre></td></tr></table></figure>
+<h4 id="安裝-mdadm-utility">安裝 mdadm utility</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Ubuntu</span><br><span class="line">$ sudo apt install mdadm</span><br><span class="line"></span><br><span class="line">CentOS</span><br><span class="line">$ sudo yum install mdadm</span><br></pre></td></tr></table></figure>
+<h4 id="使用-mdadm-建立-RAID-array">使用 mdadm 建立 RAID array</h4>
+<p>檢查硬碟是否有現有的 RAID 在使用</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo madam --examine &#x2F;dev&#x2F;sdb &#x2F;dev&#x2F;sdc</span><br><span class="line">$ sudo madam --examine &#x2F;dev&#x2F;sdb1 &#x2F;dev&#x2F;sdc1</span><br></pre></td></tr></table></figure>
+<p>建立 RAID1 邏輯磁區，名為 <code>/dev/md0</code>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mdadm --create &#x2F;dev&#x2F;md0 --level&#x3D;1 --raid-devices&#x3D;2 &#x2F;dev&#x2F;sdb1 &#x2F;dev&#x2F;sdc1</span><br></pre></td></tr></table></figure>
+<div class="info">
+<p>如果出現 “Device or resource busy”，則需要重開機。</p>
+</div>
+<p>確認結果</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ cat &#x2F;proc&#x2F;mdstat</span><br><span class="line">Personalities : [raid1] </span><br><span class="line">md0 : active raid1 sdb1[1] sdc1[0]</span><br><span class="line">      10484664 blocks super 1.2 [2&#x2F;2] [UU]</span><br><span class="line">      [&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;............]  resync &#x3D; 42.3% (4440832&#x2F;10484664) finish&#x3D;0.4min speed&#x3D;201856K&#x2F;sec</span><br></pre></td></tr></table></figure>
+<p>檢查陣列 -D(–detail)，查詢指定 MD 詳細狀態訊息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mdadm -D &#x2F;dev&#x2F;md0</span><br><span class="line">&#x2F;dev&#x2F;md0:</span><br><span class="line">        Version : 1.2</span><br><span class="line">  Creation Time : Tue Dec 1 17:49:50 2020</span><br><span class="line">     Raid Level : raid1</span><br><span class="line">     Array Size : 10484664 (10.00 GiB 10.74 GB)</span><br><span class="line">  Used Dev Size : 10484664 (10.00 GiB 10.74 GB)</span><br><span class="line">   Raid Devices : 2</span><br><span class="line">  Total Devices : 2</span><br><span class="line">    Persistence : Superblock is persistent</span><br><span class="line"></span><br><span class="line">    Update Time : Tue Dec 1 17:49:50 2020</span><br><span class="line">          State : active, resyncing</span><br><span class="line"> Active Devices : 2</span><br><span class="line">Working Devices : 2</span><br><span class="line"> Failed Devices : 0</span><br><span class="line">  Spare Devices : 0</span><br><span class="line"></span><br><span class="line"> Rebuild Status : 62% complete</span><br><span class="line"></span><br><span class="line">           Name : localhost.localdomain:0  (local to host localhost.localdomain)</span><br><span class="line">           UUID : 3a8605c3:bf0bc5b3:823c9212:7b935117</span><br><span class="line">         Events : 11</span><br><span class="line"></span><br><span class="line">    Number   Major   Minor   RaidDevice State</span><br><span class="line">       0       8        1        0      active sync   &#x2F;dev&#x2F;sdb1</span><br><span class="line">       1       8       17        1      active sync   &#x2F;dev&#x2F;sdc1</span><br></pre></td></tr></table></figure>
+<p>檢查</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mdadm -E &#x2F;dev&#x2F;sdb1</span><br><span class="line">&#x2F;dev&#x2F;sdb1:</span><br><span class="line">          Magic : a92b4efc</span><br><span class="line">        Version : 1.2</span><br><span class="line">    Feature Map : 0x0</span><br><span class="line">     Array UUID : 3a8605c3:bf0bc5b3:823c9212:7b935117</span><br><span class="line">           Name : localhost.localdomain:0  (local to host localhost.localdomain)</span><br><span class="line">  Creation Time : Tue Dec 1 17:49:50 2020</span><br><span class="line">     Raid Level : raid1</span><br><span class="line">   Raid Devices : 2</span><br><span class="line"></span><br><span class="line"> Avail Dev Size : 20969472 (10.00 GiB 10.74 GB)</span><br><span class="line">     Array Size : 20969328 (10.00 GiB 10.74 GB)</span><br><span class="line">  Used Dev Size : 20969328 (10.00 GiB 10.74 GB)</span><br><span class="line">    Data Offset : 2048 sectors</span><br><span class="line">   Super Offset : 8 sectors</span><br><span class="line">          State : active</span><br><span class="line">    Device UUID : 10384215:18a75991:4f09b97b:1960b8cd</span><br><span class="line"></span><br><span class="line">    Update Time : Tue Dec 1 17:49:50 2020</span><br><span class="line">       Checksum : ea435554 - correct</span><br><span class="line">         Events : 18</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   Device Role : Active device 0</span><br><span class="line">   Array State : AA (&#39;A&#39; &#x3D;&#x3D; active, &#39;.&#39; &#x3D;&#x3D; missing)</span><br></pre></td></tr></table></figure>
+<h4 id="為-RAID-設備創建文件系統">為 RAID 設備創建文件系統</h4>
+<p>為 /dev/md0 創建 ext4 文件系統，並掛載到 /mnt/raid1 下。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mkfs.ext4 &#x2F;dev&#x2F;md0</span><br><span class="line">$ sudo mkdir &#x2F;mnt&#x2F;raid1</span><br><span class="line">$ mount &#x2F;dev&#x2F;md0 &#x2F;mnt&#x2F;raid1&#x2F;</span><br><span class="line">$ df -h # 查看是否掛載成功</span><br></pre></td></tr></table></figure>
+<p>添加到 /etc/fstab 文件中。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo vim &#x2F;etc&#x2F;fstab</span><br><span class="line"># 加入 &#x2F;dev&#x2F;md0 &#x2F;mnt&#x2F;raid1 ext4 deaults 0 0</span><br></pre></td></tr></table></figure>
+<p>使用 mount -a 來檢查 fstab 的條目是否有誤。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ mount -av</span><br></pre></td></tr></table></figure>
+<h4 id="編輯-mdadm-conf-設定檔">編輯 mdadm.conf  設定檔</h4>
+<p>不同作業系統存放的位置不同，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;etc&#x2F;mdadm.conf         # Centos 7</span><br><span class="line">&#x2F;etc&#x2F;mdadm&#x2F;mdadm.conf   # Ubuntu &#x2F; Debian</span><br></pre></td></tr></table></figure>
+<p>在檔案中保存 RAID 設定，</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mdadm --detail --scan --verbose &gt; &#x2F;etc&#x2F;mdadm.conf</span><br><span class="line">$ cat &#x2F;etc&#x2F;mdadm.conf</span><br><span class="line">ARRAY &#x2F;dev&#x2F;md0 level&#x3D;raid1 num-devices&#x3D;2 metadata&#x3D;1.2 spares&#x3D;1 name&#x3D;localhost.localdomain:0 UUID&#x3D;c7a2743d:f1e0d872:b2ad29cd:e2bee48c</span><br><span class="line">      devices&#x3D;&#x2F;dev&#x2F;sdb1,&#x2F;dev&#x2F;sdc1</span><br></pre></td></tr></table></figure>
+<p>更新 initramfs 使 mdadm 配置保存在啟動配置過程中。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo update-initramfs -u</span><br></pre></td></tr></table></figure>
+<h4 id="刪除-RAID-Array">刪除 RAID Array</h4>
+<p>刪除邏輯磁區</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mdadm --stop &#x2F;dev&#x2F;md0</span><br><span class="line">mdadm: stopped &#x2F;dev&#x2F;md0</span><br></pre></td></tr></table></figure>
+<p>刪除 superblock，刪除後就 partition 就可以用來做新的 RAID。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo mdadm --zero-superblock &#x2F;dev&#x2F;sdb1</span><br><span class="line">$ sudo mdadm --zero-superblock &#x2F;dev&#x2F;sdc1</span><br></pre></td></tr></table></figure>
+<p><strong>並註解掉原本在 <code>mdm.conf</code> 以及 <code>/etc/fstab</code> 的 md 資料。</strong></p>
+<h5 id="Reference">Reference</h5>
+<ul>
+<li><a href="https://zh.m.wikipedia.org/zh-tw/RAID" target="_blank" rel="external nofollow noopener noreferrer">https://zh.m.wikipedia.org/zh-tw/RAID</a></li>
+<li><a href="https://superuser.com/questions/580717/how-do-i-set-up-hardware-raid" target="_blank" rel="external nofollow noopener noreferrer">https://superuser.com/questions/580717/how-do-i-set-up-hardware-raid</a></li>
+<li><a href="https://support.us.ovhcloud.com/hc/en-us/articles/360004809700-How-to-Configure-RAID-from-the-BIOS" target="_blank" rel="external nofollow noopener noreferrer">https://support.us.ovhcloud.com/hc/en-us/articles/360004809700-How-to-Configure-RAID-from-the-BIOS</a></li>
+<li><a href="https://registerboy.pixnet.net/blog/post/16190824-raid-" target="_blank" rel="external nofollow noopener noreferrer">https://registerboy.pixnet.net/blog/post/16190824-raid-</a></li>
+<li><a href="https://www.thomas-krenn.com/en/wiki/Linux_Software_RAID_Information" target="_blank" rel="external nofollow noopener noreferrer">https://www.thomas-krenn.com/en/wiki/Linux_Software_RAID_Information</a></li>
+<li><a href="https://www.linuxbabe.com/linux-server/linux-software-raid-1-setup" target="_blank" rel="external nofollow noopener noreferrer">https://www.linuxbabe.com/linux-server/linux-software-raid-1-setup</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/RAID/" rel="tag"># RAID</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Linux-LVM-extend-root-remove-pv.html" rel="prev" title="[Linux] LVM- 擴大根目錄 & 移除 pv 碟">
+      <i class="fa fa-chevron-left"></i> [Linux] LVM- 擴大根目錄 & 移除 pv 碟
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hardware-RAID"><span class="nav-number">1.</span> <span class="nav-text">Hardware RAID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ATA-SATA-RAID-BIOS-RAID-Fake-RAID"><span class="nav-number">2.</span> <span class="nav-text">ATA(SATA) RAID &#x2F; BIOS RAID &#x2F; Fake RAID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SATA-RAID-設定"><span class="nav-number">3.</span> <span class="nav-text">SATA RAID 設定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#步驟概覽"><span class="nav-number">3.1.</span> <span class="nav-text">步驟概覽</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#進入-BIOS"><span class="nav-number">3.1.1.</span> <span class="nav-text">進入 BIOS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#進入-RAID-Configuration-Utility"><span class="nav-number">3.1.2.</span> <span class="nav-text">進入 RAID Configuration Utility</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#開始創建"><span class="nav-number">3.1.3.</span> <span class="nav-text">開始創建</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Software-RAID"><span class="nav-number">4.</span> <span class="nav-text">Software RAID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Software-RAID-設定"><span class="nav-number">5.</span> <span class="nav-text">Software RAID 設定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#步驟概覽-2"><span class="nav-number">5.1.</span> <span class="nav-text">步驟概覽</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#準備並分割好兩顆硬碟"><span class="nav-number">5.1.1.</span> <span class="nav-text">準備並分割好兩顆硬碟</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安裝-mdadm-utility"><span class="nav-number">5.1.2.</span> <span class="nav-text">安裝 mdadm utility</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-mdadm-建立-RAID-array"><span class="nav-number">5.1.3.</span> <span class="nav-text">使用 mdadm 建立 RAID array</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#為-RAID-設備創建文件系統"><span class="nav-number">5.1.4.</span> <span class="nav-text">為 RAID 設備創建文件系統</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#編輯-mdadm-conf-設定檔"><span class="nav-number">5.1.5.</span> <span class="nav-text">編輯 mdadm.conf  設定檔</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#刪除-RAID-Array"><span class="nav-number">5.1.6.</span> <span class="nav-text">刪除 RAID Array</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reference"><span class="nav-number">5.1.6.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html",
+            identifier: "Linux-RAID-intro-HW-RAID-SW-RAID.html",
+            title: "[Linux] RAID 介紹及實作 (HW RAID & SW RAID)"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

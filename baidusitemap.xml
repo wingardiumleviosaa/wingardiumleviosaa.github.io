@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html</loc>
+    <lastmod>2020-12-07</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv.html</loc>
+    <lastmod>2020-12-07</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/Linux-LVM.html</loc>
     <lastmod>2020-12-01</lastmod>
   </url>  <url>
@@ -153,6 +159,9 @@
   </url>  <url>
     <loc>https://ulahsieh.github.io/mentor-alg101-1.html</loc>
     <lastmod>2020-07-11</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Javascript-ES6nBabel.html</loc>
+    <lastmod>2020-07-05</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Week4-basic-net1.html</loc>
     <lastmod>2020-07-05</lastmod>

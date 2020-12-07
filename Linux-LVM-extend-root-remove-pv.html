@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+  <meta name="google-site-verification" content="kmsBP_VIgMns4zdWHLmwyzlpJUzEcc2S9YAwdOBXWOA">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="前言 結果上次因為 LVM 分的根目錄空間不夠，仗著硬碟多就直接不管空間過剩的 &#x2F;home，直接找一顆 sdc 掛在相同的根目錄 lv 中。後來系統打算拿一些硬碟做 RAID5，才發現我的系統碟(根目錄)用的是 sda 跟 sdc，跳過了 sdb，強迫症驅使下決定把 sdc 的 pv 移除!!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Linux] LVM- 擴大根目錄 &amp; 移除 pv 碟">
+<meta property="og:url" content="https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="前言 結果上次因為 LVM 分的根目錄空間不夠，仗著硬碟多就直接不管空間過剩的 &#x2F;home，直接找一顆 sdc 掛在相同的根目錄 lv 中。後來系統打算拿一些硬碟做 RAID5，才發現我的系統碟(根目錄)用的是 sda 跟 sdc，跳過了 sdb，強迫症驅使下決定把 sdc 的 pv 移除!!">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/TTuTYmD.png">
+<meta property="og:image" content="https://imgur.com/hD802Pc.png">
+<meta property="og:image" content="https://imgur.com/y6uAHJG.png">
+<meta property="article:published_time" content="2020-12-07T09:26:00.000Z">
+<meta property="article:modified_time" content="2020-12-07T09:39:52.782Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="LVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/TTuTYmD.png">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Linux] LVM- 擴大根目錄 & 移除 pv 碟 | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Linux] LVM- 擴大根目錄 & 移除 pv 碟
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-07 17:26:00" itemprop="dateCreated datePublished" datetime="2020-12-07T17:26:00+08:00">2020-12-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OS/" itemprop="url" rel="index">
+                    <span itemprop="name">OS</span>
+                  </a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OS/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>789</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="前言">前言</h3>
+<p>結果上次因為 LVM 分的根目錄空間不夠，仗著硬碟多就直接不管空間過剩的 /home，直接找一顆 sdc 掛在相同的根目錄 lv 中。後來系統打算拿一些硬碟做 RAID5，才發現我的系統碟(根目錄)用的是 sda 跟 sdc，跳過了 sdb，強迫症驅使下決定把 sdc 的 pv 移除!!</p>
+<a id="more"></a>
+<hr>
+<h3 id="xfsdump">xfsdump</h3>
+<p>XFS 是 CentOS 7 預裝的 OS 的檔案系統，在 LVM 中 XFS 只能擴大不能縮小，所以需要利用 xfsdump 備份資料。</p>
+<p>目前掛載情況如下，預計把根目錄減掉 5.5T；</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@pc100 &#x2F;]# df -h</span><br><span class="line">Filesystem               Size  Used Avail Use% Mounted on</span><br><span class="line">devtmpfs                  95G     0   95G   0% &#x2F;dev</span><br><span class="line">tmpfs                     95G     0   95G   0% &#x2F;dev&#x2F;shm</span><br><span class="line">tmpfs                     95G   11M   95G   1% &#x2F;run</span><br><span class="line">tmpfs                     95G     0   95G   0% &#x2F;sys&#x2F;fs&#x2F;cgroup</span><br><span class="line">&#x2F;dev&#x2F;mapper&#x2F;centos-root   10T   53G  9.9T   1% &#x2F;</span><br><span class="line">&#x2F;dev&#x2F;sda2               1014M  187M  828M  19% &#x2F;boot</span><br><span class="line">&#x2F;dev&#x2F;sda1                200M   12M  189M   6% &#x2F;boot&#x2F;efi</span><br><span class="line">tmpfs                     19G     0   19G   0% &#x2F;run&#x2F;user&#x2F;0</span><br><span class="line">&#x2F;dev&#x2F;mapper&#x2F;centos-home  1.0T   33M  1.0T   1% &#x2F;home</span><br><span class="line">&#x2F;dev&#x2F;sdb1                5.5T   33M  5.5T   1% &#x2F;data</span><br></pre></td></tr></table></figure>
+<h3 id="安裝xfsdump工具">安裝xfsdump工具</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ yum install xfsdump -y</span><br></pre></td></tr></table></figure>
+<h3 id="備份根目錄">備份根目錄</h3>
+<p>將根目錄備份到 <code>/data</code> 下。注意，<code>/data</code> 需與根目錄在不同硬碟，因為根目錄需重建。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@pc100 /]<span class="comment"># xfsdump -f /data/root.dump /</span></span><br><span class="line">xfsdump: using file dump (drive_simple) strategy</span><br><span class="line">xfsdump: version 3.1.7 (dump format 3.0) - <span class="built_in">type</span> ^C <span class="keyword">for</span> status and control</span><br><span class="line"></span><br><span class="line"> ============================= dump label dialog ==============================</span><br><span class="line"></span><br><span class="line">please enter label <span class="keyword">for</span> this dump session (timeout <span class="keyword">in</span> 300 sec)</span><br><span class="line"> -&gt; root_dump  <span class="comment">##### 指定備份會話標籤</span></span><br><span class="line">session label entered: <span class="string">"root_dump"</span></span><br><span class="line"></span><br><span class="line"> --------------------------------- end dialog ---------------------------------</span><br><span class="line"></span><br><span class="line">xfsdump: level 0 dump of pc100:/</span><br><span class="line">xfsdump: dump date: Fri Dec  4 03:42:56 2020</span><br><span class="line">xfsdump: session id: 4d68cf3f-ea74-46cb-bf06-dc205f92309a</span><br><span class="line">xfsdump: session label: <span class="string">"root_dump"</span></span><br><span class="line">xfsdump: ino map phase 1: constructing initial dump list</span><br><span class="line">xfsdump: ino map phase 2: skipping (no pruning necessary)</span><br><span class="line">xfsdump: ino map phase 3: skipping (only one dump stream)</span><br><span class="line">xfsdump: ino map construction complete</span><br><span class="line">xfsdump: estimated dump size: 56621816960 bytes</span><br><span class="line">xfsdump: /var/lib/xfsdump/inventory created</span><br><span class="line"></span><br><span class="line"> ============================= media label dialog =============================</span><br><span class="line"></span><br><span class="line">please enter label <span class="keyword">for</span> media <span class="keyword">in</span> drive 0 (timeout <span class="keyword">in</span> 300 sec)</span><br><span class="line"> -&gt; root</span><br><span class="line">media label entered: <span class="string">"root"</span> <span class="comment">#### 指定設備標籤，就是對要備份的設備做一個描述</span></span><br><span class="line"></span><br><span class="line"> --------------------------------- end dialog ---------------------------------</span><br><span class="line"></span><br><span class="line">xfsdump: creating dump session media file 0 (media 0, file 0)</span><br><span class="line">xfsdump: dumping ino map</span><br><span class="line">xfsdump: dumping directories</span><br><span class="line">xfsdump: dumping non-directory files</span><br><span class="line">xfsdump: ending media file</span><br><span class="line">xfsdump: media file size 56380840688 bytes</span><br><span class="line">xfsdump: dump size (non-dir files) : 56341771264 bytes</span><br><span class="line">xfsdump: dump complete: 973 seconds elapsed</span><br><span class="line">xfsdump: Dump Summary:</span><br><span class="line">xfsdump:   stream 0 /data/root.dump OK (success)</span><br><span class="line">xfsdump: Dump Status: SUCCESS</span><br><span class="line">[root@pc100 /]<span class="comment">#</span></span><br><span class="line">[root@pc100 /]<span class="comment">#</span></span><br><span class="line">[root@pc100 /]<span class="comment"># ll -h /data/root.dump</span></span><br><span class="line">-rw-r--r--. 1 root root 53G Dec  4 03:59 /data/root.dump</span><br></pre></td></tr></table></figure>
+<h3 id="進入-Rescue-Mode">進入 Rescue Mode</h3>
+<p>使用安裝光碟，重開機後進入 <code>Rescue Mode</code>。<br>
+<img src="https://imgur.com/TTuTYmD.png" alt><br>
+<img src="https://imgur.com/hD802Pc.png" alt><br>
+進入後按 <code>3</code> 進入 Shell。<br>
+<img src="https://imgur.com/y6uAHJG.png" alt></p>
+<h3 id="縮容">縮容</h3>
+<p>輸入 lvm 進入 lvm 界面。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sh-4.2# lvm    # 進入 lvm</span><br><span class="line">lvm&gt; pvs       # 依次掃描 pv, vg, lv</span><br><span class="line">lvm&gt; vgs</span><br><span class="line">lvm&gt; lvs</span><br><span class="line">lvm&gt; lvchange -ay &#x2F;dev&#x2F;mapper&#x2F;centos-root # 啟用根目錄所在的 lv，-a 是啟用 y 是 yes，需啟用 (allocatable&#x3D;YES) 才能在 shell 中使用該 lv。</span><br><span class="line">lvm&gt; quit      # 返回 shell</span><br></pre></td></tr></table></figure>
+<p>縮小根目錄的 lv。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sh-4.2# lvreduce -L 4T &#x2F;dev&#x2F;mapper&#x2F;centos-root</span><br><span class="line">sh-4.2# pvs    # 可以發現已經有空間釋出</span><br><span class="line">sh-4.2# vgs</span><br><span class="line">sh-4.2# lvs</span><br></pre></td></tr></table></figure>
+<p>開始移除 pv</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sh-4.2# pvmove &#x2F;dev&#x2F;sdc1           # 需要看到 no data to move for xxx，非常重要，否則會造成數據遺失</span><br><span class="line">sh-4.2# pvchange -xn &#x2F;dev&#x2F;sdc1     # 註銷</span><br><span class="line">sh-4.2# pvdisplay                  # 可以發現 &#x2F;dev&#x2F;sdc1 的 allocatable 的值為 NO</span><br><span class="line">sh-4.2# vgreduce centos &#x2F;dev&#x2F;sdc1  # 將 pv 從 vg 中刪除</span><br><span class="line">sh-4.2# pvremove &#x2F;dev&#x2F;sdc1         # 刪除 pv</span><br></pre></td></tr></table></figure>
+<h3 id="重新格式化根目錄">重新格式化根目錄</h3>
+<p>將 /dev/mapper/centos-root 進行 xfs 格式化，並重新掛載</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sh-4.2# mkfs.xfs &#x2F;dev&#x2F;mapper&#x2F;centos-root</span><br><span class="line">sh-4.2# mount &#x2F;dev&#x2F;mapper&#x2F;centos-root &#x2F;</span><br><span class="line">sh-4.2# xfsrestore &#x2F;data&#x2F;root.dump &#x2F;</span><br></pre></td></tr></table></figure>
+<p>離開 shell 重新開機即可。</p>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a href="https://www.dotblogs.com.tw/I_know_why_I_am/2020/10/01/042546" target="_blank" rel="external nofollow noopener noreferrer">https://www.dotblogs.com.tw/I_know_why_I_am/2020/10/01/042546</a></li>
+</ul>
+<hr>
+<p>不負責聲明；；；；</p>
+<p>中間不小心迷失方向失敗了，又不好恢復做之前的原狀，就索性重灌了。把前三個硬碟 (sda,sdb,sdc) 都拉進系統碟，重灌結束後發現根目錄一樣分配的很少，其他空間都放到 /home 下面了。所以要乖乖地:</p>
+<ul>
+<li>把 /home 縮小</li>
+<li>刪除不要用的 pv</li>
+<li>最後挪剩下的空間給根目錄</li>
+<li>重建兩個目錄的檔案系統</li>
+</ul>
+<h4 id="備份-home">備份 /home</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ tar -zcvf &#x2F;tmp&#x2F;home.tar.gz &#x2F;home</span><br></pre></td></tr></table></figure>
+<h4 id="卸載-home">卸載 /home</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ umount &#x2F;home</span><br></pre></td></tr></table></figure>
+<h4 id="減少-dev-mapper-centos-home-的-lv-大小">減少 /dev/mapper/centos-home 的 lv 大小</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ lvreduce -L 100G &#x2F;dev&#x2F;mapper&#x2F;centos-home</span><br></pre></td></tr></table></figure>
+<h4 id="移除-pv">移除 pv</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ pvmove &#x2F;dev&#x2F;sdc1           # 需要看到 no data to move for xxx，非常重要，否則會造成數據遺失</span><br><span class="line">$ pvchange -xn &#x2F;dev&#x2F;sdc1     # 註銷</span><br><span class="line">$ pvdisplay                  # 可以發現 &#x2F;dev&#x2F;sdc1 的 allocatable 的值為 NO</span><br><span class="line">$ vgreduce centos &#x2F;dev&#x2F;sdc1  # 將 pv 從 vg 中刪除</span><br><span class="line">$ pvremove &#x2F;dev&#x2F;sdc1         # 刪除 pv</span><br></pre></td></tr></table></figure>
+<h4 id="重建-file-system">重建 file system</h4>
+<p>擴展根目錄並擴大文件系統</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ lvextend -l +100%FREE &#x2F;dev&#x2F;mapper&#x2F;centos-root</span><br><span class="line">$ xfs_growfs &#x2F;dev&#x2F;mapper&#x2F;centos-root</span><br></pre></td></tr></table></figure>
+<p>重建 /home 目錄並掛載再還原</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ mkfs.xfs -f &#x2F;dev&#x2F;mapper&#x2F;centos-home</span><br><span class="line">$ mount &#x2F;dev&#x2F;mapper&#x2F;centos-home &#x2F;home&#x2F;</span><br><span class="line">$ tar -zxvf &#x2F;tmp&#x2F;home.tar.gz -C &#x2F;home&#x2F;</span><br><span class="line">$ rm -rf &#x2F;tmp&#x2F;home.tar.gz</span><br></pre></td></tr></table></figure>
+<h6 id="Reference-2">Reference</h6>
+<ul>
+<li><a href="https://blog.csdn.net/weixin_38850930/article/details/106805131" target="_blank" rel="external nofollow noopener noreferrer">https://blog.csdn.net/weixin_38850930/article/details/106805131</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/LVM/" rel="tag"># LVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Linux-LVM.html" rel="prev" title="[Linux] LVM">
+      <i class="fa fa-chevron-left"></i> [Linux] LVM
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Linux-RAID-intro-HW-RAID-SW-RAID.html" rel="next" title="[Linux] RAID 介紹及實作 (HW RAID & SW RAID)">
+      [Linux] RAID 介紹及實作 (HW RAID & SW RAID) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xfsdump"><span class="nav-number">2.</span> <span class="nav-text">xfsdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安裝xfsdump工具"><span class="nav-number">3.</span> <span class="nav-text">安裝xfsdump工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#備份根目錄"><span class="nav-number">4.</span> <span class="nav-text">備份根目錄</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#進入-Rescue-Mode"><span class="nav-number">5.</span> <span class="nav-text">進入 Rescue Mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#縮容"><span class="nav-number">6.</span> <span class="nav-text">縮容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重新格式化根目錄"><span class="nav-number">7.</span> <span class="nav-text">重新格式化根目錄</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">7.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#備份-home"><span class="nav-number">7.1.</span> <span class="nav-text">備份 &#x2F;home</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卸載-home"><span class="nav-number">7.2.</span> <span class="nav-text">卸載 &#x2F;home</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#減少-dev-mapper-centos-home-的-lv-大小"><span class="nav-number">7.3.</span> <span class="nav-text">減少 &#x2F;dev&#x2F;mapper&#x2F;centos-home 的 lv 大小</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移除-pv"><span class="nav-number">7.4.</span> <span class="nav-text">移除 pv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重建-file-system"><span class="nav-number">7.5.</span> <span class="nav-text">重建 file system</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference-2"><span class="nav-number">7.5.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv.html",
+            identifier: "Linux-LVM-extend-root-remove-pv.html",
+            title: "[Linux] LVM- 擴大根目錄 & 移除 pv 碟"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

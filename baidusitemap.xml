@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/MongoDB-Install-MongoDB-Replica-Set-with-Docker.html</loc>
+    <lastmod>2020-12-15</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/MongoDB-Introduction-and-Install-on-BareMetal.html</loc>
+    <lastmod>2020-12-15</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html</loc>
+    <lastmod>2020-12-15</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Install-Docker-Docker-Compose-on-CentOS7.html</loc>
+    <lastmod>2020-12-15</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html</loc>
     <lastmod>2020-12-07</lastmod>
   </url>  <url>
@@ -108,9 +120,6 @@
   </url>  <url>
     <loc>https://ulahsieh.github.io/it-multi-account.html</loc>
     <lastmod>2020-08-12</lastmod>
-  </url>  <url>
-    <loc>https://ulahsieh.github.io/MySQL-NDB-Cluster8-onUbuntu.html</loc>
-    <lastmod>2020-08-11</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Kafka.html</loc>
     <lastmod>2020-07-31</lastmod>

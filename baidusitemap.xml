@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/MongoDB-cannot-connect-with-replicaSet.html</loc>
+    <lastmod>2020-12-20</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/MongoDB-Install-Only-Shell.html</loc>
+    <lastmod>2020-12-20</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/MongoDB-Install-MongoDB-Replica-Set-with-Docker.html</loc>
-    <lastmod>2020-12-15</lastmod>
+    <lastmod>2020-12-20</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/MongoDB-Introduction-and-Install-on-BareMetal.html</loc>
     <lastmod>2020-12-15</lastmod>

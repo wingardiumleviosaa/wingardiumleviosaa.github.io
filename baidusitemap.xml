@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86.html</loc>
+    <lastmod>2021-01-08</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Kubernetes-ConfigMap-create-mount.html</loc>
+    <lastmod>2021-01-08</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Kubernetes-Object-%E5%9F%BA%E6%9C%AC%E5%B0%8D%E8%B1%A1%E4%BB%8B%E7%B4%B9.html</loc>
+    <lastmod>2021-01-07</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Kubernetes_basic.html</loc>
+    <lastmod>2021-01-07</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html</loc>
+    <lastmod>2020-12-23</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/MongoDB-cannot-connect-with-replicaSet.html</loc>
     <lastmod>2020-12-20</lastmod>
   </url>  <url>
@@ -18,9 +33,6 @@
   </url>  <url>
     <loc>https://ulahsieh.github.io/Install-Docker-Docker-Compose-on-CentOS7.html</loc>
     <lastmod>2020-12-15</lastmod>
-  </url>  <url>
-    <loc>https://ulahsieh.github.io/Linux-RAID-intro-HW-RAID-SW-RAID.html</loc>
-    <lastmod>2020-12-07</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv.html</loc>
     <lastmod>2020-12-07</lastmod>
@@ -81,9 +93,6 @@
   </url>  <url>
     <loc>https://ulahsieh.github.io/Kafka-SSL-Encryption.html</loc>
     <lastmod>2020-09-08</lastmod>
-  </url>  <url>
-    <loc>https://ulahsieh.github.io/Kubernetes1.html</loc>
-    <lastmod>2020-09-07</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Zookeeper-Encryption3.html</loc>
     <lastmod>2020-08-30</lastmod>

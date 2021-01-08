@@ -198,6 +198,292 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kubernetes-ConfigMap-create-mount.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/Kubernetes-ConfigMap-create-mount.html" class="post-title-link" itemprop="url">[Kubernetes]  ConfigMap 建立及掛載</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-08 14:26:00" itemprop="dateCreated datePublished" datetime="2021-01-08T14:26:00+08:00">2021-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>983</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="ConfigMap">ConfigMap</h3>
+<p>ConfigMap 以 key-vaule 的方式用來描述系統相關設定，所有與應用程式相關的<strong>非敏感性</strong>未加密的資訊可放在 ConfigMap 內。而如有敏感性資料，則需透過 <code>Secret</code>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/Kubernetes-ConfigMap-create-mount.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kubernetes-Object-%E5%9F%BA%E6%9C%AC%E5%B0%8D%E8%B1%A1%E4%BB%8B%E7%B4%B9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/Kubernetes-Object-%E5%9F%BA%E6%9C%AC%E5%B0%8D%E8%B1%A1%E4%BB%8B%E7%B4%B9.html" class="post-title-link" itemprop="url">[Kubernetes] Object 基本對象介紹</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-07 17:38:00" itemprop="dateCreated datePublished" datetime="2021-01-07T17:38:00+08:00">2021-01-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="K8s-Obejcts">K8s Obejcts</h3>
+<h4 id="常用的基本-objects：">常用的基本 objects：</h4>
+<ul>
+<li>Pod<br>
+Pod 有兩種類型：普通 Pod 和靜態 Pod (static pod)。靜態 Pod 即不通過 K8S 調度和創建，直接在某個具體的 Node 機器上通過具體的文件來啟動。普通 Pod 則是由 K8S 創建、調度，同時數據存放在 etcd 中。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/Kubernetes-Object-%E5%9F%BA%E6%9C%AC%E5%B0%8D%E8%B1%A1%E4%BB%8B%E7%B4%B9.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86.html" class="post-title-link" itemprop="url">[RabbitMQ] 在 K8s cluster 上安裝叢集</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-30 17:31:00" itemprop="dateCreated datePublished" datetime="2020-12-30T17:31:00+08:00">2020-12-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Big-Data/" itemprop="url" rel="index">
+                    <span itemprop="name">Big Data</span>
+                  </a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Big-Data/RabbitMQ/" itemprop="url" rel="index">
+                    <span itemprop="name">RabbitMQ</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>901</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="先決條件">先決條件</h3>
+<ul>
+<li>kubernetes 1.17 版以上</li>
+<li>RabbitMQ image 3.8.8+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/MongoDB-cannot-connect-with-replicaSet.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -723,7 +1009,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>2k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -864,294 +1150,11 @@ RAID 一般分類成 Software RAID 與 Hardware RAID。</p>
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Linux-LVM.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ula Hsieh">
-      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UlaGraphy">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/Linux-LVM.html" class="post-title-link" itemprop="url">[Linux] LVM</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-11-27 17:37:00" itemprop="dateCreated datePublished" datetime="2020-11-27T17:37:00+08:00">2020-11-27</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/OS/" itemprop="url" rel="index">
-                    <span itemprop="name">OS</span>
-                  </a>
-                </span>
-                  , 
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/OS/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="Symbols count in article">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>838</span>
-            </span>
-            <span class="post-meta-item" title="Reading time">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>1 mins.</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>LVM (Logical Volume Manager) 邏輯磁碟管理器，是 Linux 系統 kernel 所提供的功能，在硬碟的分割區上建立邏輯層，可以彈性調整磁碟、分割區與檔案系統的大小。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/Linux-LVM.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Node-RED-%E7%94%A2%E7%B7%9A%E6%A8%A1%E6%93%AC-POC.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ula Hsieh">
-      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UlaGraphy">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/Node-RED-%E7%94%A2%E7%B7%9A%E6%A8%A1%E6%93%AC-POC.html" class="post-title-link" itemprop="url">[Node-RED] 產線模擬 POC</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-11-03 16:00:00" itemprop="dateCreated datePublished" datetime="2020-11-03T16:00:00+08:00">2020-11-03</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Node-RED/" itemprop="url" rel="index">
-                    <span itemprop="name">Node-RED</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="Symbols count in article">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.3k</span>
-            </span>
-            <span class="post-meta-item" title="Reading time">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>1 mins.</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Production-Line-gateway1">Production Line (gateway1)</h3>
-<h4 id="初始流程">初始流程</h4>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/Node-RED-%E7%94%A2%E7%B7%9A%E6%A8%A1%E6%93%AC-POC.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/CSS-%E9%87%8D%E7%96%8A%E9%82%8A%E6%A1%86.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ula Hsieh">
-      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UlaGraphy">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/CSS-%E9%87%8D%E7%96%8A%E9%82%8A%E6%A1%86.html" class="post-title-link" itemprop="url">[CSS] 將重複邊框重疊</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-10-21 09:38:46" itemprop="dateCreated datePublished" datetime="2020-10-21T09:38:46+08:00">2020-10-21</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Frontend/" itemprop="url" rel="index">
-                    <span itemprop="name">Frontend</span>
-                  </a>
-                </span>
-                  , 
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Frontend/CSS/" itemprop="url" rel="index">
-                    <span itemprop="name">CSS</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="Symbols count in article">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>199</span>
-            </span>
-            <span class="post-meta-item" title="Reading time">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>1 mins.</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>當兩個 inline-block 元素或是 具有 float 屬性的元素放在同一行時，<strong>左邊元素的右邊邊框與右邊元素的左邊邊框會貼在一起</strong>，導致原本想設計成 4px 的邊框變成 8px，如下範例；</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/CSS-%E9%87%8D%E7%96%8A%E9%82%8A%E6%A1%86.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1218,20 +1221,20 @@ RAID 一般分類成 Software RAID 與 Hardware RAID。</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-count">83</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">90</span>
+        <span class="site-state-item-count">92</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -1261,7 +1264,7 @@ RAID 一般分類成 Software RAID 與 Hardware RAID。</p>
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

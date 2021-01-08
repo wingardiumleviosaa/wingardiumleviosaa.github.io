@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+  <meta name="google-site-verification" content="kmsBP_VIgMns4zdWHLmwyzlpJUzEcc2S9YAwdOBXWOA">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic|Amatic SC:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Montserrat:400,400i,700,700i|Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://ulahsieh.github.io').hostname,
+    root: '/',
+    scheme: 'Muse',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="ConfigMap ConfigMap 以 key-vaule 的方式用來描述系統相關設定，所有與應用程式相關的非敏感性未加密的資訊可放在 ConfigMap 內。而如有敏感性資料，則需透過 Secret。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Kubernetes]  ConfigMap 建立及掛載">
+<meta property="og:url" content="https://ulahsieh.github.io/Kubernetes-ConfigMap-create-mount.html">
+<meta property="og:site_name" content="UlaGraphy">
+<meta property="og:description" content="ConfigMap ConfigMap 以 key-vaule 的方式用來描述系統相關設定，所有與應用程式相關的非敏感性未加密的資訊可放在 ConfigMap 內。而如有敏感性資料，則需透過 Secret。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-01-08T06:26:00.000Z">
+<meta property="article:modified_time" content="2021-01-08T06:33:03.955Z">
+<meta property="article:author" content="Ula Hsieh">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="ConfigMap">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ulahsieh.github.io/Kubernetes-ConfigMap-create-mount.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>[Kubernetes]  ConfigMap 建立及掛載 | UlaGraphy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UlaGraphy</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">Get busy living or get busy dying</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kubernetes-ConfigMap-create-mount.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula Hsieh">
+      <meta itemprop="description" content="Hello! :-) 我是 Ula </br>(發音 U 拉或烏拉都可以)</br>喜歡吃。</br>正在往稱職的工程師路上前進。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UlaGraphy">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          [Kubernetes]  ConfigMap 建立及掛載
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-08 14:26:00" itemprop="dateCreated datePublished" datetime="2021-01-08T14:26:00+08:00">2021-01-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>983</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="ConfigMap">ConfigMap</h3>
+<p>ConfigMap 以 key-vaule 的方式用來描述系統相關設定，所有與應用程式相關的<strong>非敏感性</strong>未加密的資訊可放在 ConfigMap 內。而如有敏感性資料，則需透過 <code>Secret</code>。</p>
+<a id="more"></a>
+<h3 id="主要目的">主要目的</h3>
+<p>主要目的是將應用程式與設定解耦，ConfigMap 與 Pod 將個別單獨存在於 k8s 叢集中，當 Pod 需要使用 ConfigMap 時才需要將 ConfigMap 掛載到 Pod 內使用。解耦的好處有：</p>
+<ul>
+<li>便於管理</li>
+<li>彈性高，可掛載不同的 ConfigMap 到 Pod 內使用；或是同一個 ConfigMap 掛載到多個 Pod。</li>
+</ul>
+<h3 id="用法">用法</h3>
+<p>Kubernetes 的 ConfigMap 透過 kubectl create 或 kubectl apply 來建立。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl create configmap [資源名字] [來源參數]</span><br><span class="line">$ kubectl apply condfigmap.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="使用-kubectl-create-建立">使用 kubectl create 建立</h4>
+<p>使用 kubectl create 可以從檔案路徑、檔案或是 literal value 來建立 configMap。</p>
+<ul>
+<li>–from-file</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#  建立名為 myConf、資料來源是某路徑下所有檔案的 configMap</span></span><br><span class="line">$ kubectl create configmap myConf --from-file=/path/<span class="keyword">for</span>/config/file/</span><br><span class="line"><span class="comment">#  建立名為 myConf、資料來源是一個檔案的 configMap</span></span><br><span class="line">$ kubectl create configmap myConf --from-file=/path/to/app.properties</span><br><span class="line"><span class="comment">#  建立名為 myConf、資料來源是多個檔案的 configMap</span></span><br><span class="line">$ kubectl create configmap myConf --from-file=/path/of/app1.properties --from-file=/path/of/app2.properties</span><br></pre></td></tr></table></figure>
+<div class="info">
+<p>如果是來源是檔案的話，則 configMap 中的 key 就會是檔名，value 則是檔案內容。</p>
+</div>
+<ul>
+<li>–from-literal</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#  建立名為 myConf、包含指定鍵值對的 configMap</span><br><span class="line">$ kubectl create configmap myConf --from-literal&#x3D;key1&#x3D;config1</span><br><span class="line">$ kubectl create configmap myConf --from-literal&#x3D;key1&#x3D;config1 --from-literal&#x3D;key2&#x3D;config2</span><br></pre></td></tr></table></figure>
+<ul>
+<li>兩個共用</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl create configmap myConf --from-file&#x3D;&#x2F;path&#x2F;of&#x2F;config.conf \</span><br><span class="line">    --from-literal&#x3D;key1&#x3D;config1 \</span><br><span class="line">    --from-literal&#x3D;key2&#x3D;config2</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–from-env-file<br>
+使用環境變數表示的檔案。</li>
+</ul>
+<div class="warning">
+<p>請注意，value 如果有 “” 則會視為是值的一部份。且如果在同個 create 中使用多個 --from-env-file 則指會應用最後一個。</p>
+</div>
+<h4 id="使用-kubectl-apply-yaml-檔案建立">使用 kubectl apply yaml 檔案建立</h4>
+<p>準備 yaml 檔</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myConf</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">key1:</span> <span class="string">config1</span></span><br><span class="line">  <span class="attr">key2:</span> <span class="string">config2</span></span><br><span class="line">  <span class="attr">app.properties:</span> <span class="string">|</span> </span><br><span class="line">    <span class="string">property.1</span> <span class="string">=</span> <span class="string">value1</span> </span><br><span class="line">    <span class="string">property.2</span> <span class="string">=</span> <span class="string">value2</span> </span><br><span class="line">    <span class="string">property.3</span> <span class="string">=</span> <span class="string">value3</span></span><br></pre></td></tr></table></figure>
+<p>佈署</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl apply -f configmap.yaml</span><br></pre></td></tr></table></figure>
+<h3 id="查看-ConfigMap">查看 ConfigMap</h3>
+<p>建立完成後可以使用 <code>kubectl get</code> 或是 <code>kubectl describe</code> 的擷取 configMap 的內容。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl get configmaps myConf -o yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="number">2021</span><span class="number">-01</span><span class="string">-04T18:52:05Z</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myConf</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">resourceVersion:</span> <span class="string">"516"</span></span><br><span class="line">  <span class="attr">uid:</span> <span class="string">b4952dc3-d670-11e5-8cd0-68f728db1985</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">key1:</span> <span class="string">config1</span></span><br><span class="line">  <span class="attr">key2:</span> <span class="string">config2</span></span><br><span class="line">  <span class="attr">app.properties:</span> <span class="string">|</span> </span><br><span class="line">    <span class="string">property.1</span> <span class="string">=</span> <span class="string">value1</span> </span><br><span class="line">    <span class="string">property.2</span> <span class="string">=</span> <span class="string">value2</span> </span><br><span class="line">    <span class="string">property.3</span> <span class="string">=</span> <span class="string">value3</span></span><br></pre></td></tr></table></figure>
+<h3 id="將-ConfigMap-掛載到-pod-使用">將 ConfigMap 掛載到 pod 使用</h3>
+<h4 id="當成環境變數使用">當成環境變數使用</h4>
+<p>pod 的 yaml 檔如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">testenv</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">tomcat:8</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">[</span> <span class="string">"/bin/sh"</span><span class="string">,</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"echo $(KEY1_ENV)"</span> <span class="string">]</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">KEY1_ENV</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">myConf</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">key1</span></span><br></pre></td></tr></table></figure>
+<p>將 pod 跑起來後，ConfigMap myConf 中的 key1 的 value 就會做為環境變數 KEY1_ENV 的值。</p>
+<h4 id="掛載成-volume">掛載成 volume</h4>
+<p>pod 的 yaml 檔如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">testvolume</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">image: tomcat:</span> <span class="number">8</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">[</span> <span class="string">"/bin/sh"</span><span class="string">,"-c","cat</span> <span class="string">/etc/config/keys"</span> <span class="string">]</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">        <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">      <span class="attr">configMap:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">myConf</span></span><br></pre></td></tr></table></figure>
+<div class="info">
+<p>使用 volume 將 ConfigMap 作為文件或目錄直接掛載，ConfigMap 中每一個 key-value 鍵值對都會生成一個文件，key 為文件名，value 為內容。</p>
+</div>
+<p>另一種方式，只掛載某個 key，並指定相對路徑。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">testvolume</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">tomcat:8</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">          <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">      <span class="attr">configMap:</span></span><br><span class="line">         <span class="attr">name:</span> <span class="string">myConf</span></span><br><span class="line">         <span class="attr">items:</span></span><br><span class="line">           <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">key1</span></span><br><span class="line">             <span class="attr">path:</span> <span class="string">/path/to/key1</span>  <span class="comment"># key1 會放在 mountPath /etc/config/path/to 下。</span></span><br><span class="line">           <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">app.properties</span></span><br><span class="line">             <span class="attr">path:</span> <span class="string">app.properties</span> <span class="comment"># 如果 path 與 key 相同，則會直接把 app.properties 文件放在 mountPath 下。</span></span><br></pre></td></tr></table></figure>
+<h5 id="Reference">Reference</h5>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/" target="_blank" rel="external nofollow noopener noreferrer">https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/</a></li>
+<li><a href="https://www.cnblogs.com/pu20065226/p/10690628.html" target="_blank" rel="external nofollow noopener noreferrer">https://www.cnblogs.com/pu20065226/p/10690628.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/ConfigMap/" rel="tag"># ConfigMap</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Kubernetes-Object-%E5%9F%BA%E6%9C%AC%E5%B0%8D%E8%B1%A1%E4%BB%8B%E7%B4%B9.html" rel="prev" title="[Kubernetes] Object 基本對象介紹">
+      <i class="fa fa-chevron-left"></i> [Kubernetes] Object 基本對象介紹
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ConfigMap"><span class="nav-number">1.</span> <span class="nav-text">ConfigMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主要目的"><span class="nav-number">2.</span> <span class="nav-text">主要目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用法"><span class="nav-number">3.</span> <span class="nav-text">用法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-kubectl-create-建立"><span class="nav-number">3.1.</span> <span class="nav-text">使用 kubectl create 建立</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-kubectl-apply-yaml-檔案建立"><span class="nav-number">3.2.</span> <span class="nav-text">使用 kubectl apply yaml 檔案建立</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看-ConfigMap"><span class="nav-number">4.</span> <span class="nav-text">查看 ConfigMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#將-ConfigMap-掛載到-pod-使用"><span class="nav-number">5.</span> <span class="nav-text">將 ConfigMap 掛載到 pod 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#當成環境變數使用"><span class="nav-number">5.1.</span> <span class="nav-text">當成環境變數使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#掛載成-volume"><span class="nav-number">5.2.</span> <span class="nav-text">掛載成 volume</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Reference"><span class="nav-number">5.2.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula Hsieh" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula Hsieh</p>
+  <div class="site-description" itemprop="description">Hello! :-) 我是 Ula <br>(發音 U 拉或烏拉都可以)<br>喜歡吃。<br>正在往稱職的工程師路上前進。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">92</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:yiju.117@gmail.com" title="E-Mail → mailto:yiju.117@gmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula Hsieh</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      flOptions = {};
+        flOptions.iconStyle = "default";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Wechat,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+<script>
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: {page: {
+            url: "https://ulahsieh.github.io/Kubernetes-ConfigMap-create-mount.html",
+            identifier: "Kubernetes-ConfigMap-create-mount.html",
+            title: "[Kubernetes]  ConfigMap 建立及掛載"
+          }
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://ulagraphy.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

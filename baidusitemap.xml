@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/Python-system-proformance-monitor.html</loc>
+    <lastmod>2021-01-15</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/Python-Install-Python3-9-on-CentOS7.html</loc>
+    <lastmod>2021-01-15</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86.html</loc>
     <lastmod>2021-01-08</lastmod>
   </url>  <url>

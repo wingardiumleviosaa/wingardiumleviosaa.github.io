@@ -61,7 +61,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://imgur.com/mopFRPT.png">
 <meta property="article:published_time" content="2021-09-05T13:44:00.000Z">
-<meta property="article:modified_time" content="2021-09-05T14:16:14.182Z">
+<meta property="article:modified_time" content="2021-09-07T14:01:23.649Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="Kafka">
 <meta name="twitter:card" content="summary">
@@ -434,7 +434,9 @@
 <p>可以在 producer 的 config 設置指定要使用的編碼方式。</p>
 <h3 id="Producer-Config-設定">Producer Config 設定</h3>
 <p><em>key.serializer = org.apache.kafka.common.serialization.StringSerializer value.serializer = org.apache.kafka.common.serialization.StringSerializer</em></p>
-<p>訊息的序列化功能，producer 在傳送時訊息可以是字串也可以是物件，在傳送時必須做序列化，除了 String 之外，預設還支援 ByteArray、ByteBuffer、Bytes、Double、Integer、Long，另外也可以實作自己的 serializer，但必須要 implement <code>org.apache.kafka.common.serialization.Serializer</code>。可以參考這篇<a href="https://www.opencodez.com/java/implement-custom-value-serializer-apache-kafka.htm" target="_blank" rel="external nofollow noopener noreferrer">文章</a>。</p>
+<p>訊息的序列化功能，producer 在傳送時訊息可以是字串也可以是物件，在傳送時必須做序列化，除了 String 之外，預設還支援 ByteArray、ByteBuffer、Bytes、Double、Integer、Long，另外也可以實作自己的 serializer，但必須要 implement -<br>
+<code>org.apache.kafka.common.serialization.Serializer</code>。<br>
+可以參考這篇<a href="https://www.opencodez.com/java/implement-custom-value-serializer-apache-kafka.htm" target="_blank" rel="external nofollow noopener noreferrer">文章</a>。</p>
 <h6 id="Reference">Reference</h6>
 <ul>
 <li><a href="https://www.cnblogs.com/jiujuan/p/15024666.html" target="_blank" rel="external nofollow noopener noreferrer">https://www.cnblogs.com/jiujuan/p/15024666.html</a></li>
@@ -545,7 +547,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -558,7 +560,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

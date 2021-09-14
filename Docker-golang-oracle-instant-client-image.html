@@ -62,7 +62,7 @@
 <meta property="og:image" content="https://imgur.com/aODpLcK.png">
 <meta property="og:image" content="https://imgur.com/NU8XcVr.png">
 <meta property="article:published_time" content="2021-09-07T14:05:00.000Z">
-<meta property="article:modified_time" content="2021-09-07T14:12:36.929Z">
+<meta property="article:modified_time" content="2021-09-14T13:20:21.722Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="Docker">
 <meta property="article:tag" content="alpine">
@@ -290,14 +290,14 @@
 <p>為了追求更小的 docker image，這裡使用第二個方法。</p>
 <p><img src="https://imgur.com/aODpLcK.png" alt></p>
 <p>範例一：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;Dockerfile</span><br><span class="line"></span><br><span class="line"># build stage</span><br><span class="line">FROM golang:alpine as builder</span><br><span class="line">WORKDIR &#x2F;go&#x2F;src</span><br><span class="line">COPY httpserver.go .</span><br><span class="line">RUN go build -o httpd .&#x2F;httpserver.go</span><br><span class="line"></span><br><span class="line"># run stage</span><br><span class="line">From alpine:latest</span><br><span class="line">WORKDIR &#x2F;root&#x2F;</span><br><span class="line">COPY --from&#x3D;builder &#x2F;go&#x2F;src&#x2F;httpd .</span><br><span class="line">RUN chmod +x &#x2F;root&#x2F;httpd</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;&#x2F;root&#x2F;httpd&quot;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;Dockerfile</span><br><span class="line"></span><br><span class="line"># build stage</span><br><span class="line">FROM golang:alpine as builder</span><br><span class="line">WORKDIR &#x2F;go&#x2F;src</span><br><span class="line">COPY httpserver.go .</span><br><span class="line">RUN go build -o httpd .&#x2F;httpserver.go</span><br><span class="line"></span><br><span class="line"># run stage</span><br><span class="line">From alpine:latest</span><br><span class="line">WORKDIR &#x2F;root&#x2F;</span><br><span class="line">COPY --from&#x3D;builder &#x2F;go&#x2F;src&#x2F;httpd .</span><br><span class="line">RUN chmod +x &#x2F;root&#x2F;httpd</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;&#x2F;root&#x2F;httpd&quot;]</span><br></pre></td></tr></table></figure>
 <p>範例二：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM alpine:edge AS build</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add --no-cache go gcc g++</span><br><span class="line">WORKDIR &#x2F;</span><br><span class="line">COPY . .</span><br><span class="line">RUN CGO_ENABLED&#x3D;1 go build &#x2F;</span><br><span class="line"></span><br><span class="line">FROM alpine:edge</span><br><span class="line">WORKDIR &#x2F;</span><br><span class="line">COPY --from&#x3D;build &#x2F;reverseapi &#x2F;reverseapi</span><br><span class="line">ENTRYPOINT [ &quot;&#x2F;reverseapi&quot; ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine:edge AS build</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add --no-cache go gcc g++</span><br><span class="line">WORKDIR &#x2F;</span><br><span class="line">COPY . .</span><br><span class="line">RUN CGO_ENABLED&#x3D;1 go build &#x2F;</span><br><span class="line"></span><br><span class="line">FROM alpine:edge</span><br><span class="line">WORKDIR &#x2F;</span><br><span class="line">COPY --from&#x3D;build &#x2F;reverseapi &#x2F;reverseapi</span><br><span class="line">ENTRYPOINT [ &quot;&#x2F;reverseapi&quot; ]</span><br></pre></td></tr></table></figure>
 <h3 id="補充">補充</h3>
 <h4 id="Alpine-鏡像的限製或者前提條件">Alpine 鏡像的限製或者前提條件</h4>
 <p>是否可以使用 Alpine，大部分項目均可無視 musl libc 和 gnu libc 的區別，但是如果有相關的依賴gnu libc，則需要慎重考慮是否一定需要使用 Alpine 鏡像，因為 Alpine 鏡像的小巧正是建立在busybox 和 musl libc 基礎之上的，雖然在 Alpine 上也可以安裝 gnu libc，但是這種對應給人一種強烈的違和感，而且後續碰到的各種問題的概率較大。所以整體來說，如果沒有一定要使用 gnu libc 的項目可以考慮使用 Alpine 鏡像，否者還是不要使用較為穩妥。</p>
 <h4 id="版本支持">版本支持</h4>
-<p>需要注意的是不同的 Alpine 的版本當前所支持的gcc/g++的版本有所不同，如果不是從源碼編譯的安裝的情況下，需要注意此方面的限制，具體的查詢請參考[這裡](<a href="https://pkgs.alpinelinux.org/" target="_blank" rel="external nofollow noopener noreferrer">https://pkgs.alpinelinux.org/</a></p>
+<p>需要注意的是不同的 Alpine 的版本當前所支持的gcc/g++的版本有所不同，如果不是從源碼編譯的安裝的情況下，需要注意此方面的限制，具體的查詢請參考<a href="https://pkgs.alpinelinux.org" target="_blank" rel="external nofollow noopener noreferrer">這裡</a></p>
 <h6 id="Reference">Reference</h6>
 <ul>
 <li>
@@ -320,7 +320,7 @@
 <p><img src="https://imgur.com/NU8XcVr.png" alt></p>
 <p>官網雖然有<a href="https://docs.oracle.com/en/database/oracle/oracle-database/18/lnoci/instant-client.html#GUID-7D65474A-8790-4E81-B535-409010791C2F" target="_blank" rel="external nofollow noopener noreferrer">參考文檔</a>，但是因為我用的 base image 是 alpine，有些功能跟 library 放的地方跟其他 Linux 如 ubuntu 或 centos 不一樣，所以決定安裝該有的 Library 後，再自己手動建 symbol link。</p>
 <p>最後的 Dockerfile 長這樣：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM alpine:edge AS build</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add --no-cache go gcc g++</span><br><span class="line">WORKDIR /</span><br><span class="line">COPY . .</span><br><span class="line">RUN CGO_ENABLED=1 go build /</span><br><span class="line"></span><br><span class="line">FROM alpine:edge</span><br><span class="line">WORKDIR /</span><br><span class="line"><span class="comment"># COPY ./config /config</span></span><br><span class="line">RUN wget https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip &amp;&amp; \</span><br><span class="line">    unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip &amp;&amp; \</span><br><span class="line">    apk add --no-cache libaio libnsl libc6-compat gcc &amp;&amp; ln -s /usr/lib/* /instantclient_18_5 &amp;&amp; \</span><br><span class="line">    <span class="built_in">cd</span> /instantclient_18_5 &amp;&amp; \</span><br><span class="line">    ln -s libnsl.so.2 /usr/lib/libnsl.so.1 &amp;&amp; \</span><br><span class="line">    ln -s /lib/libc.so.6 /usr/lib/libresolv.so.2 &amp;&amp; \</span><br><span class="line">    ln -s /lib/libc.musl-x86_64.so.1 /usr/lib/ld-linux-x86-64.so.2</span><br><span class="line">ENV LD_LIBRARY_PATH=/instantclient_18_5</span><br><span class="line">COPY --from=build /reverseapi /reverseapi</span><br><span class="line">ENTRYPOINT [ <span class="string">"/reverseapi"</span> ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine:edge AS build</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add --no-cache go gcc g++</span><br><span class="line">WORKDIR /</span><br><span class="line">COPY . .</span><br><span class="line">RUN CGO_ENABLED=1 go build /</span><br><span class="line"></span><br><span class="line">FROM alpine:edge</span><br><span class="line">WORKDIR /</span><br><span class="line"><span class="comment"># COPY ./config /config</span></span><br><span class="line">RUN wget https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip &amp;&amp; \</span><br><span class="line">    unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip &amp;&amp; \</span><br><span class="line">    apk add --no-cache libaio libnsl libc6-compat gcc &amp;&amp; ln -s /usr/lib/* /instantclient_18_5 &amp;&amp; \</span><br><span class="line">    <span class="built_in">cd</span> /instantclient_18_5 &amp;&amp; \</span><br><span class="line">    ln -s libnsl.so.2 /usr/lib/libnsl.so.1 &amp;&amp; \</span><br><span class="line">    ln -s /lib/libc.so.6 /usr/lib/libresolv.so.2 &amp;&amp; \</span><br><span class="line">    ln -s /lib/libc.musl-x86_64.so.1 /usr/lib/ld-linux-x86-64.so.2</span><br><span class="line">ENV LD_LIBRARY_PATH=/instantclient_18_5</span><br><span class="line">COPY --from=build /reverseapi /reverseapi</span><br><span class="line">ENTRYPOINT [ <span class="string">"/reverseapi"</span> ]</span><br></pre></td></tr></table></figure>
 <div class="info">
 <p>在測試的時候是安裝完整的 instantclinet，但應該可以裝 lite 版本的，以減少不必要的 image 大小。</p>
 </div>
@@ -364,7 +364,10 @@
     <a href="/Kubernetes-Minikube.html" rel="prev" title="[Kubernetes] Minikube">
       <i class="fa fa-chevron-left"></i> [Kubernetes] Minikube
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/terraform-Upgrade.html" rel="next" title="[Terraform] Upgrade to the Latest Version">
+      [Terraform] Upgrade to the Latest Version <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -446,7 +449,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -459,7 +462,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">99</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

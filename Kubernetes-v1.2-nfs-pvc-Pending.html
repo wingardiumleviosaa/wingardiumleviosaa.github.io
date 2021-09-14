@@ -54,18 +54,18 @@
 
   <meta name="description" content="上次將 K8s 集群從 1.7 升級到 1.20 之後，在創建 pvc 時，發現狀態會一直停留在 Pending，詳細資訊如下：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Kubernetes] nfs 創建 pvc 時停在 Pending">
-<meta property="og:url" content="https://ulahsieh.github.io/Kubernetes-nfs-%E5%89%B5%E5%BB%BA-pvc-%E6%99%82%E5%81%9C%E5%9C%A8-Pending.html">
+<meta property="og:title" content="[Kubernetes] k8s v1.20 nfs-client-provisioner 創建 pvc 時停在 Pending">
+<meta property="og:url" content="https://ulahsieh.github.io/Kubernetes-v1.2-nfs-pvc-Pending.html">
 <meta property="og:site_name" content="UlaGraphy">
 <meta property="og:description" content="上次將 K8s 集群從 1.7 升級到 1.20 之後，在創建 pvc 時，發現狀態會一直停留在 Pending，詳細資訊如下：">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-08-29T13:47:00.000Z">
-<meta property="article:modified_time" content="2021-08-29T13:49:53.809Z">
+<meta property="article:modified_time" content="2021-09-14T13:18:13.313Z">
 <meta property="article:author" content="Ula Hsieh">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://ulahsieh.github.io/Kubernetes-nfs-%E5%89%B5%E5%BB%BA-pvc-%E6%99%82%E5%81%9C%E5%9C%A8-Pending.html">
+<link rel="canonical" href="https://ulahsieh.github.io/Kubernetes-v1.2-nfs-pvc-Pending.html">
 
 
 <script id="page-configurations">
@@ -90,7 +90,7 @@
   padding: 0 10px 0 14px;
 }
 </style>
-  <title>[Kubernetes] nfs 創建 pvc 時停在 Pending | UlaGraphy</title>
+  <title>[Kubernetes] k8s v1.20 nfs-client-provisioner 創建 pvc 時停在 Pending | UlaGraphy</title>
   
 
 
@@ -201,7 +201,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kubernetes-nfs-%E5%89%B5%E5%BB%BA-pvc-%E6%99%82%E5%81%9C%E5%9C%A8-Pending.html">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kubernetes-v1.2-nfs-pvc-Pending.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -214,7 +214,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          [Kubernetes] nfs 創建 pvc 時停在 Pending
+          [Kubernetes] k8s v1.20 nfs-client-provisioner 創建 pvc 時停在 Pending
         </h2>
 
         <div class="post-meta">
@@ -244,7 +244,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>181</span>
+              <span>310</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -266,14 +266,15 @@
         <p>上次將 K8s 集群從 1.7 升級到 1.20 之後，在創建 pvc 時，發現狀態會一直停留在 Pending，詳細資訊如下：</p>
 <a id="more"></a>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@master1 telegraf]<span class="comment"># kubectl get pvc</span></span><br><span class="line">NAME   STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line"><span class="built_in">test</span>   Pending                                      nfs            5s</span><br><span class="line">[root@master1 telegraf]<span class="comment"># kubectl describe pvc test</span></span><br><span class="line">Name:          <span class="built_in">test</span></span><br><span class="line">Namespace:     default</span><br><span class="line">StorageClass:  nfs</span><br><span class="line">Status:        Pending</span><br><span class="line">Volume:</span><br><span class="line">Labels:        &lt;none&gt;</span><br><span class="line">Annotations:   volume.beta.kubernetes.io/storage-provisioner: cluster.local/nfs-sc-0-nfs-client-provisioner</span><br><span class="line">Finalizers:    [kubernetes.io/pvc-protection]</span><br><span class="line">Capacity:</span><br><span class="line">Access Modes:</span><br><span class="line">VolumeMode:    Filesystem</span><br><span class="line">Used By:       &lt;none&gt;</span><br><span class="line">Events:</span><br><span class="line">  Type    Reason                Age                From                         Message</span><br><span class="line">  ----    ------                ----               ----                         -------</span><br><span class="line">  Normal  ExternalProvisioning  10s (x5 over 50s)  persistentvolume-controller  waiting <span class="keyword">for</span> a volume to be created, either                                                        by external provisioner <span class="string">"cluster.local/nfs-sc-0-nfs-client-provisioner"</span> or manually created by system administrator</span><br></pre></td></tr></table></figure>
-<p>查了原因可能是因為 selfLink 為空，無法建立參考。</p>
+<p>查了原因可能是因為 selfLink 為空，無法建立參考。<br>
+Kubernetes v1.20 開始，根據 <a href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.20.md#other-cleanup-or-flake-2" target="_blank" rel="external nofollow noopener noreferrer">change log</a> 說明，默認刪除了 metadata.selfLink 字段，然而部分應用仍然依賴於此功能，例如 nfs-client-provisioner。如果仍然要繼續使用這些應用，需要重新啟用selfLink。</p>
 <h4 id="解決方式如下：">解決方式如下：</h4>
 <p>修改 kube-apiserver 文件</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/kubernetes/manifests/kube-apiserver.yaml</span><br></pre></td></tr></table></figure>
 <p>在 command 下的參數加上 <code>--feature-gates=RemoveSelfLink=false</code></p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">command:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">kube-apiserver</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--advertise-address=10.1.5.141</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--allow-privileged=true</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--au...</span></span><br><span class="line">    <span class="string">.</span></span><br><span class="line">    <span class="string">.</span></span><br><span class="line">    <span class="string">.</span></span><br><span class="line">    <span class="string">**-</span> <span class="string">--feature-gates=RemoveSelfLink=false**</span></span><br></pre></td></tr></table></figure>
-<p>儲存編輯後，下 kubectl apply 使變動生效</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">/etc/kubernetes/manifests/kube-apiserver.yaml</span></span><br></pre></td></tr></table></figure>
+<p>儲存編輯後，kube-apiserver 便會自動重啟。</p>
+
     </div>
 
     
@@ -379,7 +380,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -392,7 +393,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">99</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -501,9 +502,9 @@
       DISQUS.reset({
         reload: true,
         config: {page: {
-            url: "https://ulahsieh.github.io/Kubernetes-nfs-%E5%89%B5%E5%BB%BA-pvc-%E6%99%82%E5%81%9C%E5%9C%A8-Pending.html",
-            identifier: "Kubernetes-nfs-創建-pvc-時停在-Pending.html",
-            title: "[Kubernetes] nfs 創建 pvc 時停在 Pending"
+            url: "https://ulahsieh.github.io/Kubernetes-v1.2-nfs-pvc-Pending.html",
+            identifier: "Kubernetes-v1.2-nfs-pvc-Pending.html",
+            title: "[Kubernetes] k8s v1.20 nfs-client-provisioner 創建 pvc 時停在 Pending"
           }
         }
       });

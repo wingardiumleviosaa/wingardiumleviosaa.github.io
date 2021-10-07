@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/Data-Pipeline.html</loc>
+    <lastmod>2021-10-07</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/KVM-virt-install-CentOS.html</loc>
-    <lastmod>2021-09-27</lastmod>
+    <lastmod>2021-10-07</lastmod>
   </url>  <url>
     <loc>https://ulahsieh.github.io/Kubernetes-Change-MetalLB-IP-Range.html</loc>
     <lastmod>2021-09-16</lastmod>

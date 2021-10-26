@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/Node-RED-Deploy-on-Kubernetes.html</loc>
+    <lastmod>2021-10-26</lastmod>
+  </url>  <url>
+    <loc>https://ulahsieh.github.io/NodeRED-mail-node-send-Error.html</loc>
+    <lastmod>2021-10-26</lastmod>
+  </url>  <url>
     <loc>https://ulahsieh.github.io/Ubuntu-Create-Applications-Shortcut-on-Desktop.html</loc>
     <lastmod>2021-10-25</lastmod>
   </url>  <url>

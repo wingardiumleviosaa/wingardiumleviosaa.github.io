@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="官方 Ubuntu repository 中提供的 Docker 可能不是最新版本。 為確保獲得最新版本，本篇將從官方 Docker 存儲庫安裝。 為此，我們將添加一個新的 package source，從 Docker 中添加 GPG 密鑰以確保下載有效，然後安裝該程序包。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Docker] Install Docker &amp; Docker Compose on Ubuntu18.04">
+<meta property="og:url" content="https://ulahsieh.github.io/Docker-Install-Docker-Docker-Compose-on-Ubuntu18-04/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="官方 Ubuntu repository 中提供的 Docker 可能不是最新版本。 為確保獲得最新版本，本篇將從官方 Docker 存儲庫安裝。 為此，我們將添加一個新的 package source，從 Docker 中添加 GPG 密鑰以確保下載有效，然後安裝該程序包。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/lUWfH3W.png">
+<meta property="og:image" content="https://imgur.com/speYw5F.png">
+<meta property="article:published_time" content="2020-08-18T06:48:00.000Z">
+<meta property="article:modified_time" content="2020-08-18T06:48:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="Docker Compose">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/lUWfH3W.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Docker-Install-Docker-Docker-Compose-on-Ubuntu18-04/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Docker-Install-Docker-Docker-Compose-on-Ubuntu18-04/","path":"Docker-Install-Docker-Docker-Compose-on-Ubuntu18-04/","title":"[Docker] Install Docker & Docker Compose on Ubuntu18.04"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Docker] Install Docker & Docker Compose on Ubuntu18.04 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Docker"><span class="nav-number">1.</span> <span class="nav-text">安裝 Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0-package-%E4%B8%A6%E5%8C%AF%E5%85%A5-docker-repo"><span class="nav-number">1.1.</span> <span class="nav-text">更新 package 並匯入 docker repo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D%E6%9C%80%E6%96%B0%E7%89%88%E6%88%96%E6%98%AF%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC"><span class="nav-number">1.2.</span> <span class="nav-text">安裝最新版或是指定版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E5%AE%89%E8%A3%9D"><span class="nav-number">1.3.</span> <span class="nav-text">完成安裝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%87%E7%95%B6%E4%B8%8B%E4%BD%BF%E7%94%A8%E8%80%85%E5%8A%A0%E5%85%A5-docker-group"><span class="nav-number">1.4.</span> <span class="nav-text">將當下使用者加入 docker group</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%AE%98%E6%96%B9%E5%AE%89%E8%A3%85%E8%85%B3%E6%9C%AC%E8%87%AA%E5%8B%95%E5%AE%89%E8%A3%9D"><span class="nav-number">2.</span> <span class="nav-text">使用官方安装腳本自動安裝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-docker-compose"><span class="nav-number">3.</span> <span class="nav-text">安裝 docker-compose</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BC%89%E6%9C%80%E6%96%B0%E7%89%88"><span class="nav-number">3.1.</span> <span class="nav-text">下載最新版</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A-docker-compose-%E5%8A%A0%E5%85%A5%E5%9F%B7%E8%A1%8C%E6%AA%94"><span class="nav-number">3.2.</span> <span class="nav-text">把 docker-compose 加入執行檔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%AC%E8%A9%A6%E5%AE%89%E8%A3%9D"><span class="nav-number">3.3.</span> <span class="nav-text">測試安裝</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#reference"><span class="nav-number">3.3.0.0.1.</span> <span class="nav-text">reference</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Docker-Install-Docker-Docker-Compose-on-Ubuntu18-04/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Docker] Install Docker & Docker Compose on Ubuntu18.04
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-08-18 14:48:00" itemprop="dateCreated datePublished" datetime="2020-08-18T14:48:00+08:00">2020-08-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>827</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>官方 Ubuntu repository 中提供的 Docker 可能不是最新版本。 為確保獲得最新版本，本篇將從官方 Docker 存儲庫安裝。 為此，我們將添加一個新的 package source，從 Docker 中添加 GPG 密鑰以確保下載有效，然後安裝該程序包。</p>
+<span id="more"></span>
+<h2 id="安裝-Docker">安裝 Docker</h2>
+<h3 id="更新-package-並匯入-docker-repo">更新 package 並匯入 docker repo</h3>
+<p>先更新現有的 packages</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt update</span><br></pre></td></tr></table></figure>
+<p>安裝需要用到的套件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt install apt-transport-https ca-certificates curl software-properties-common</span><br></pre></td></tr></table></figure>
+<p>將官方 docker repo 的 gpg 密鑰匯入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<p>將 docker 穩定版 repo 加到 apt source</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable&quot;</span><br></pre></td></tr></table></figure>
+<p>再次更新 packages</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt update</span><br></pre></td></tr></table></figure>
+<h3 id="安裝最新版或是指定版本">安裝最新版或是指定版本</h3>
+<ul>
+<li>安裝最新版</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+<ul>
+<li>安裝指定版本<br>
+a. 列出 repo 中所有可用版本</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ apt-cache madison docker-ce</span><br><span class="line">docker-ce | 5:19.03.13~1.2.beta2-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/test amd64 Packages</span><br><span class="line"> docker-ce | 5:19.03.12~3-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/test amd64 Packages</span><br><span class="line"> docker-ce | 5:19.03.11~3-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/test amd64 Packages </span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$  apt-cache madison docker-ce-cli</span><br><span class="line">docker-ce-cli | 5:19.03.13~1.2.beta2-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/test amd64 Packages</span><br><span class="line">docker-ce-cli | 5:19.03.12~3-0~ubuntu-bionic | https://download.docker.com/linux/ubuntu bionic/test amd64 Packages</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>b. 選擇指定版本安裝，例如 5:19.03.12<sub>3-0</sub>ubuntu-bionic</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install docker-ce=&lt;VERSION_STRING&gt; docker-ce-cli=&lt;VERSION_STRING&gt; containerd.io</span><br></pre></td></tr></table></figure>
+<h3 id="完成安裝">完成安裝</h3>
+<p>安裝成功後 daemon 會自動啟用，並且會加到開機自動啟動的程序中。可以使用下列命令確認安裝以及程序狀態：<br>
+確認版本資訊</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker version</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/lUWfH3W.png" alt><br>
+確認狀態</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl status docker</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/speYw5F.png" alt></p>
+<h3 id="將當下使用者加入-docker-group">將當下使用者加入 docker group</h3>
+<p>默認情況下，只能以 root 或由 docker group 中的用戶執行 docker 命令。否則會得到下列警示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker: Cannot connect to the Docker daemon. Is the docker daemon running on this host?.</span><br><span class="line">See &#x27;docker run --help&#x27;.</span><br></pre></td></tr></table></figure>
+<p>如果要避免在每次運行 docker 命令時都加 sudo，請將用戶添加到 docker group：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo usermod -aG docker $&#123;USER&#125;</span><br><span class="line">$ su - $&#123;USER&#125;</span><br></pre></td></tr></table></figure>
+<p>確認用戶目前所屬的 group</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ id -nG</span><br></pre></td></tr></table></figure>
+<hr>
+<p>上面演示了如何手動安裝 docker，有點麻煩，所以官方提供了<a target="_blank" rel="external nofollow noopener noreferrer" href="https://get.docker.com/">腳本</a>可以一鍵安裝。</p>
+<h2 id="使用官方安装腳本自動安裝">使用官方安装腳本自動安裝</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -fsSL https://get.docker.com | sudo sh</span><br></pre></td></tr></table></figure>
+<p>完成！超簡潔。</p>
+<hr>
+<h2 id="安裝-docker-compose">安裝 docker-compose</h2>
+<h3 id="下載最新版">下載最新版</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo curl -L &quot;https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)&quot; -o /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+<p>若要安裝其他版本，請將 URL 中的 <code>1.26.2</code> 取代成其他<a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.docker.com/compose/release-notes/">版本</a>。</p>
+<h3 id="把-docker-compose-加入執行檔">把 docker-compose 加入執行檔</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo chmod +x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+<h3 id="測試安裝">測試安裝</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker-compose --version</span><br><span class="line">docker-compose version 1.26.2, build 1110ad01</span><br></pre></td></tr></table></figure>
+<h6 id="reference">reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.docker.com/engine/install/ubuntu/">https://docs.docker.com/engine/install/ubuntu/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.docker.com/compose/install/">https://docs.docker.com/compose/install/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
+              <a href="/tags/Docker-Compose/" rel="tag"># Docker Compose</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/truncate-docker-log/" rel="prev" title="[Docker] 限制 log 大小以避免硬碟爆掉">
+                  <i class="fa fa-chevron-left"></i> [Docker] 限制 log 大小以避免硬碟爆掉
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/copy-docker-image-to-different-host/" rel="next" title="[Docker] 在不同電腦中傳 Docker image">
+                  [Docker] 在不同電腦中傳 Docker image <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

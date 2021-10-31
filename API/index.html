@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="API Application Programming Interface 應用程式介面，其中『介面』就是溝通的管道，比如說 USB 隨身碟的介面就是 USB．所有電腦以及 USB 隨身硬碟的廠商只要按照 USB 的規則製造就能使用此介面去溝通。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[API] 簡介及實作 &amp; 資料交換格式 - XML, JSON, SOAP">
+<meta property="og:url" content="https://ulahsieh.github.io/API/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="API Application Programming Interface 應用程式介面，其中『介面』就是溝通的管道，比如說 USB 隨身碟的介面就是 USB．所有電腦以及 USB 隨身硬碟的廠商只要按照 USB 的規則製造就能使用此介面去溝通。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/R4FKQdA.png">
+<meta property="og:image" content="https://imgur.com/aRf6k3X.png">
+<meta property="og:image" content="https://imgur.com/i9dXR3c.png">
+<meta property="og:image" content="https://imgur.com/mJQUD1u.png">
+<meta property="og:image" content="https://imgur.com/H5CQh3z.png">
+<meta property="og:image" content="https://imgur.com/j4UE1Zp.png">
+<meta property="og:image" content="https://imgur.com/XQcAPCK.png">
+<meta property="og:image" content="https://imgur.com/h2QBAaD.png">
+<meta property="og:image" content="https://imgur.com/e1lJJHm.png">
+<meta property="og:image" content="https://imgur.com/fvitz2E.png">
+<meta property="article:published_time" content="2020-07-02T13:10:00.000Z">
+<meta property="article:modified_time" content="2020-07-02T13:10:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="curl">
+<meta property="article:tag" content="API">
+<meta property="article:tag" content="HTTP">
+<meta property="article:tag" content="Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/R4FKQdA.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/API/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/API/","path":"API/","title":"[API] 簡介及實作 & 資料交換格式 - XML, JSON, SOAP"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[API] 簡介及實作 & 資料交換格式 - XML, JSON, SOAP | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#API"><span class="nav-number">1.</span> <span class="nav-text">API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BE%9B-API-%E4%BD%BF%E7%94%A8-API"><span class="nav-number">2.</span> <span class="nav-text">提供 API &amp; 使用 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebAPI"><span class="nav-number">3.</span> <span class="nav-text">WebAPI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDK"><span class="nav-number">4.</span> <span class="nav-text">SDK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#api-%E4%B8%B2%E6%8E%A5%E5%AF%A6%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text">api 串接實作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CURD"><span class="nav-number">6.</span> <span class="nav-text">CURD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RESTful-API"><span class="nav-number">7.</span> <span class="nav-text">RESTful API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B3%87%E6%96%99%E6%A0%BC%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">資料格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#XML"><span class="nav-number">8.1.</span> <span class="nav-text">XML</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSON"><span class="nav-number">8.2.</span> <span class="nav-text">JSON</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SOAP"><span class="nav-number">9.</span> <span class="nav-text">SOAP</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#reference"><span class="nav-number">9.0.0.1.</span> <span class="nav-text">reference</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [API] 簡介及實作 & 資料交換格式 - XML, JSON, SOAP
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-07-02 21:10:00" itemprop="dateCreated datePublished" datetime="2020-07-02T21:10:00+08:00">2020-07-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Frontend/" itemprop="url" rel="index"><span itemprop="name">Frontend</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Frontend/API/" itemprop="url" rel="index"><span itemprop="name">API</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="API">API</h3>
+<p>Application Programming Interface 應用程式介面，其中『介面』就是溝通的管道，比如說 USB 隨身碟的介面就是 USB．所有電腦以及 USB 隨身硬碟的廠商只要按照 USB 的規則製造就能使用此介面去溝通。</p>
+<span id="more"></span>
+<h3 id="提供-API-使用-API">提供 API &amp; 使用 API</h3>
+<p>比如電腦使用者說想知道網路狀況，作業系統底層變提供了 API 讓我們使用。又比如說想要更改某個網站的會員資料，那這個網站就提供了 API 讓我們能在網站上修改資料庫的會員資料。或是要在網頁上加入 google map 的功能，就需使用 google map 提供的 API。</p>
+<p><strong>所以 API 可以想成是某種功能，用以溝通兩個不同的東西用的。</strong></p>
+<h3 id="WebAPI">WebAPI</h3>
+<p>指 HTTP API，透過 HTTP 協定的 API。通常透過 HTTP method 去呼叫 API 進而交換資料，基本上就是丟 request，然後拿到 response 的資料。</p>
+<h3 id="SDK">SDK</h3>
+<p>Software Development Kit 軟體開發套件，是用來開發特定應用程式的工具組，通常是廠商針對某一平臺、系統、或硬體所釋出，用以開發應用程式的工具組，在這個工具包裡面，可能包含了各式各樣的開發工具，模擬器或 API 等。</p>
+<h3 id="api-串接實作">api 串接實作</h3>
+<p>將使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://reqres.in/">reqres</a> 網站當作伺服器，下 API 去取得該網站的資料。另外使用 request node module 實作。</p>
+<ol>
+<li>發 request 到網址，並印出 body<br>
+<img src="https://imgur.com/R4FKQdA.png" alt></li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line">request(</span><br><span class="line">  <span class="string">&#x27;https://reqres.in/api/users?page=2&#x27;</span>,</span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">console</span>.log(<span class="string">&#x27;request failed&#x27;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(body)</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>印出所有 user list<br>
+<img src="https://imgur.com/aRf6k3X.png" alt></p>
+<ol start="2">
+<li>發 request 到網址，並印出單一使用者資料<br>
+<img src="https://imgur.com/i9dXR3c.png" alt></li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line">request(</span><br><span class="line">  <span class="string">&#x27;https://reqres.in/api/users/2&#x27;</span>,</span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">console</span>.log(<span class="string">&#x27;request failed&#x27;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(body)  </span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/mJQUD1u.png" alt></p>
+<ol start="3">
+<li>把取得得特定使用者變成是下 node index.js 時的參數<br>
+將使用另一個 node module - process</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> process = <span class="built_in">require</span>(<span class="string">&#x27;process&#x27;</span>);</span><br><span class="line"><span class="built_in">console</span>.log(process.argv)</span><br><span class="line">request(</span><br><span class="line">  <span class="string">&#x27;https://reqres.in/api/users/&#x27;</span> + process.argv[<span class="number">2</span>], <span class="comment">//第三個參數</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">console</span>.log(<span class="string">&#x27;request failed&#x27;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(body)  </span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/H5CQh3z.png" alt></p>
+<ol start="4">
+<li>post 一筆新使用者資料到網站上<br>
+<img src="https://imgur.com/j4UE1Zp.png" alt></li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line">request.post(</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">url</span>:<span class="string">&#x27;https://reqres.in/api/users/&#x27;</span>, </span><br><span class="line">    <span class="attr">form</span>:&#123;</span><br><span class="line">      <span class="attr">name</span>:<span class="string">&#x27;ula&#x27;</span>,</span><br><span class="line">      <span class="attr">job</span>:<span class="string">&#x27;student&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">console</span>.log(<span class="string">&#x27;request failed&#x27;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(response.statusCode) <span class="comment">//印出 http 狀態碼  </span></span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/XQcAPCK.png" alt></p>
+<ol start="5">
+<li>使用 patch 修改資料</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line">request.post(</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">url</span>:<span class="string">&#x27;https://reqres.in/api/users/2&#x27;</span>, </span><br><span class="line">    <span class="attr">form</span>:&#123;</span><br><span class="line">      <span class="attr">name</span>:<span class="string">&#x27;ula&#x27;</span>,</span><br><span class="line">      <span class="attr">job</span>:<span class="string">&#x27;student&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">console</span>.log(<span class="string">&#x27;request failed&#x27;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(response.statusCode) <span class="comment">//印出 http 狀態碼  </span></span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li>使用 delete 刪除資料</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line">request.delete(</span><br><span class="line">  <span class="string">&#x27;https://lidemy-book-store.herokuapp.com/books/21&#x27;</span>, </span><br><span class="line">  <span class="function"><span class="keyword">function</span> (<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">console</span>.log(<span class="string">&#x27;request failed&#x27;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(response.statusCode) <span class="comment">//印出 http 狀態碼</span></span><br><span class="line">    <span class="built_in">console</span>.log(body)  </span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="CURD">CURD</h3>
+<p>CURD 是創建（Create）、更新（Update）、讀取（Read）和刪除（Delete）操作的縮寫。在電腦程式語言中是一連串常見的動作行為，通常是為了針對某個特定資源所作出的舉動（例如：建立資料、讀取資料等）。這四種行為最常使用在 SQL 資料庫操作或網站的 API 串接時。[3]</p>
+<h3 id="RESTful-API">RESTful API</h3>
+<p>REST (Representational State Transfer)具象狀態傳輸，而 Restful 形容詞， Restful API 是一種風格而非協定，形容以此規範設計的 API。</p>
+<p>RESTful 風格的網址設計強調從 URL 就能看出要對什麼資料(資源名稱)、進行什麼操作(HTTP Method)。</p>
+<ul>
+<li>瀏覽全部資料：GET + 資源名稱</li>
+<li>瀏覽特定資料：GET + 資源名稱 + id</li>
+<li>新增一筆資料：POST + 資源名稱</li>
+<li>修改特定資料：PUT + 資源名稱 + id</li>
+<li>刪除特定資料：DELETE + 資源名稱 + id</li>
+</ul>
+<p>例如前面的 reqres 範例，get <a target="_blank" rel="external nofollow noopener noreferrer" href="https://reqres.in/api/users/2%EF%BC%8C%E5%8F%96%E5%BE%97%E7%AC%AC%E4%BA%8C%E7%AD%86">https://reqres.in/api/users/2，取得第二筆</a> users 資料。</p>
+<table><tr><td bgcolor="AliceBlue">
+<b>小補充</b><p></p>
+API 的網址通常會定義如下，會為 api 加上版本資訊，以便未來改版時不同版本的 client 可以同時使用。
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://ulagraphy.com/api/v1</span><br></pre></td></tr></table></figure>
+</td></tr></table>
+<hr>
+<h3 id="資料格式">資料格式</h3>
+<h4 id="XML">XML</h4>
+<p>Extensible Markup Language，跟 html 很像，是一種標記式語言。與 html 不同的是，XML可以允許使用者自行定義所需的標籤(tags)，主要的功能是用來「資料傳遞」用。<br>
+<img src="https://imgur.com/h2QBAaD.png" alt></p>
+<h4 id="JSON">JSON</h4>
+<p>Javascript Object Notation，是一種資料格式。相較於 XML，近年來 JSON 較廣為使用，易讀且檔案大小相對較小。<br>
+前面的範例中 response 回傳的資料雖然是字串，但可以被轉成 json。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> process = <span class="built_in">require</span>(<span class="string">&#x27;process&#x27;</span>);</span><br><span class="line">request(</span><br><span class="line">  <span class="string">&#x27;https://reqres.in/api/users/&#x27;</span> + process.argv[<span class="number">2</span>], <span class="comment">//第三個參數</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">error, response, body</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> json = <span class="built_in">JSON</span>.parse(body)</span><br><span class="line">    <span class="built_in">console</span>.log(json)  </span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/e1lJJHm.png" alt><br>
+轉成 json 格式後就可以存取裡面的屬性值。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">console.log(json.data.first_name)</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/fvitz2E.png" alt></p>
+<table><tr><td bgcolor="AliceBlue">
+<b>補充</b><p></p>
+1. 字串轉 JSON 使用 `JSON.parse(str)`<br>
+2. Javascript 物件轉 JSON 格式的字串可使用 `JSON.stringify(obj)` <br>
+3. 任何一種資料格式在任何程式語言都可以使用，所以雖然 JSON 全名有 Javascript，但他也支援其他如 C, Pyhon 等語言
+</td></tr></table>
+<h3 id="SOAP">SOAP</h3>
+<p>除了前面提到的 HTTP METHOD 可以下 API 來跟網頁溝通外，還有其他種方式，SOAP (Simple Object Access Protocol) 就是其一，SOAP 的交換(request &amp; response)都是透過 XML。Node.js 有提供 node-soap 的 module，方便產生 SOAP 的資料格式，但此協定已很少被使用了！</p>
+<hr>
+<h6 id="reference">reference</h6>
+<p>[1] <a target="_blank" rel="external nofollow noopener noreferrer" href="https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/424027/">https://codertw.com/程式語言/424027/</a><br>
+[2] <a target="_blank" rel="external nofollow noopener noreferrer" href="https://noob.tw/restful-api/">https://noob.tw/restful-api/</a><br>
+[3] <a target="_blank" rel="external nofollow noopener noreferrer" href="https://zh.wikipedia.org/wiki/%E5%A2%9E%E5%88%AA%E6%9F%A5%E6%94%B9">https://zh.wikipedia.org/wiki/增刪查改</a><br>
+[all] 記此篇為觀看 Lidemy NET101 的筆記，部分圖片以及內容取自上課影片</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/curl/" rel="tag"># curl</a>
+              <a href="/tags/API/" rel="tag"># API</a>
+              <a href="/tags/HTTP/" rel="tag"># HTTP</a>
+              <a href="/tags/Network/" rel="tag"># Network</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Install-Java-on-Win10/" rel="prev" title="[Java] Install Java on Win10">
+                  <i class="fa fa-chevron-left"></i> [Java] Install Java on Win10
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/API-curl-%E7%94%A8%E6%B3%95/" rel="next" title="[API] curl 使用指南">
+                  [API] curl 使用指南 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

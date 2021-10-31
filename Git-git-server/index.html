@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Step 1: 電腦&#x2F;VM 環境設置  作業系統選擇 Ubuntu 或其他 Linux 版本 開啟 SSH port 新增使用者帳號 git  $ sudo adduser --home &#x2F;home&#x2F;git --disabled-password git&#x2F;&#x2F;--disabled-password 表示取消用密碼登入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Git] Build a Git Server on Ubuntu">
+<meta property="og:url" content="https://ulahsieh.github.io/Git-git-server/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Step 1: 電腦&#x2F;VM 環境設置  作業系統選擇 Ubuntu 或其他 Linux 版本 開啟 SSH port 新增使用者帳號 git  $ sudo adduser --home &#x2F;home&#x2F;git --disabled-password git&#x2F;&#x2F;--disabled-password 表示取消用密碼登入">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/0ppmntS.png">
+<meta property="og:image" content="https://imgur.com/thA3DK7.png">
+<meta property="og:image" content="https://imgur.com/28JswVa.png">
+<meta property="og:image" content="https://imgur.com/3GywqeJ.png">
+<meta property="og:image" content="https://imgur.com/NFLalCV.png">
+<meta property="og:image" content="https://imgur.com/4GM2rl3.png">
+<meta property="og:image" content="https://imgur.com/NkLcrPE.png">
+<meta property="og:image" content="https://imgur.com/EYbI7GT.png">
+<meta property="article:published_time" content="2020-03-14T11:48:00.000Z">
+<meta property="article:modified_time" content="2020-03-14T11:48:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Git">
+<meta property="article:tag" content="Git Server">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/0ppmntS.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Git-git-server/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Git-git-server/","path":"Git-git-server/","title":"[Git] Build a Git Server on Ubuntu"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Git] Build a Git Server on Ubuntu | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-1-%E9%9B%BB%E8%85%A6-VM-%E7%92%B0%E5%A2%83%E8%A8%AD%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">Step 1: 電腦&#x2F;VM 環境設置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-2-%E5%AE%89%E8%A3%9D%E6%89%80%E9%9C%80%E5%A5%97%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">Step 2: 安裝所需套件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-3-git-client-%E7%AB%AF%E7%9A%84%E5%8B%95%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">Step 3: git client 端的動作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-4-%E7%AE%A1%E7%90%86%E8%80%85%E5%B0%87%E4%BD%BF%E7%94%A8%E8%80%85%E5%80%91%E7%9A%84%E5%85%AC%E9%91%B0%E5%82%B3%E8%87%B3-git-server"><span class="nav-number">4.</span> <span class="nav-text">Step 4: 管理者將使用者們的公鑰傳至 git server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-5-%E5%AE%8C%E6%88%90-Gitosis-%E7%9A%84%E8%A8%AD%E5%AE%9A"><span class="nav-number">5.</span> <span class="nav-text">Step 5: 完成 Gitosis 的設定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-6-%E4%BD%BF%E7%94%A8%E8%80%85%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">Step 6: 使用者使用</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Git-git-server/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Git] Build a Git Server on Ubuntu
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-03-14 19:48:00" itemprop="dateCreated datePublished" datetime="2020-03-14T19:48:00+08:00">2020-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>995</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="Step-1-電腦-VM-環境設置">Step 1: 電腦/VM 環境設置</h3>
+<ul>
+<li>作業系統選擇 Ubuntu 或其他 Linux 版本</li>
+<li>開啟 SSH port</li>
+<li>新增使用者帳號 git</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo adduser --home /home/git --disabled-password git</span><br><span class="line">//--disabled-password 表示取消用密碼登入</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">small tips:</span><br><span class="line">若開發團隊僅有兩三人，那不建立 git 帳號而是建立使用者個別的帳號也行。但考慮到日後可能擴編或是人員交替等等的因素，可能會增加管理的負擔。</span><br></pre></td></tr></table></figure>
+<h3 id="Step-2-安裝所需套件">Step 2: 安裝所需套件</h3>
+<ul>
+<li>安裝 git</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install git</span><br></pre></td></tr></table></figure>
+<ul>
+<li>安裝 Gitosis</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install python-setuptools</span><br><span class="line">$ cd /tmp</span><br><span class="line">$ git clone https://github.com/tv42/gitosis.git</span><br><span class="line">$ cd gittosis</span><br><span class="line">$ sudo python setup.py install</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">承第一步結尾，為了使用及管理上的方便，Gitosis 便應運而生，Gitosis 是一套用來管理授權金鑰文件和實現簡單連接限制的腳本。可以輕鬆的管理每個使用者，而不需實際在主機上新增/移除帳號，這樣 user 皆可用 git@server:ServerIP.git 這樣的格式來取得或上傳版本庫到Server上。</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在使用者家目錄 /home/git/ 下新增資料夾 repositories 當作版本庫位置</li>
+</ul>
+<p>Gitosis 預設會把 /home/git 這個目錄裡面的 repositories 資料夾當成所有 repository 的根目錄，以後所有的專案就都放在裡面。</p>
+<h3 id="Step-3-git-client-端的動作">Step 3: git client 端的動作</h3>
+<p>每個要使用 git server 的使用者，將會擁護一把自己的金鑰，若同一使用者使用多台電腦，則需將同一把的私鑰複製到同路徑下便可連線。</p>
+<ul>
+<li>開啟 git bash 產生一對金鑰</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C &quot;xxx@email.com&quot;</span><br><span class="line">// -C 參數用於指定這個金鑰的識別碼，預設是「帳號@主機名稱」，但為了好管理，所以建議用使用者的唯一識別值如 email</span><br></pre></td></tr></table></figure>
+<ul>
+<li>輸入金鑰存放位置<br>
+若沒輸入則存在預設位置<br>
+<img src="https://imgur.com/0ppmntS.png" alt></li>
+<li>輸入密碼<br>
+這裡不需設定，直接按兩次 enter 即可，這樣日後在 push 上 server 時，就不用輸入密碼了<br>
+<img src="https://imgur.com/thA3DK7.png" alt></li>
+<li>產生金鑰<br>
+產生完成後會有兩個檔案，副檔名 .pub 為公鑰，沒有副檔名的是私鑰，公鑰交給(寄給) git server 管理者，私鑰則好好保存在欲使用的電腦中。<br>
+<img src="https://imgur.com/28JswVa.png" alt></li>
+</ul>
+<h3 id="Step-4-管理者將使用者們的公鑰傳至-git-server">Step 4: 管理者將使用者們的公鑰傳至 git server</h3>
+<ul>
+<li>使用 pscp 將檔案傳至 git server</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ pscp user1.pub git@ServerIP:/tmp/user1.pub</span><br><span class="line">//將 user1.pub 以 git 帳號丟到 server 上的 /tmp 目錄下，若需重新命名，則直接在 /tmp/xxx.pub 中打上欲命名的檔名</span><br></pre></td></tr></table></figure>
+<ul>
+<li>輸入密碼以開始上傳<br>
+<img src="https://imgur.com/3GywqeJ.png" alt></li>
+</ul>
+<h3 id="Step-5-完成-Gitosis-的設定">Step 5: 完成 Gitosis 的設定</h3>
+<p>Gitosis 有個很酷的管理方式，因為它本身就是一個 Git Repository，只要 clone 到管理者的電腦，修改裡面的檔案，再 push 回 Git Server，就會能完成如新增使用者公鑰、更改專案權限等設定。</p>
+<ul>
+<li>在管理者地端的電腦中 git clone Gitosis</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ cd /c/Projects</span><br><span class="line">$ git clone git@ServerIP:gitosis-admin.git</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>git clone 後可看到目錄下的資料結構<br>
+<img src="https://imgur.com/NFLalCV.png" alt></p>
+</li>
+<li>
+<p>新增使用者<br>
+keydir目錄裡面存放目前所有Git使用者的公鑰，把新使用者的公鑰丟到 keydir 目錄下<br>
+<img src="https://imgur.com/4GM2rl3.png" alt></p>
+</li>
+<li>
+<p>編輯 gitosis.conf<br>
+gitosis.conf 就是主要的設定檔，我們可以編輯裡面的設定來加入專案或使用者。<br>
+這是剛初始化好的內容，裡面指定了 gitosis-admin 管理員的公鑰名稱(只允許一個管理員來管理 gitosis-admin)<br>
+<img src="https://imgur.com/NkLcrPE.png" alt><br>
+編輯gitosis.conf，加入專案名稱和擁有寫入權限的使用者；<br>
+　　1. [群組名稱] 可自定<br>
+　　2. members 為成員的公鑰識別碼 (建立金鑰時的 -C 參數值) 多個請用空白分隔<br>
+　　3. writable 為專案名稱<br>
+<img src="https://imgur.com/EYbI7GT.png" alt></p>
+</li>
+<li>
+<p>提交更新並同步回 git server</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ git add</span><br><span class="line">$ git commit -m &quot;add an user and create a develop group&quot;</span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
+<p>到這個步驟，git server 就算是建完了!</p>
+<h3 id="Step-6-使用者使用">Step 6: 使用者使用</h3>
+<ul>
+<li>push (在專案下)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ git remote add origin git@ServerIP:project1.git</span><br><span class="line">$ git push origin master</span><br></pre></td></tr></table></figure>
+<ul>
+<li>pull</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ git clone git@ServerIP:project1.git</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+              <a href="/tags/Git-Server/" rel="tag"># Git Server</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/nginx-certbot/" rel="prev" title="[SSL] 用 Let's Encrypt & Certbot 為網站加密">
+                  <i class="fa fa-chevron-left"></i> [SSL] 用 Let's Encrypt & Certbot 為網站加密
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Javascript-Debugging-in-Chrome/" rel="next" title="[Javascript] Debugging in Chrome">
+                  [Javascript] Debugging in Chrome <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

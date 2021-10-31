@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="在 Kafka 集群中增加 broker 非常方便，只需為其分配唯一的 broker ID，指定集群使用的 zookeeper connect 位址，然後在新服務器上啟動 Kafka。但是，舊有的 Topic 不會將 Partition 均勻分配到新的節點上，進而造成數據不平衡。 因此需要將一些現有數據遷移到這些新機器上進行 rebalancing。 Kafka 提供了 kafka-reassig">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Kafka] 新增 broker 節點並平衡 topic">
+<meta property="og:url" content="https://ulahsieh.github.io/Kafka-topic-rebalancing/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="在 Kafka 集群中增加 broker 非常方便，只需為其分配唯一的 broker ID，指定集群使用的 zookeeper connect 位址，然後在新服務器上啟動 Kafka。但是，舊有的 Topic 不會將 Partition 均勻分配到新的節點上，進而造成數據不平衡。 因此需要將一些現有數據遷移到這些新機器上進行 rebalancing。 Kafka 提供了 kafka-reassig">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/FkFrL6U.png">
+<meta property="og:image" content="https://imgur.com/7bkElf4.png">
+<meta property="og:image" content="https://imgur.com/njWtLVh.png">
+<meta property="og:image" content="https://imgur.com/TvoSa8i.png">
+<meta property="og:image" content="https://imgur.com/KHNRdTr.png">
+<meta property="og:image" content="https://imgur.com/8ovsqWl.png">
+<meta property="og:image" content="https://imgur.com/undefined.png">
+<meta property="og:image" content="https://imgur.com/n4zrCwN.png">
+<meta property="og:image" content="https://imgur.com/5mY3pG8.png">
+<meta property="article:published_time" content="2020-08-24T06:10:00.000Z">
+<meta property="article:modified_time" content="2020-08-24T06:10:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/FkFrL6U.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Kafka-topic-rebalancing/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Kafka-topic-rebalancing/","path":"Kafka-topic-rebalancing/","title":"[Kafka] 新增 broker 節點並平衡 topic"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Kafka] 新增 broker 節點並平衡 topic | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E5%A2%9E-kafka-broker-%E5%88%B0-cluster-%E4%B8%AD"><span class="nav-number">1.</span> <span class="nav-text">新增 kafka broker 到 cluster 中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#partition-reassign"><span class="nav-number">2.</span> <span class="nav-text">partition reassign</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BB%BA%E7%AB%8B-topics-json-%E6%AA%94%E6%A1%88"><span class="nav-number">2.1.</span> <span class="nav-text">1. 建立 topics.json 檔案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%9F%E6%88%90%E5%88%86%E9%85%8D%E8%A8%88%E7%95%AB"><span class="nav-number">2.2.</span> <span class="nav-text">2. 生成分配計畫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%9F%B7%E8%A1%8C%E9%87%8D%E5%88%86%E9%85%8D%E8%A8%88%E7%95%AB"><span class="nav-number">2.3.</span> <span class="nav-text">3. 執行重分配計畫</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%A9%97%E8%AD%89%E9%80%B2%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">4. 驗證進度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%9F%A5%E7%9C%8B-topic-%E5%89%AF%E6%9C%AC%E7%8B%80%E6%B3%81"><span class="nav-number">4.</span> <span class="nav-text">5. 查看 topic 副本狀況</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#preferred-replica-election"><span class="nav-number">5.</span> <span class="nav-text">preferred replica election</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kafka-topic-rebalancing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Kafka] 新增 broker 節點並平衡 topic
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-08-24 14:10:00" itemprop="dateCreated datePublished" datetime="2020-08-24T14:10:00+08:00">2020-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在 Kafka 集群中增加 broker 非常方便，只需為其分配唯一的 broker ID，指定集群使用的 zookeeper connect 位址，然後在新服務器上啟動 Kafka。但是，<strong>舊有的 Topic 不會將 Partition 均勻分配到新的節點上，進而造成數據不平衡。</strong> 因此需要將一些現有數據遷移到這些新機器上進行 rebalancing。</p>
+<p>Kafka 提供了 <code>kafka-reassign-partitions.sh</code> 工具來進行手動平均分配：</p>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">This tool helps to moves topic partitions between replicas.</span><br><span class="line">Option                                  Description</span><br><span class="line">------                                  -----------</span><br><span class="line">--bootstrap-server &lt;String: Server(s)   the server(s) to use for</span><br><span class="line">  to use for bootstrapping&gt;               bootstrapping. REQUIRED if an</span><br><span class="line">                                          absolute path of the log directory</span><br><span class="line">                                          is specified for any replica in the</span><br><span class="line">                                          reassignment json file</span><br><span class="line">--broker-list &lt;String: brokerlist&gt;      The list of brokers to which the</span><br><span class="line">                                          partitions need to be reassigned in</span><br><span class="line">                                          the form &quot;0,1,2&quot;. This is required</span><br><span class="line">                                          if --topics-to-move-json-file is</span><br><span class="line">                                          used to generate reassignment</span><br><span class="line">                                          configuration</span><br><span class="line">--command-config &lt;String: Admin client  Property file containing configs to be</span><br><span class="line">  property file&gt;                          passed to Admin Client.</span><br><span class="line">--disable-rack-aware                    Disable rack aware replica assignment</span><br><span class="line">--execute                               Kick off the reassignment as specified</span><br><span class="line">                                          by the --reassignment-json-file</span><br><span class="line">                                          option.</span><br><span class="line">--generate                              Generate a candidate partition</span><br><span class="line">                                          reassignment configuration. Note</span><br><span class="line">                                          that this only generates a candidate</span><br><span class="line">                                          assignment, it does not execute it.</span><br><span class="line">--help                                  Print usage information.</span><br><span class="line">--reassignment-json-file &lt;String:       The JSON file with the partition</span><br><span class="line">  manual assignment json file path&gt;       reassignment configurationThe format</span><br><span class="line">                                          to use is -</span><br><span class="line">                                        &#123;&quot;partitions&quot;:</span><br><span class="line">                                                [&#123;&quot;topic&quot;: &quot;foo&quot;,</span><br><span class="line">                                                  &quot;partition&quot;: 1,</span><br><span class="line">                                                  &quot;replicas&quot;: [1,2,3],</span><br><span class="line">                                                  &quot;log_dirs&quot;: [&quot;dir1&quot;,&quot;dir2&quot;,&quot;dir3&quot;]</span><br><span class="line">                                          &#125;],</span><br><span class="line">                                        &quot;version&quot;:1</span><br><span class="line">                                        &#125;</span><br><span class="line">                                        Note that &quot;log_dirs&quot; is optional. When</span><br><span class="line">                                          it is specified, its length must</span><br><span class="line">                                          equal the length of the replicas</span><br><span class="line">                                          list. The value in this list can be</span><br><span class="line">                                          either &quot;any&quot; or the absolution path</span><br><span class="line">                                          of the log directory on the broker.</span><br><span class="line">                                          If absolute log directory path is</span><br><span class="line">                                          specified, the replica will be moved</span><br><span class="line">                                          to the specified log directory on</span><br><span class="line">                                          the broker.</span><br><span class="line">--replica-alter-log-dirs-throttle       The movement of replicas between log</span><br><span class="line">  &lt;Long: replicaAlterLogDirsThrottle&gt;     directories on the same broker will</span><br><span class="line">                                          be throttled to this value</span><br><span class="line">                                          (bytes/sec). Rerunning with this</span><br><span class="line">                                          option, whilst a rebalance is in</span><br><span class="line">                                          progress, will alter the throttle</span><br><span class="line">                                          value. The throttle rate should be</span><br><span class="line">                                          at least 1 KB/s. (default: -1)</span><br><span class="line">--throttle &lt;Long: throttle&gt;             The movement of partitions between</span><br><span class="line">                                          brokers will be throttled to this</span><br><span class="line">                                          value (bytes/sec). Rerunning with</span><br><span class="line">                                          this option, whilst a rebalance is</span><br><span class="line">                                          in progress, will alter the throttle</span><br><span class="line">                                          value. The throttle rate should be</span><br><span class="line">                                          at least 1 KB/s. (default: -1)</span><br><span class="line">--timeout &lt;Long: timeout&gt;               The maximum time in ms allowed to wait</span><br><span class="line">                                          for partition reassignment execution</span><br><span class="line">                                          to be successfully initiated</span><br><span class="line">                                          (default: 10000)</span><br><span class="line">--topics-to-move-json-file &lt;String:     Generate a reassignment configuration</span><br><span class="line">  topics to reassign json file path&gt;      to move the partitions of the</span><br><span class="line">                                          specified topics to the list of</span><br><span class="line">                                          brokers specified by the --broker-</span><br><span class="line">                                          list option. The format to use is -</span><br><span class="line">                                        &#123;&quot;topics&quot;:</span><br><span class="line">                                                [&#123;&quot;topic&quot;: &quot;foo&quot;&#125;,&#123;&quot;topic&quot;: &quot;foo1&quot;&#125;],</span><br><span class="line">                                        &quot;version&quot;:1</span><br><span class="line">                                        &#125;</span><br><span class="line">--verify                                Verify if the reassignment completed</span><br><span class="line">                                          as specified by the --reassignment-</span><br><span class="line">                                          json-file option. If there is a</span><br><span class="line">                                          throttle engaged for the replicas</span><br><span class="line">                                          specified, and the rebalance has</span><br><span class="line">                                          completed, the throttle will be</span><br><span class="line">                                          removed</span><br><span class="line">--version                               Display Kafka version.</span><br><span class="line">--zookeeper &lt;String: urls&gt;              REQUIRED: The connection string for</span><br><span class="line">                                          the zookeeper connection in the form</span><br><span class="line">                                          host:port. Multiple URLS can be</span><br><span class="line">                                          given to allow fail-over.</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="新增-kafka-broker-到-cluster-中">新增 kafka broker 到 cluster 中</h2>
+<p>首先先到集群的 zookeeper 中開啟 zkCli 查看目前集群下有的 kafka broker<br>
+<img src="https://imgur.com/FkFrL6U.png" alt><br>
+準備一台新的節點，其中配置檔的 <code>id</code> 要寫不同於群集現有的 id，<code>zookeeper.connect</code> 填寫群集使用的 zookeeper。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">broker.id=3</span><br><span class="line">zookeeper.connect=10.1.5.31:2181,10.1.5.32:2181,10.1.5.33:2181/kafka</span><br></pre></td></tr></table></figure>
+<p>啟用節點<br>
+<img src="https://imgur.com/7bkElf4.png" alt><br>
+回到 zkCli 查看 kafka broker id，就可以發現節點已經被加入叢集了！<br>
+<img src="https://imgur.com/njWtLVh.png" alt></p>
+<hr>
+<h2 id="partition-reassign">partition reassign</h2>
+<p>原有的 topic <code>test</code> 有三個 replication 以及三個 partition，ISR 如下：<br>
+<img src="https://imgur.com/TvoSa8i.png" alt><br>
+在新增 broker 節點後，可以使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="http://kafka-reassign-partitions.sh">kafka-reassign-partitions.sh</a> 重新分配 partition 的分布。</p>
+<h3 id="1-建立-topics-json-檔案">1. 建立 <code>topics.json</code> 檔案</h3>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">&quot;topics&quot;</span>: [</span><br><span class="line">    &#123;<span class="attr">&quot;topic&quot;</span>:<span class="string">&quot;test1&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="attr">&quot;topic&quot;</span>:<span class="string">&quot;test2&quot;</span>&#125; </span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 <code>topics</code>是一個 array，可以在其中放置多個 topics。 但是在生產環境中最好一個接一個地進行 reassign，這樣就不會因為一個 topic 重新平衡失敗而影響整個集群。</p>
+<h3 id="2-生成分配計畫">2. 生成分配計畫</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ cd /opt/kafka</span><br><span class="line">$ bin/kafka-reassign-partitions.sh --zookeeper 10.1.5.31:2181,10.1.5.32:2181,10.1.5.33:2181/kafka --topics-to-move-json-file topic.json  --broker-list  &quot;0,1,2,3&quot;  --generate</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–generate: 根據給與的 Topic 列表和 Broker 列表生成遷移計劃。 generate 並不會真正進行消息遷移，而是將消息遷移計劃計算出來，供 execute 命令使用。<br>
+<img src="https://imgur.com/KHNRdTr.png" alt></li>
+</ul>
+<p><code>Current partition replica assignment</code> 表示當前的消息存儲狀況。 <code>Proposed partition reassignment configuration</code>表示遷移後的消息存儲狀況。</p>
+<h3 id="3-執行重分配計畫">3. 執行重分配計畫</h3>
+<p>將上面產出的遷移列表 <code>Proposed partition reassignment configuration</code> 存入文件 reassignment.json 中，供 --execute 命令使用。<br>
+<img src="https://imgur.com/8ovsqWl.png" alt><br>
+執行計畫</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ bin/kafka-reassign-partitions.sh --zookeeper 10.1.5.31:2181,10.1.5.32:2181,10.1.5.33:2181/kafka --reassignment-json-file reassignment.json --execute</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–execute: 根據 topic 遷移計劃進行遷移。</li>
+<li>–throttle 為了避免遷移過程中影響 kafka 正常使用，可以加入這個參數限制遷移的流量，單位是 byte。<br>
+<img src="https://imgur.com/undefined.png" alt></li>
+</ul>
+<h2 id="4-驗證進度">4. 驗證進度</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ bin/kafka-reassign-partitions.sh --zookeeper 10.1.5.31:2181,10.1.5.32:2181,10.1.5.33:2181/kafka --reassignment-json-file reassignment.json --verify</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–verify: 檢查消息是否已經遷移完成。<br>
+<img src="https://imgur.com/n4zrCwN.png" alt></li>
+</ul>
+<h2 id="5-查看-topic-副本狀況">5. 查看 topic 副本狀況</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ bin/kafka-topics.sh --describe --bootstrap-server 10.1.5.31:9092 --topic test</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/5mY3pG8.png" alt></p>
+<h2 id="preferred-replica-election">preferred replica election</h2>
+<p>關於優先副本的選舉可以保持預設值讓節點間自動平衡，在 broker 啟動時，因預設 <code>auto.leader.rebalance.enable</code> 的默認值為 true，故當 broker 在故障轉移操作時會啟動一個定時任務，每隔 <code>$&#123;leader. imbalance.check.interval.seconds&#125;</code> 秒 (默認是5分鐘) 觸發一次分區分配均衡操作，而只有在代理的不均衡的百分比達到 <code>$&#123;leader.imbalance.per.broker.percentage&#125;</code> (default 10，即不均衡比例達到 10%) 以上時才會真正執行分區重新分配操作。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/copy-docker-image-to-different-host/" rel="prev" title="[Docker] 在不同電腦中傳 Docker image">
+                  <i class="fa fa-chevron-left"></i> [Docker] 在不同電腦中傳 Docker image
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Zookeeper-Encryption1/" rel="next" title="[Zookeeper] Encryption - 產生 self-signed 金鑰">
+                  [Zookeeper] Encryption - 產生 self-signed 金鑰 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

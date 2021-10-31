@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="目前的環境使用的 terraform 版本是 v0.13.5  參考以下官網說明，如果從 0.13 版要往最新版 v1 升，需要先升到 0.14。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Terraform] Upgrade to the Latest Version">
+<meta property="og:url" content="https://ulahsieh.github.io/terraform-Upgrade/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="目前的環境使用的 terraform 版本是 v0.13.5  參考以下官網說明，如果從 0.13 版要往最新版 v1 升，需要先升到 0.14。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/QDUkUEk.png">
+<meta property="og:image" content="https://imgur.com/Fbo6jfu.png">
+<meta property="article:published_time" content="2021-09-14T05:02:00.000Z">
+<meta property="article:modified_time" content="2021-09-14T05:02:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="terraform">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/QDUkUEk.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/terraform-Upgrade/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/terraform-Upgrade/","path":"terraform-Upgrade/","title":"[Terraform] Upgrade to the Latest Version"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Terraform] Upgrade to the Latest Version | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%96%8B%E5%A7%8B%E5%8D%87%E7%B4%9A"><span class="nav-number">1.</span> <span class="nav-text">開始升級</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cannot-execute-binary-file"><span class="nav-number">2.</span> <span class="nav-text">cannot execute binary file</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/terraform-Upgrade/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Terraform] Upgrade to the Latest Version
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-09-14 13:02:00" itemprop="dateCreated datePublished" datetime="2021-09-14T13:02:00+08:00">2021-09-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Terraform/" itemprop="url" rel="index"><span itemprop="name">Terraform</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>目前的環境使用的 terraform 版本是 v0.13.5<br>
+<img src="https://imgur.com/QDUkUEk.png" alt></p>
+<p>參考以下官網說明，如果從 0.13 版要往最新版 v1 升，需要先升到 0.14。</p>
+<span id="more"></span>
+<table>
+<thead>
+<tr>
+<th>Current Version</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v0.10 or earlier</td>
+<td>Refer to the upgrade guides for these historical versions until you have upgraded to the latest v0.11 release, then refer to the following item.</td>
+</tr>
+<tr>
+<td>v0.11</td>
+<td>Use the terraform 0.12checklist command to detect any situations that must be addressed before upgrading to v0.12, resolve them, and then upgrade to the latest v0.12 release and follow the v0.12 Upgrade Guide.</td>
+</tr>
+<tr>
+<td>v0.12</td>
+<td>Upgrade to the latest Terraform v0.13 release and then follow the v0.13 upgrade guide to upgrade your configuration and state for explicit provider requirements.</td>
+</tr>
+<tr>
+<td>v0.13</td>
+<td>Upgrade to the latest Terraform v0.14 release and attempt a normal Terraform run. If you encounter any new errors, refer to the v0.14 upgrade guide for resolution steps.</td>
+</tr>
+<tr>
+<td>v0.14</td>
+<td>Upgrade directly to the latest Terraform v1.0 release and attempt a normal Terraform run. If you encounter any new errors, refer to the v0.15 upgrade guide for resolution steps.</td>
+</tr>
+<tr>
+<td>v0.15</td>
+<td>Upgrade directly to the latest Terraform v1.0 release and attempt a normal Terraform run. Terraform v1.0 is a continuation of the v0.15 series, and so v1.0.0 and later are directly backward-compatible with Terraform v0.15.5.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="開始升級">開始升級</h3>
+<p>各版 release <a target="_blank" rel="external nofollow noopener noreferrer" href="https://releases.hashicorp.com/terraform/">載點</a>，請依照不同的作業系統安裝。<br>
+<img src="https://imgur.com/Fbo6jfu.png" alt></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@master1 ~]<span class="comment"># wget https://releases.hashicorp.com/terraform/0.14.11/terraform_0.14.11_linux_amd64.zip</span></span><br><span class="line">--2021-09-14 13:00:30--  https://releases.hashicorp.com/terraform/0.14.11/terraform_0.14.11_linux_amd64.zip</span><br><span class="line">Resolving releases.hashicorp.com (releases.hashicorp.com)... 151.101.1.183, 151.101.65.183, 151.101.129.183, ...</span><br><span class="line">Connecting to releases.hashicorp.com (releases.hashicorp.com)|151.101.1.183|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 33789439 (32M) [application/zip]</span><br><span class="line">Saving to: ‘terraform_0.14.11_linux_amd64.zip’</span><br><span class="line"></span><br><span class="line">100%[==============================================================================================&gt;] 33,789,439  8.05MB/s   <span class="keyword">in</span> 4.0s</span><br><span class="line"></span><br><span class="line">2021-09-14 13:00:34 (8.10 MB/s) - ‘terraform_0.14.11_linux_amd64.zip’ saved [33789439/33789439]</span><br><span class="line"></span><br><span class="line">[root@master1 ~]<span class="comment">#</span></span><br><span class="line">[root@master1 ~]<span class="comment"># unzip terraform_0.14.11_linux_amd64.zip</span></span><br><span class="line">Archive:  terraform_0.14.11_linux_amd64.zip</span><br><span class="line">  inflating: terraform</span><br><span class="line"></span><br><span class="line">[root@master1 ~]<span class="comment">#</span></span><br><span class="line">[root@master1 ~]<span class="comment"># mv terraform /usr/local/bin/</span></span><br><span class="line">mv: overwrite ‘/usr/<span class="built_in">local</span>/bin/terraform’? y</span><br><span class="line">[root@master1 ~]<span class="comment"># terraform version</span></span><br><span class="line">Terraform v0.14.11</span><br><span class="line"></span><br><span class="line">Your version of Terraform is out of date! The latest version</span><br><span class="line">is 1.0.6. You can update by downloading from https://www.terraform.io/downloads.html</span><br><span class="line">[root@master1 ~]<span class="comment">#</span></span><br><span class="line">[root@master1 ~]<span class="comment"># wget https://releases.hashicorp.com/terraform/1.0.6/terraform_1.0.6_linux_amd64.zip</span></span><br><span class="line">[root@master1 ~]<span class="comment"># wget https://releases.hashicorp.com/terraform/1.0.6/terraform_1.0.6_linux_amd64.zip</span></span><br><span class="line">--2021-09-14 13:31:21--  https://releases.hashicorp.com/terraform/1.0.6/terraform_1.0.6_linux_amd64.zip</span><br><span class="line">Resolving releases.hashicorp.com (releases.hashicorp.com)... 151.101.129.183, 151.101.1.183, 151.101.65.183, ...</span><br><span class="line">Connecting to releases.hashicorp.com (releases.hashicorp.com)|151.101.129.183|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 32677516 (31M) [application/zip]</span><br><span class="line">Saving to: ‘terraform_1.0.6_linux_amd64.zip’</span><br><span class="line"></span><br><span class="line">100%[=================================================================================================================&gt;] 32,677,516  11.0MB/s   <span class="keyword">in</span> 2.8s</span><br><span class="line"></span><br><span class="line">2021-09-14 13:31:24 (11.0 MB/s) - ‘terraform_1.0.6_linux_amd64.zip’ saved [32677516/32677516]</span><br><span class="line"></span><br><span class="line">[root@master1 ~]<span class="comment">#</span></span><br><span class="line">[root@master1 ~]<span class="comment"># unzip terraform_1.0.6_linux_amd64.zip</span></span><br><span class="line">Archive:  terraform_1.0.6_linux_amd64.zip</span><br><span class="line">  inflating: terraform</span><br><span class="line"></span><br><span class="line">[root@master1 ~]<span class="comment">#</span></span><br><span class="line">[root@master1 ~]<span class="comment"># mv terraform /usr/local/bin/</span></span><br><span class="line">mv: overwrite ‘/usr/<span class="built_in">local</span>/bin/terraform’? y</span><br><span class="line">[root@master1 ~]<span class="comment"># terraform version</span></span><br><span class="line">Terraform v1.0.6</span><br></pre></td></tr></table></figure>
+<h3 id="cannot-execute-binary-file">cannot execute binary file</h3>
+<p>如果在安裝完後，使用 <code>terrform</code> cli 時，發現以下錯誤</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@master1 ~]# terraform version</span><br><span class="line">-bash: /usr/local/bin/terraform: cannot execute binary file</span><br></pre></td></tr></table></figure>
+<p>則是因為下載到錯誤的作業系統的安裝包。</p>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.terraform.io/upgrade-guides/1-0.html">https://www.terraform.io/upgrade-guides/1-0.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/terraform/" rel="tag"># terraform</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Docker-golang-oracle-instant-client-image/" rel="prev" title="[Docker] 建立 golang 中使用到 oracle instant client 的 image">
+                  <i class="fa fa-chevron-left"></i> [Docker] 建立 golang 中使用到 oracle instant client 的 image
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Kubernetes-Change-MetalLB-IP-Range/" rel="next" title="[Kubernetes] Change MetalLB IP Range">
+                  [Kubernetes] Change MetalLB IP Range <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

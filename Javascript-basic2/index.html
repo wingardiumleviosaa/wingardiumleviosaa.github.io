@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="if&#x2F;else statement 使用 if&#x2F;else 來判斷狀況，用法如下： if… 可加入運算於判斷條件句內 1234var num &#x3D; 13if(num % 5 &#x3D;&#x3D;&#x3D; 0)&amp;#123;    console.log(&amp;#x27;num is multiple of five&amp;#x27;)&amp;#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Javascript] 條件句、迴圈">
+<meta property="og:url" content="https://ulahsieh.github.io/Javascript-basic2/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="if&#x2F;else statement 使用 if&#x2F;else 來判斷狀況，用法如下： if… 可加入運算於判斷條件句內 1234var num &#x3D; 13if(num % 5 &#x3D;&#x3D;&#x3D; 0)&amp;#123;    console.log(&amp;#x27;num is multiple of five&amp;#x27;)&amp;#125;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-17T14:23:00.000Z">
+<meta property="article:modified_time" content="2020-06-17T14:23:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="javascript">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Javascript-basic2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Javascript-basic2/","path":"Javascript-basic2/","title":"[Javascript] 條件句、迴圈"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Javascript] 條件句、迴圈 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#if-else-statement"><span class="nav-number">1.</span> <span class="nav-text">if&#x2F;else statement</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#if%E2%80%A6"><span class="nav-number">1.1.</span> <span class="nav-text">if…</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#if%E2%80%A6else"><span class="nav-number">1.2.</span> <span class="nav-text">if…else</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#if%E2%80%A6else-if%E2%80%A6else"><span class="nav-number">1.3.</span> <span class="nav-text">if…else if…else</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A3%9C%E5%85%85"><span class="nav-number">1.4.</span> <span class="nav-text">補充</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#switch-case"><span class="nav-number">2.</span> <span class="nav-text">switch case</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A0%88%E7%95%99%E6%84%8F"><span class="nav-number">2.1.</span> <span class="nav-text">須留意</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="nav-number">2.2.</span> <span class="nav-text">小技巧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E5%A0%B4%E5%8A%A0%E6%98%A0%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="nav-number">2.3.</span> <span class="nav-text">同場加映小技巧</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%85%83%E9%81%8B%E7%AE%97%E5%AD%90-Ternary"><span class="nav-number">3.</span> <span class="nav-text">三元運算子 Ternary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%B4%E5%9C%88"><span class="nav-number">4.</span> <span class="nav-text">迴圈</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#do%E2%80%A6while%E2%80%A6"><span class="nav-number">4.1.</span> <span class="nav-text">do…while…</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#break"><span class="nav-number">4.1.1.</span> <span class="nav-text">break</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#continue"><span class="nav-number">4.1.2.</span> <span class="nav-text">continue</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#while%E2%80%A6"><span class="nav-number">4.2.</span> <span class="nav-text">while…</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#for%E2%80%A6loop"><span class="nav-number">4.3.</span> <span class="nav-text">for…loop</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%88%87%E9%99%A3%E5%88%97%E7%9A%84%E6%90%AD%E9%85%8D%E4%BD%BF%E7%94%A8"><span class="nav-number">4.3.1.</span> <span class="nav-text">與陣列的搭配使用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E6%8A%80%E5%B7%A7-2"><span class="nav-number">4.4.</span> <span class="nav-text">小技巧</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Javascript-basic2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Javascript] 條件句、迴圈
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-06-17 22:23:00" itemprop="dateCreated datePublished" datetime="2020-06-17T22:23:00+08:00">2020-06-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="if-else-statement">if/else statement</h3>
+<p>使用 if/else 來判斷狀況，用法如下：</p>
+<h4 id="if…">if…</h4>
+<p>可加入運算於判斷條件句內</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="number">13</span></span><br><span class="line"><span class="keyword">if</span>(num % <span class="number">5</span> === <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;num is multiple of five&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h4 id="if…else">if…else</h4>
+<p>判斷如果 if 相符做什麼事，不相符則則做 else 區塊。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> score = <span class="number">70</span></span><br><span class="line"><span class="keyword">if</span>( score&gt;=<span class="number">60</span> &amp;&amp; score&lt;<span class="number">100</span>)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;pass&#x27;</span>)</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;failed&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="if…else-if…else">if…else if…else</h4>
+<p>多條件判斷，先判斷 if、再判斷 else if(可以多個 else if 判斷)，最後都不相符的話執行 else 區塊。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>( score&gt;=<span class="number">60</span> &amp;&amp; score&lt;<span class="number">100</span>)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;pass&#x27;</span>)</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>(score===<span class="number">100</span>)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;excellent&#x27;</span>)</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;failed&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="補充">補充</h4>
+<ol>
+<li>小條件通常都用 () 括起來；區塊通常都用 {} 括起來</li>
+<li>num % 5 === 0　這個判斷 num 是否為 5 的倍數的判斷句，可以改寫成 !(num % 5)，但 num % 5 === 0 會比較直觀，如果無關乎效能的話．建議使用比較好懂得語句去寫 code。</li>
+</ol>
+<h3 id="switch-case">switch case</h3>
+<p>當判斷的條件非常多的時候，除了使用 else if 外，還可以使用 switch case 取代。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> g = <span class="number">1</span></span><br><span class="line"><span class="keyword">switch</span>(month)&#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Jan&#x27;</span>)</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Feb&#x27;</span>)</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">  <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Mar&#x27;</span>)</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  <span class="attr">default</span>:</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;wrong month&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="須留意">須留意</h4>
+<ul>
+<li><font color="darkred">在每個 case 結尾需加入 <code>break</code></font>，當符合 case 後才會跳出，否則會把每個 case 都執行一遍</li>
+<li>如果上述 case 都沒符合的話，會執行 <code>default</code></li>
+<li>可以把兩個 case 放一起做同一件事，例如上面範例的 case 3 &amp; case 4，任一個符合都會執行 console.log(‘Mar’)</li>
+</ul>
+<h4 id="小技巧">小技巧</h4>
+<p>如果以這個範例來說的話，用上面寫法還是很冗，可以把它簡化成使用陣列來判斷變數內容。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> month = <span class="number">3</span></span><br><span class="line"><span class="keyword">var</span> arrMonth = [<span class="string">&#x27;Jan&#x27;</span>,<span class="string">&#x27;Feb&#x27;</span>,<span class="string">&#x27;Mar&#x27;</span>,<span class="string">&#x27;Apr&#x27;</span>,<span class="string">&#x27;May&#x27;</span>]</span><br><span class="line"><span class="built_in">console</span>.log(arrMonth[month-<span class="number">1</span>]) <span class="comment">//找到 index 就是答案</span></span><br></pre></td></tr></table></figure>
+<p>所以可以依照需求去使用不同的寫法，看哪個最適合、或最簡便就用哪個。</p>
+<h4 id="同場加映小技巧">同場加映小技巧</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">var score = 60</span><br><span class="line">var isPass = false</span><br><span class="line">if (score &gt;= 60)&#123;</span><br><span class="line">    isPass = true</span><br><span class="line">&#125;else &#123;</span><br><span class="line">    isPass = false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可簡化成以下，可讀性高又簡潔的寫法。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">var score = 60</span><br><span class="line">var isPass = score &gt;= 60</span><br></pre></td></tr></table></figure>
+<h3 id="三元運算子-Ternary">三元運算子 Ternary</h3>
+<p><code>[condition] ? A : B</code>，condition 為成立的話執行 A；false 的話執行 B。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log( <span class="number">10</span> &gt; <span class="number">5</span> ? <span class="string">&#x27;bigger&#x27;</span> : <span class="string">&#x27;smaller&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> score = <span class="number">60</span></span><br><span class="line"><span class="keyword">var</span> msg = score &gt;= <span class="number">60</span> ? <span class="string">&#x27;pass&#x27;</span> : <span class="string">&#x27;failed&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>也可以加上巢狀判斷，但可讀性就會降低，所以不推薦寫。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> msg = score &gt;= <span class="number">60</span> ? (score === <span class="number">100</span> ? <span class="string">&#x27;excellent&#x27;</span> : <span class="string">&#x27;pass&#x27;</span>) : <span class="string">&#x27;failed&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="迴圈">迴圈</h3>
+<p>定義</p>
+<ul>
+<li>重複做一樣的事情</li>
+<li>通常有終止條件</li>
+<li>沒有終止條件的迴圈為<code>無窮迴圈</code></li>
+</ul>
+<h4 id="do…while…">do…while…</h4>
+<p>do-while 迴圈至少會執行第一次。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = <span class="number">1</span></span><br><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)</span><br><span class="line">  i++</span><br><span class="line">&#125;<span class="keyword">while</span>(i&lt;=<span class="number">100</span>)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;i=&#x27;</span>,i) <span class="comment">//i=101</span></span><br></pre></td></tr></table></figure>
+<p>當 while () 理的條件為 true 的話才會進入迴圈，false 的話會跳出迴圈。</p>
+<h5 id="break">break</h5>
+<p>或是可以把跳出迴圈的判斷寫在 do 裡面，使用 <code>break</code> 跳出迴圈。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = <span class="number">1</span></span><br><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(i)</span><br><span class="line">  i++</span><br><span class="line">  <span class="keyword">if</span>(i&gt;<span class="number">100</span>)&#123;</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;<span class="keyword">while</span>(<span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="continue">continue</h5>
+<p>可以在 do 裡面加上 <code>continue</code> 做另一層判斷以接進行下一圈。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = <span class="number">1</span></span><br><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (i%<span class="number">2</span>===<span class="number">1</span>)&#123;</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">console</span>.log(i)</span><br><span class="line">  i++</span><br><span class="line">&#125;<span class="keyword">while</span>(i&lt;=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<p>上面印出的結果如下，因為當 i 為奇數時（% 2 === 1），會執行 continue 跳到while 判斷進行到下一個個迴圈。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2</span><br><span class="line">4</span><br><span class="line">6</span><br><span class="line">8</span><br><span class="line">10</span><br></pre></td></tr></table></figure>
+<h4 id="while…">while…</h4>
+<p>while 迴圈會先判斷，才會進入迴圈。通常較多使用 while 迴圈，依實際狀況而定。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = <span class="number">1</span> <span class="comment">//初始值</span></span><br><span class="line"><span class="keyword">while</span>(i&lt;=<span class="number">100</span>)&#123;  <span class="comment">//終止條件</span></span><br><span class="line">  <span class="built_in">console</span>.log(i++) <span class="comment">//i++, i每一圈要做的事情</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>while 同樣也可以使用上面提到的 <code>break</code> 以及 <code>continue</code>。</p>
+<h4 id="for…loop">for…loop</h4>
+<p>從上述 while 的例子中註解寫到的迴圈基本的元素，如果用 for-loop 形式表示如下：<br>
+<code>for(初始值 i ; i 的終止條件; i 每一圈要做的事情)&#123;&#125;</code></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">1</span>; i&lt;=<span class="number">100</span>; i++)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>執行的順序是 i=1、i 是否小於等於 100、console.log(i)、i++。<br>
+for 同樣也可以使用上面提到的 <code>break</code> 以及 <code>continue</code>。<br>
+for-loop 通常使用在已知迴圈長度的情況下，例如陣列。</p>
+<h5 id="與陣列的搭配使用">與陣列的搭配使用</h5>
+<p>使用 for loop 示範，也可以用 while / do-while。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scores=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line"><span class="keyword">var</span> sum = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>; i&lt;scores.length; i++)&#123;</span><br><span class="line">  sum += scores[i]</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;sum=&#x27;</span>,sum)</span><br></pre></td></tr></table></figure>
+<h4 id="小技巧-2">小技巧</h4>
+<p>利用 Chrome 的 debugger 可以實時觀察迴圈執行的變化，幫助釐清，可參考這篇<a href="https://ulahsieh.github.io/Javascript-Debugging-in-Chrome.html#more">文章</a>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Javascript-basic1/" rel="prev" title="[Javascript] runtime、運算子、變數">
+                  <i class="fa fa-chevron-left"></i> [Javascript] runtime、運算子、變數
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Javascript-basic3/" rel="next" title="[Javascript] 函式、內建函式">
+                  [Javascript] 函式、內建函式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

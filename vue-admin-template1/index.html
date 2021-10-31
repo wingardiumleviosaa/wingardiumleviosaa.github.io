@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="專案結構(src)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Vue] 解析 vue-admin-template">
+<meta property="og:url" content="https://ulahsieh.github.io/vue-admin-template1/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="專案結構(src)">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-12T12:36:00.000Z">
+<meta property="article:modified_time" content="2020-10-12T12:36:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Vue">
+<meta property="article:tag" content="vue-admin-template">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/vue-admin-template1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/vue-admin-template1/","path":"vue-admin-template1/","title":"[Vue] 解析 vue-admin-template"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Vue] 解析 vue-admin-template | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%88%E6%A1%88%E7%B5%90%E6%A7%8B-src"><span class="nav-number">1.</span> <span class="nav-text">專案結構(src)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#main-js"><span class="nav-number">2.</span> <span class="nav-text">main.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#App-vue-router-view"><span class="nav-number">3.</span> <span class="nav-text">App.vue - router-view</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#router-index-js"><span class="nav-number">4.</span> <span class="nav-text">router&#x2F;index.js</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/vue-admin-template1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Vue] 解析 vue-admin-template
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-10-12 20:36:00" itemprop="dateCreated datePublished" datetime="2020-10-12T20:36:00+08:00">2020-10-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Frontend/" itemprop="url" rel="index"><span itemprop="name">Frontend</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Frontend/Vue/" itemprop="url" rel="index"><span itemprop="name">Vue</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>50</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="專案結構-src">專案結構(src)</h3>
+<span id="more"></span>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">user@pc10:~/vue-admin-template/src$ tree -L 1</span><br><span class="line">├── api                 <span class="comment"># 所有請求，對後端的請求皆寫在這裡</span></span><br><span class="line">├── App.vue             <span class="comment"># 入口頁面</span></span><br><span class="line">├── assets              <span class="comment"># 圖片等資源</span></span><br><span class="line">├── components          <span class="comment"># 全局公共組件，非公共組件在各自的 view 中維護</span></span><br><span class="line">├── icons</span><br><span class="line">├── layout              <span class="comment"># 全局 layout</span></span><br><span class="line">├── main.js             <span class="comment"># 程式入口</span></span><br><span class="line">├── permission.js       <span class="comment"># 權限管理</span></span><br><span class="line">├── router              <span class="comment"># 路由，把頁面放進導航欄</span></span><br><span class="line">├── settings.js</span><br><span class="line">├── store               <span class="comment"># 全局 store 管理，Vuex 倉庫，用於儲存狀態</span></span><br><span class="line">├── styles              <span class="comment"># 全局樣式</span></span><br><span class="line">├── utils               <span class="comment"># 全局公共方法，非公共在各自的 view 中維護</span></span><br><span class="line">└── views               <span class="comment"># 所有頁面，自添加的頁面放這裡  </span></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="main-js">main.js</h3>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;normalize.css/normalize.css&#x27;</span> <span class="comment">// A modern alternative to CSS resets</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> ElementUI <span class="keyword">from</span> <span class="string">&#x27;element-ui&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;element-ui/lib/theme-chalk/index.css&#x27;</span></span><br><span class="line"><span class="keyword">import</span> locale <span class="keyword">from</span> <span class="string">&#x27;element-ui/lib/locale/lang/en&#x27;</span> <span class="comment">// lang i18n</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/styles/index.scss&#x27;</span> <span class="comment">// global css</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// In Vue Webpack template, Webpack is configured to replace @/ with src path，@ 是webpack中定義的別名，代替 resolve(&#x27;src&#x27;) 指向的路徑</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App&#x27;</span></span><br><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">&#x27;./store&#x27;</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">&#x27;./router&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/icons&#x27;</span> <span class="comment">// icon</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@/permission&#x27;</span> <span class="comment">// permission control</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * If you don&#x27;t want to use mock-server</span></span><br><span class="line"><span class="comment"> * you want to use MockJs for mock api</span></span><br><span class="line"><span class="comment"> * you can execute: mockXHR()</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Currently MockJs will be used in the production environment,</span></span><br><span class="line"><span class="comment"> * please remove it before going online ! ! !</span></span><br><span class="line"><span class="comment"> * 下面 if 區塊的用途是指在 production 環境下會使用 mock server，如果後端已經做好準備上線的話，請記得註解掉這邊</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">if</span> (process.env.NODE_ENV === <span class="string">&#x27;production&#x27;</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; mockXHR &#125; = <span class="built_in">require</span>(<span class="string">&#x27;../mock&#x27;</span>)</span><br><span class="line">  mockXHR()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 補充: Mock 是一個模擬數據生成器，用來模擬 ajax 請求，當後端還沒開發完成時，前端可自行寫靜態模擬數據</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// set ElementUI lang to EN</span></span><br><span class="line"><span class="comment">// 如果想要中文版 element-ui，按 Vue.use(ElementUI) 方式聲明</span></span><br><span class="line">Vue.use(ElementUI, &#123; locale &#125;)</span><br><span class="line"><span class="comment">// Vue.use(plugin) 是用來安裝插件的，就可以在組件中調用 this.$router、this.$route、this.$store、this.$alert() (ElementUI的彈窗組件) 參數(方法)。</span></span><br><span class="line"></span><br><span class="line">Vue.config.productionTip = <span class="literal">false</span></span><br><span class="line"><span class="comment">// 關掉提醒 production 的警告訊息，開發環境下 Vue 會提供很多警告來幫你對付常見的錯誤與陷阱。而在生產環境下，這些警告語句卻沒有用，反而會增加應用的體積。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  <span class="attr">el</span>: <span class="string">&#x27;#app&#x27;</span>,  <span class="comment">// 要綁定的 DOM 元件</span></span><br><span class="line">  router,  </span><br><span class="line">  store, <span class="comment">// 在根實例中註冊 store，會注入到所有子元件中供他們使用。使子元件能用 this.$store 存取 store 中的狀態。</span></span><br><span class="line">  <span class="attr">render</span>: <span class="function"><span class="params">h</span> =&gt;</span> h(App)  <span class="comment">//createElement</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">使用 new Vue 建構 vue 實體(instance)，傳入一個選項物件(options object)，裡面含了所有實體所需的屬性，這邊就將掛載元素(el)、router、store、render 等屬性，其他屬性還有如資料(data)、方法(methods)、模板(template)、生命週期掛鉤等等，都可以在官網 API 文件中查找。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 除了使用 el 綁定 HTML 元素外，也可以在宣告完實例後用 $mount 的方法來掛載</span></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">new Vue(&#123;</span></span><br><span class="line"><span class="comment">  render: h =&gt; h(App)</span></span><br><span class="line"><span class="comment">&#125;).$mount(&#x27;#app&#x27;)</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="App-vue-router-view">App.vue - router-view</h3>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">router-view</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line">/* 整個 div 的視圖由 router-view 取代，為路由的進入點，路由切換的時候會在這顯示不同的內容。*/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="javascript">  <span class="attr">name</span>: <span class="string">&#x27;App&#x27;</span></span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">/* </span><br><span class="line">export default 為 ES6 的語法</span><br><span class="line"></span><br><span class="line">export 用來導出模塊/變數，通常是一個 Vue instance 的選項物件(options object)，可以在其他地方使用 import 引入，舉個栗子，這邊 export 了 App.vue 模組，在上面 main.js 使用 import 匯入了。</span><br><span class="line"></span><br><span class="line">export 可區分為兩種：</span><br><span class="line">-named export（具名匯出）：可匯獨立的物件、變數、函式等等，匯出前必須給予特定名稱，而匯入時也必須使用相同的名稱。另外，一個檔案中可以有多個 named export。</span><br><span class="line">-default export（預設匯出）：一個檔案僅能有唯一的 default export，而此類型不需要給予名稱。</span><br><span class="line"></span><br><span class="line">name: ‘app’ 相當於一個全局 ID；可以不寫；寫了可以提供更好的調用。</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="router-index-js">router/index.js</h3>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 引用 vue-router</span></span><br><span class="line"><span class="keyword">import</span> Router <span class="keyword">from</span> <span class="string">&#x27;vue-router&#x27;</span></span><br><span class="line">Vue.use(Router)</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Layout */</span></span><br><span class="line"><span class="keyword">import</span> Layout <span class="keyword">from</span> <span class="string">&#x27;@/layout&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> constantRoutes = [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/login&#x27;</span>,  <span class="comment">// 指定要跳轉的路徑</span></span><br><span class="line">    <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/login/index&#x27;</span>),  <span class="comment">// 路由對應到的組件</span></span><br><span class="line">    <span class="attr">hidden</span>: <span class="literal">true</span>  <span class="comment">// 項目將不會顯示在 sidebar</span></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* </span></span><br><span class="line"><span class="comment">    component: () =&gt; import(&#x27;@/views/login/index&#x27;),</span></span><br><span class="line"><span class="comment">    lazy loading，把不同路由對應的組件分割成不同的代碼塊，然後當路由被訪問的時候才載入組件，更加高效。</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/404&#x27;</span>,</span><br><span class="line">    <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/404&#x27;</span>),</span><br><span class="line">    <span class="attr">hidden</span>: <span class="literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">    <span class="attr">component</span>: Layout,</span><br><span class="line">    <span class="attr">redirect</span>: <span class="string">&#x27;/dashboard&#x27;</span>,  <span class="comment">// 重定向</span></span><br><span class="line">    <span class="attr">children</span>: [&#123;   <span class="comment">// 嵌套路由的子路由 </span></span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;dashboard&#x27;</span>,</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;Dashboard&#x27;</span>,  <span class="comment">// 路由名稱</span></span><br><span class="line">      <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;@/views/dashboard/index&#x27;</span>),</span><br><span class="line">      <span class="attr">meta</span>: &#123; <span class="attr">title</span>: <span class="string">&#x27;Dashboard&#x27;</span>, <span class="attr">icon</span>: <span class="string">&#x27;dashboard&#x27;</span> &#125; <span class="comment">// 路由元訊息</span></span><br><span class="line">    &#125;]</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 404 page must be placed at the end !!!含有通配符(*)的路由應該放在最後，通常用於客戶端 404 錯誤。</span></span><br><span class="line">  &#123; <span class="attr">path</span>: <span class="string">&#x27;*&#x27;</span>, <span class="attr">redirect</span>: <span class="string">&#x27;/404&#x27;</span>, <span class="attr">hidden</span>: <span class="literal">true</span> &#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> createRouter = <span class="function">() =&gt;</span> <span class="keyword">new</span> Router(&#123;</span><br><span class="line">  <span class="attr">scrollBehavior</span>: <span class="function">() =&gt;</span> (&#123; <span class="attr">y</span>: <span class="number">0</span> &#125;),  <span class="comment">// 對於所有路由導航，切換後讓頁面滾動到頂部。</span></span><br><span class="line">  <span class="attr">routes</span>: constantRoutes</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> router = createRouter()</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">resetRouter</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> newRouter = createRouter()</span><br><span class="line">  router.matcher = newRouter.matcher <span class="comment">// reset router</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> router</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vue/" rel="tag"># Vue</a>
+              <a href="/tags/vue-admin-template/" rel="tag"># vue-admin-template</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Frontend-DOM/" rel="prev" title="[Frontend] DOM">
+                  <i class="fa fa-chevron-left"></i> [Frontend] DOM
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Linux-disk-format/" rel="next" title="[Linux] 分割 & 格式化 & 掛載硬碟">
+                  [Linux] 分割 & 格式化 & 掛載硬碟 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

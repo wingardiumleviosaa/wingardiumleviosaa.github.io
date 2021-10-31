@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Production Line (gateway1) 初始流程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Node-RED] 產線模擬">
+<meta property="og:url" content="https://ulahsieh.github.io/Node-RED-%E7%94%A2%E7%B7%9A%E6%A8%A1%E6%93%AC-POC/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Production Line (gateway1) 初始流程">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/PYT3rrq.png">
+<meta property="og:image" content="https://imgur.com/a6srloB.png">
+<meta property="og:image" content="https://imgur.com/j1N5IbE.gif">
+<meta property="og:image" content="https://imgur.com/1mz3O3j.png">
+<meta property="og:image" content="https://imgur.com/kbDlXLP.png">
+<meta property="og:image" content="https://imgur.com/rDnCNiZ.png">
+<meta property="og:image" content="https://imgur.com/NzQ7BQw.png">
+<meta property="og:image" content="https://imgur.com/fg9Yays.gif">
+<meta property="article:published_time" content="2020-11-03T08:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-03T08:00:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Node-RED">
+<meta property="article:tag" content="IIoT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/PYT3rrq.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Node-RED-%E7%94%A2%E7%B7%9A%E6%A8%A1%E6%93%AC-POC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Node-RED-%E7%94%A2%E7%B7%9A%E6%A8%A1%E6%93%AC-POC/","path":"Node-RED-產線模擬-POC/","title":"[Node-RED] 產線模擬"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Node-RED] 產線模擬 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Production-Line-gateway1"><span class="nav-number">1.</span> <span class="nav-text">Production Line (gateway1)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">初始流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%81%E7%89%87%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">送片流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E6%93%AC%E8%B3%87%E6%96%99%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">模擬資料流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dashboard-%E7%95%AB%E9%9D%A2"><span class="nav-number">1.4.</span> <span class="nav-text">Dashboard 畫面</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Environment-Monitor-gateway2"><span class="nav-number">2.</span> <span class="nav-text">Environment Monitor (gateway2)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Edge-Server"><span class="nav-number">3.</span> <span class="nav-text">Edge Server</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Node-RED-%E7%94%A2%E7%B7%9A%E6%A8%A1%E6%93%AC-POC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Node-RED] 產線模擬
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-11-03 16:00:00" itemprop="dateCreated datePublished" datetime="2020-11-03T16:00:00+08:00">2020-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Node-RED/" itemprop="url" rel="index"><span itemprop="name">Node-RED</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="Production-Line-gateway1">Production Line (gateway1)</h3>
+<h4 id="初始流程">初始流程</h4>
+<span id="more"></span>
+<p><img src="https://imgur.com/PYT3rrq.png" alt><br>
+首先第一個 inject flow (inject once at start) 會去下 http request 去跟事先寫好的 NodeJS express http server (<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.footmark.info/programming-language/nodejs/nodejs-restful-webapi-mysql/">參考這篇</a>)索取事先放在 MySQL 的訂單資料 (目前僅設計為一筆)，function node 會放所有會使用到的 global 變數。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;wo&quot;</span>,msg.payload[<span class="number">0</span>].wo);</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;totalPcs&quot;</span>,msg.payload[<span class="number">0</span>].qty);</span><br><span class="line">node.warn(<span class="built_in">global</span>.get(<span class="string">&#x27;wo&#x27;</span>));</span><br><span class="line">node.warn(<span class="built_in">global</span>.get(<span class="string">&#x27;totalPcs&#x27;</span>));</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;startTime&#x27;</span>,<span class="number">1603670400</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m1Status&#x27;</span>,<span class="string">&#x27;Running&#x27;</span>);</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;m1DonePcs&quot;</span>,<span class="number">0</span>);</span><br><span class="line"><span class="comment">// node.warn(global.get(&#x27;m1DonePcs&#x27;));</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m2Status&#x27;</span>,<span class="string">&#x27;Stop&#x27;</span>);</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;m2DonePcs&quot;</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m3Status&#x27;</span>,<span class="string">&#x27;Stop&#x27;</span>);</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;m3DonePcs&quot;</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;ng&quot;</span>,<span class="number">0</span>);</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;ok&quot;</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<h4 id="送片流程">送片流程</h4>
+<p>接下來的 <code>START!!</code> inject flow 會用 link node 形成一個大迴圈，去循迴產線。進入每一台機器前會有一個 switch node 判斷目前機器運行狀態是 <code>Running</code> 還是 <code>Idle</code>，在 <code>Running</code> 條件下，模擬機器製作一片的時間 <code>Producing...</code> 後，將每一台的完成片數加一，再將機器狀態設為閒置。接著再用 link node 連接回自己的 switch 判斷。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m1DonePcs&#x27;</span>,<span class="built_in">global</span>.get(<span class="string">&#x27;m1DonePcs&#x27;</span>)+<span class="number">1</span>);</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m1Status&#x27;</span>,<span class="string">&#x27;Idle&#x27;</span>);</span><br><span class="line"></span><br><span class="line">node.warn(<span class="string">&#x27;m1的第&#x27;</span>+<span class="built_in">global</span>.get(<span class="string">&#x27;m1DonePcs&#x27;</span>)+<span class="string">&#x27;完成&#x27;</span>);</span><br><span class="line">node.warn(<span class="built_in">global</span>.get(<span class="string">&#x27;m1Status&#x27;</span>));</span><br><span class="line"><span class="comment">// node.warn 為了 debug 方便，將顯示於 debug tab</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<p>在 <code>Idle</code> 條件下，讓機器休息三秒模擬過站，再把第二台機器喚醒，並準備送進下一片，再把自己的狀態改成運作。結束後 link 到第二台機器的 switch。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m2Status&#x27;</span>,<span class="string">&#x27;Running&#x27;</span>);</span><br><span class="line">node.warn(<span class="string">&quot;m1第&quot;</span>+ <span class="built_in">global</span>.get(<span class="string">&#x27;m1DonePcs&#x27;</span>)+<span class="string">&quot;片完成, 開始送到 m2&quot;</span>);</span><br><span class="line"><span class="comment">// 機器一把自己的狀態改成運作</span></span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m1Status&#x27;</span>,<span class="string">&#x27;Running&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<div class="info">
+<p>由此可推第一片與下一片的時間差為 producing 時間加上過站三秒，因此 START!! inject node 的 intervel 時間設為上述時間差再加上三秒(送到第一台機器的過站時間)。</p>
+</div>
+<p>機器二為 <code>Running</code> 時完成片數加一、狀態變閒置；機器二做完後為 <code>Idle</code> 時，將機器三的狀態喚醒；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;m3Status&#x27;</span>,<span class="string">&#x27;Running&#x27;</span>);</span><br><span class="line">node.warn(<span class="string">&quot;m2第&quot;</span>+ <span class="built_in">global</span>.get(<span class="string">&#x27;m2DonePcs&#x27;</span>)+<span class="string">&quot;片完成,開始送到 m3&quot;</span>);</span><br><span class="line">node.warn(<span class="built_in">global</span>.get(<span class="string">&#x27;m2Status&#x27;</span>));</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<p>機器三為 <code>Running</code> 時完成片數加一、狀態變閒置；機器三做完後為 <code>Idle</code> 時，<strong>就結束這一片產品的流程了!</strong> 這邊要特別想一下，不用再接回機器一，因為前面已經設了 intervel，第二片會自己送進來，且機器一的狀態是自己控制的，因為第一片完成後就進第二片了。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">node.warn(<span class="string">&#x27;m3 第 &#x27;</span> + <span class="built_in">global</span>.get(<span class="string">&#x27;m3DonePcs&#x27;</span>) + <span class="string">&#x27; 片完成&#x27;</span>);</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<h4 id="模擬資料流程">模擬資料流程</h4>
+<p>從第三個 flow 開始就是模擬產線上各台機器的 sensor 資料了。<br>
+第一台機器每秒更新</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> startTime = <span class="built_in">global</span>.get(<span class="string">&#x27;startTime&#x27;</span>);</span><br><span class="line">msg.payload=&#123;</span><br><span class="line">    <span class="attr">vaccum</span> : &#123;</span><br><span class="line">        <span class="attr">content</span>: (<span class="built_in">Math</span>.random()*<span class="number">1.5</span>).toFixed(<span class="number">1</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">silverTarget</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="built_in">Math</span>.floor(((<span class="keyword">new</span> <span class="built_in">Date</span>().getTime()/<span class="number">1000</span>)-startTime)/<span class="number">60</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">depositionspeed</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: (<span class="number">1000</span>+<span class="built_in">Math</span>.random()).toFixed(<span class="number">2</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">m1Status</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="built_in">global</span>.get(<span class="string">&#x27;m1Status&#x27;</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">m1DonePcs</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="built_in">global</span>.get(<span class="string">&#x27;m1DonePcs&#x27;</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">wo</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>:<span class="built_in">global</span>.get(<span class="string">&#x27;wo&#x27;</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">totalPcs</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="string">&quot; / &quot;</span> + <span class="built_in">global</span>.get(<span class="string">&#x27;totalPcs&#x27;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<p>datasource node 按照 msg.payload object 定義的 key 接收資料。<br>
+<img src="https://imgur.com/a6srloB.png" alt></p>
+<p>第二台機器每秒更新</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> pressure, humidity, particle, m2Status, m2DonePcs;</span><br><span class="line">pressure = <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random()*<span class="number">20</span>+<span class="number">70</span>).toFixed(<span class="number">0</span>);</span><br><span class="line">humidity = <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random()*<span class="number">40</span>+<span class="number">30</span>).toFixed(<span class="number">0</span>);</span><br><span class="line">particle = <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random()*<span class="number">50</span>+<span class="number">60</span>).toFixed(<span class="number">0</span>);</span><br><span class="line">msg.payload=&#123;</span><br><span class="line">    <span class="attr">pressure</span> : &#123;</span><br><span class="line">        <span class="attr">content</span>: pressure,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">pressureAlarm</span> : &#123;</span><br><span class="line">        <span class="attr">turnOn</span>: <span class="number">1</span>, <span class="comment">// 0: Turn OFF, 1: Turn ON</span></span><br><span class="line">        <span class="attr">color</span>: pressure&gt;=<span class="number">88</span> || pressure&lt;=<span class="number">73</span>?<span class="number">0</span>:<span class="number">2</span>, <span class="comment">// color index</span></span><br><span class="line">        <span class="attr">mode</span>: pressure&gt;=<span class="number">88</span> || pressure&lt;=<span class="number">73</span>&gt;=<span class="number">500</span>?<span class="number">1</span>:<span class="number">0</span> <span class="comment">// 0: means stable, 1: means blink</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">humidity</span> :  &#123;</span><br><span class="line">        <span class="attr">content</span>: humidity,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">humidityAlarm</span> : &#123;</span><br><span class="line">        <span class="attr">turnOn</span>: <span class="number">1</span>, <span class="comment">// 0: Turn OFF, 1: Turn ON</span></span><br><span class="line">        <span class="attr">color</span>: humidity&gt;=<span class="number">67</span> || humidity&lt;=<span class="number">35</span>?<span class="number">0</span>:<span class="number">2</span>, <span class="comment">// color index</span></span><br><span class="line">        <span class="attr">mode</span>: humidity&gt;=<span class="number">67</span> || humidity&lt;=<span class="number">35</span>?<span class="number">1</span>:<span class="number">0</span> <span class="comment">// 0: means stable, 1: means blink</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">particle</span> :  &#123;</span><br><span class="line">        <span class="attr">content</span>: particle,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">particleAlarm</span> : &#123;</span><br><span class="line">        <span class="attr">turnOn</span>: <span class="number">1</span>, <span class="comment">// 0: Turn OFF, 1: Turn ON</span></span><br><span class="line">        <span class="attr">color</span>: particle&gt;=<span class="number">105</span>?<span class="number">0</span>:<span class="number">2</span>, <span class="comment">// color index</span></span><br><span class="line">        <span class="attr">mode</span>:particle&gt;=<span class="number">105</span>?<span class="number">1</span>:<span class="number">0</span> <span class="comment">// 0: means stable, 1: means blink</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">m2Status</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="built_in">global</span>.get(<span class="string">&#x27;m2Status&#x27;</span>),</span><br><span class="line">        </span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">m2DonePcs</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="built_in">global</span>.get(<span class="string">&#x27;m2DonePcs&#x27;</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<p>第三台機器有兩個 flow，第一個 flow 每秒抓取機器狀態 m3Status 以及 m3DonePcs 完成數(代碼參考上兩台)，第二個 flow 用來模擬機器三檢測機的不良數，這邊的 intervel 也須留意設為一片的製作時間加上一兩秒，不能設為每秒抓取的原因是因為只要發現完成數除以某值整除的話就會有一片不良品，若在製作時間內都是整除該值的話，每秒抓取會每秒不良品加一，所以間格時間應該設為一片的製作時間。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">global</span>.get(<span class="string">&#x27;m3DonePcs&#x27;</span>) &gt; <span class="number">0</span> &amp;&amp; (<span class="built_in">global</span>.get(<span class="string">&#x27;m3DonePcs&#x27;</span>) % <span class="number">5</span>)===<span class="number">0</span>)&#123;</span><br><span class="line">    <span class="built_in">global</span>.set(<span class="string">&#x27;ng&#x27;</span>,<span class="built_in">global</span>.get(<span class="string">&#x27;ng&#x27;</span>)+<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&#x27;ok&#x27;</span>,<span class="built_in">global</span>.get(<span class="string">&#x27;m3DonePcs&#x27;</span>)-<span class="built_in">global</span>.get(<span class="string">&#x27;ng&#x27;</span>));</span><br><span class="line">msg.payload=&#123;</span><br><span class="line">    <span class="attr">ng</span> : &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="built_in">global</span>.get(<span class="string">&#x27;ng&#x27;</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">ok</span> : &#123;</span><br><span class="line">        <span class="attr">content</span>: <span class="built_in">global</span>.get(<span class="string">&#x27;ok&#x27;</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<h4 id="Dashboard-畫面">Dashboard 畫面</h4>
+<p><img src="https://imgur.com/j1N5IbE.gif" alt></p>
+<h3 id="Environment-Monitor-gateway2">Environment Monitor (gateway2)</h3>
+<p><img src="https://imgur.com/1mz3O3j.png" alt><br>
+將使用 modsim32 (<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.win-tech.com/html/demos.htm">下載</a>、<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.findserialnumber.net/modsim-32-4-a00-04-serial-number-keygen-7d50fa31.html">啟用序號</a>) 模擬環境的四種 sensor 資料，再使用 modbus node 統一接收後拆開丟到對應的 datasource node。<br>
+<img src="https://imgur.com/kbDlXLP.png" alt></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> temperature=msg.payload.sensors.results[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">var</span> humidity=msg.payload.sensors.results[<span class="number">1</span>];</span><br><span class="line"><span class="keyword">var</span> co2=msg.payload.sensors.results[<span class="number">2</span>];</span><br><span class="line"><span class="keyword">var</span> pm25=msg.payload.sensors.results[<span class="number">3</span>];</span><br><span class="line">msg.payload=&#123;</span><br><span class="line">    <span class="attr">temperature</span> : &#123;</span><br><span class="line">        <span class="attr">content</span>: temperature,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">humidity</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: humidity,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">co2</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: co2,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">pm25</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: pm25,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<h3 id="Edge-Server">Edge Server</h3>
+<p>因為一鍵上雲的設計，從 gateway 部屬上 edge server 的 node 不能再次被 deploy 到其他伺服器，因為邊緣伺服器還打算部屬到雲端伺服器中，故這邊稍微做了點修改。<br>
+<img src="https://imgur.com/rDnCNiZ.png" alt><br>
+將從地端部屬上來的 flow 中的 datasource 複製到另一個自己的 flow 中，再宣告一個 global 變數接收上來的資料。收到的資料內容如下:<br>
+<img src="https://imgur.com/NzQ7BQw.png" alt><br>
+將字串變回 JSON 後再接到自己的 datasource 中，msg.payload 的資料格式依照使用的 chart 不同而不同。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = <span class="built_in">JSON</span>.parse(<span class="built_in">global</span>.get(<span class="string">&quot;gw1&quot;</span>));</span><br><span class="line"><span class="comment">//node.warn(Number(obj.temperature.content));</span></span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;temp&quot;</span>,<span class="built_in">Number</span>(obj.temperature.content));</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;humi&quot;</span>,<span class="built_in">Number</span>(obj.humidity.content));</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;co&quot;</span>,<span class="built_in">Number</span>(obj.co2.content));</span><br><span class="line"><span class="built_in">global</span>.set(<span class="string">&quot;pm&quot;</span>,<span class="built_in">Number</span>(obj.pm25.content));</span><br><span class="line"><span class="keyword">var</span> now = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">msg.payload=&#123;</span><br><span class="line">    <span class="attr">tstamp</span>: now,</span><br><span class="line">    <span class="attr">temperature</span>: <span class="built_in">global</span>.get(<span class="string">&quot;temp&quot;</span>),</span><br><span class="line">    <span class="attr">humidity</span>: <span class="built_in">global</span>.get(<span class="string">&quot;humi&quot;</span>),</span><br><span class="line">    <span class="attr">co2</span>: <span class="built_in">global</span>.get(<span class="string">&quot;co&quot;</span>),</span><br><span class="line">    <span class="attr">pm25</span>: <span class="built_in">global</span>.get(<span class="string">&quot;pm&quot;</span>),</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = <span class="built_in">JSON</span>.parse(<span class="built_in">global</span>.get(<span class="string">&quot;gw2&quot;</span>));</span><br><span class="line">msg.payload=&#123;</span><br><span class="line">    <span class="attr">m1Status</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: obj.m1Status.content,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">m1DonePcs</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: obj.m1DonePcs.content,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">wo</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: obj.wo.content,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">totalPcs</span>: &#123;</span><br><span class="line">        <span class="attr">content</span>: obj.totalPcs.content,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">return</span> msg;</span><br></pre></td></tr></table></figure>
+<p>dashboard 畫面如下:<br>
+<img src="https://imgur.com/fg9Yays.gif" alt></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Node-RED/" rel="tag"># Node-RED</a>
+              <a href="/tags/IIoT/" rel="tag"># IIoT</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/CSS-%E9%87%8D%E7%96%8A%E9%82%8A%E6%A1%86/" rel="prev" title="[CSS] 將重複邊框重疊">
+                  <i class="fa fa-chevron-left"></i> [CSS] 將重複邊框重疊
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Linux-LVM/" rel="next" title="[Linux] LVM">
+                  [Linux] LVM <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

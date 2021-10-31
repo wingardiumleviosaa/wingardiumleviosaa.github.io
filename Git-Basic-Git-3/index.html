@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="想改最後一次的 commit message 在本地端 git commit 後發現 commit message 打錯了，只要下 $ git commit --amend即可進入 vim 編輯器做修改。   請注意，如果已經 commit 而且又 push to remote 了，那就乖乖認命吧，這種情形下你在 local 端改的話可能會造成其他人的困擾。最好的方法還是 push 之前先檢查一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Git] Basic Git (3) 一些狀況劇">
+<meta property="og:url" content="https://ulahsieh.github.io/Git-Basic-Git-3/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="想改最後一次的 commit message 在本地端 git commit 後發現 commit message 打錯了，只要下 $ git commit --amend即可進入 vim 編輯器做修改。   請注意，如果已經 commit 而且又 push to remote 了，那就乖乖認命吧，這種情形下你在 local 端改的話可能會造成其他人的困擾。最好的方法還是 push 之前先檢查一下">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/7uZHzPo.png">
+<meta property="og:image" content="https://imgur.com/3yBqfnp.png">
+<meta property="og:image" content="https://imgur.com/GxP9UtR.png">
+<meta property="og:image" content="https://imgur.com/drkR4Vc.png">
+<meta property="og:image" content="https://imgur.com/noHMLbm.png">
+<meta property="article:published_time" content="2020-06-13T02:45:00.000Z">
+<meta property="article:modified_time" content="2020-06-13T02:45:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/7uZHzPo.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Git-Basic-Git-3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Git-Basic-Git-3/","path":"Git-Basic-Git-3/","title":"[Git] Basic Git (3) 一些狀況劇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Git] Basic Git (3) 一些狀況劇 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%B3%E6%94%B9%E6%9C%80%E5%BE%8C%E4%B8%80%E6%AC%A1%E7%9A%84-commit-message"><span class="nav-number">1.</span> <span class="nav-text">想改最後一次的 commit message</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#commit-%E5%BE%8C%E4%BD%86%E5%BE%8C%E6%82%94%E4%BA%86"><span class="nav-number">2.</span> <span class="nav-text">commit 後但後悔了</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E4%BA%86%E6%AA%94%E6%A1%88%E9%82%84%E6%B2%92-commit-%E4%BD%86%E6%83%B3%E5%BE%A9%E5%8E%9F"><span class="nav-number">3.</span> <span class="nav-text">改了檔案還沒 commit 但想復原</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%B3%E6%94%B9-branch-%E5%90%8D%E7%A8%B1"><span class="nav-number">4.</span> <span class="nav-text">想改 branch 名稱</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%B3%E6%8A%8A%E9%81%A0%E7%AB%AF%E7%9A%84-branch-%E6%8A%93%E4%B8%8B%E4%BE%86"><span class="nav-number">5.</span> <span class="nav-text">想把遠端的 branch 抓下來</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%B3%E5%9C%A8-commit-%E5%89%8D%E5%81%9A%E4%B8%80%E4%BA%9B%E5%88%A4%E6%96%B7-git-hooks"><span class="nav-number">6.</span> <span class="nav-text">想在 commit 前做一些判斷 (git hooks)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Source"><span class="nav-number">6.0.0.1.</span> <span class="nav-text">Source</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Git-Basic-Git-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Git] Basic Git (3) 一些狀況劇
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-06-13 10:45:00" itemprop="dateCreated datePublished" datetime="2020-06-13T10:45:00+08:00">2020-06-13</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>945</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="想改最後一次的-commit-message">想改最後一次的 commit message</h3>
+<p>在本地端 git commit 後發現 commit message 打錯了，只要下 <code>$ git commit --amend</code>即可進入 vim 編輯器做修改。</p>
+<p><img src="https://imgur.com/7uZHzPo.png" alt></p>
+<table><tr><td bgcolor="#FDEDEC">
+請注意，如果已經 commit 而且又 push to remote 了，那就乖乖認命吧，這種情形下你在 local 端改的話可能會造成其他人的困擾。最好的方法還是 push 之前先檢查一下，避免錯的東西被放到遠端。
+</td></tr></table>
+<h3 id="commit-後但後悔了">commit 後但後悔了</h3>
+<p>使用 <code>$ git reset HEAD^ (--soft / --hard / --mixed)</code></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名詞</th>
+<th style="text-align:center">解釋</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">head</td>
+<td style="text-align:center">所在位置</td>
+</tr>
+<tr>
+<td style="text-align:center">^</td>
+<td style="text-align:center">上一個</td>
+</tr>
+<tr>
+<td style="text-align:center">index</td>
+<td style="text-align:center">變更狀態紀錄 (git status)</td>
+</tr>
+<tr>
+<td style="text-align:center">working directory</td>
+<td style="text-align:center">工作目錄</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">mode</th>
+<th style="text-align:center">head</th>
+<th style="text-align:center">index</th>
+<th style="text-align:center">working directory</th>
+<th style="text-align:left">說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">soft</td>
+<td style="text-align:center">changed</td>
+<td style="text-align:center">unchanged</td>
+<td style="text-align:center">unchanged</td>
+<td style="text-align:left">僅移除 commit 變成新版未 commit，內容仍是新版的。</td>
+</tr>
+<tr>
+<td style="text-align:center">mixed(default)</td>
+<td style="text-align:center">changed</td>
+<td style="text-align:center">changed</td>
+<td style="text-align:center">unchanged</td>
+<td style="text-align:left">index 移除 staged 標記，變成 Modifiedor Untracked，內容是新版的。</td>
+</tr>
+<tr>
+<td style="text-align:center">hard</td>
+<td style="text-align:center">changed</td>
+<td style="text-align:center">changed</td>
+<td style="text-align:center">changed</td>
+<td style="text-align:left">回到上一版版本，完全移除，內容及狀態皆是上一版。</td>
+</tr>
+<tr>
+<td style="text-align:center">[1]</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="改了檔案還沒-commit-但想復原">改了檔案還沒 commit 但想復原</h3>
+<p>用 <code>$ git restore &lt;file&gt;</code> 回復，或是 <code>$ git restore .</code>回復所有檔案<br>
+或是舊 command <code>$ git checkout -- &lt;file&gt;</code></p>
+<p><img src="https://imgur.com/3yBqfnp.png" alt></p>
+<h3 id="想改-branch-名稱">想改 branch 名稱</h3>
+<p><code>$ git branch -m &lt;新名稱&gt;</code></p>
+<p><img src="https://imgur.com/GxP9UtR.png" alt></p>
+<h3 id="想把遠端的-branch-抓下來">想把遠端的 branch 抓下來</h3>
+<p>設目前本地端無任何 branch，可以直接下 <code>$ git checkout &lt;remote-branch-name&gt;</code>。</p>
+<p><img src="https://imgur.com/drkR4Vc.png" alt></p>
+<h3 id="想在-commit-前做一些判斷-git-hooks">想在 commit 前做一些判斷 (git hooks)</h3>
+<p>在 <code>.git</code> 資料夾下有 <code>hooks</code> 資料夾，裡面存放了一些 shell script，可以讓使用在在針對某些狀況下設置一些判斷，然後 git 做一些反應，比如說在 commit 或是 push 前檢查是否有放帳號密碼等資訊，然後停止或允許動作。</p>
+<p><img src="https://imgur.com/noHMLbm.png" alt></p>
+<h6 id="Source">Source</h6>
+<p>[1] <a target="_blank" rel="external nofollow noopener noreferrer" href="https://ithelp.ithome.com.tw/articles/10187303">https://ithelp.ithome.com.tw/articles/10187303</a><br>
+[All] 大部分的內容皆來自 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://lidemy.com/">Lidemy</a> [GIT101] 的課堂筆記</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Git-Basic2/" rel="prev" title="[Git] Basic Git (2) - Branch & GitHub">
+                  <i class="fa fa-chevron-left"></i> [Git] Basic Git (2) - Branch & GitHub
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Mentor-CS101-Note/" rel="next" title="程式初學者基礎知識 - CLI, 計概, 網路, session & cookie, 演算法">
+                  程式初學者基礎知識 - CLI, 計概, 網路, session & cookie, 演算法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

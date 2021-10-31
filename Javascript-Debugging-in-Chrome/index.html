@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Debugging 是指在一個腳本中找出錯誤。市面上大宗瀏覽器都支持開發人員工具，能幫助開發者一步步地追蹤代碼，查看當前實際運行情況。 此篇文章以常用的 Google Chrome 做說明－ 進入開發人員工具 按 F12 或是右上角選單中的 更多工具 \ 開發人員工具 開啟面板。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Javascript] Debugging in Chrome">
+<meta property="og:url" content="https://ulahsieh.github.io/Javascript-Debugging-in-Chrome/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Debugging 是指在一個腳本中找出錯誤。市面上大宗瀏覽器都支持開發人員工具，能幫助開發者一步步地追蹤代碼，查看當前實際運行情況。 此篇文章以常用的 Google Chrome 做說明－ 進入開發人員工具 按 F12 或是右上角選單中的 更多工具 \ 開發人員工具 開啟面板。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/4kW4nnK.png">
+<meta property="og:image" content="https://imgur.com/p73UTZ9.png">
+<meta property="og:image" content="https://imgur.com/TX1JU5q.png">
+<meta property="og:image" content="https://imgur.com/GQ1VrFh.png">
+<meta property="og:image" content="https://imgur.com/cPPUvKC.png">
+<meta property="og:image" content="https://imgur.com/qNWOS6e.png">
+<meta property="og:image" content="https://imgur.com/JQnb7H3.png">
+<meta property="og:image" content="https://imgur.com/IZrFrbH.png">
+<meta property="og:image" content="https://imgur.com/lKQK3Bj.png">
+<meta property="og:image" content="https://imgur.com/MGhfpuH.png">
+<meta property="og:image" content="https://imgur.com/UZGcRJh.png">
+<meta property="og:image" content="https://imgur.com/NDSHkql.png">
+<meta property="og:image" content="https://imgur.com/tcSMSza.png">
+<meta property="og:image" content="https://imgur.com/k93iP9W.png">
+<meta property="article:published_time" content="2020-04-12T13:13:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T13:13:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="debugging">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/4kW4nnK.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Javascript-Debugging-in-Chrome/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Javascript-Debugging-in-Chrome/","path":"Javascript-Debugging-in-Chrome/","title":"[Javascript] Debugging in Chrome"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Javascript] Debugging in Chrome | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%B2%E5%85%A5%E9%96%8B%E7%99%BC%E4%BA%BA%E5%93%A1%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">進入開發人員工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Console"><span class="nav-number">1.1.</span> <span class="nav-text">Console</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Source"><span class="nav-number">1.2.</span> <span class="nav-text">Source</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#debugging-%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.1.</span> <span class="nav-text">debugging 操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#debugging-%E7%8B%80%E6%85%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">debugging 狀態</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">1.2.2.0.1.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A3%9C%E5%85%85"><span class="nav-number">1.2.2.0.2.</span> <span class="nav-text">補充</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Javascript-Debugging-in-Chrome/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Javascript] Debugging in Chrome
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-04-12 21:13:00" itemprop="dateCreated datePublished" datetime="2020-04-12T21:13:00+08:00">2020-04-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Debugging 是指在一個腳本中找出錯誤。市面上大宗瀏覽器都支持開發人員工具，能幫助開發者一步步地追蹤代碼，查看當前實際運行情況。<br>
+此篇文章以常用的 Google Chrome 做說明－</p>
+<h2 id="進入開發人員工具">進入開發人員工具</h2>
+<p>按 <code>F12</code> 或是右上角選單中的 <code>更多工具</code> \ <code>開發人員工具</code> 開啟面板。</p>
+<span id="more"></span>
+<p><img src="https://imgur.com/4kW4nnK.png" alt><br>
+通常 debugging 最常使用到的是 <code>source</code> 以及 <code>console</code> 面板。</p>
+<h3 id="Console">Console</h3>
+<p>控制台，可以輸入命令執行，以及用來輸出資料(如 <code>console.log</code> 將顯示於此)。<br>
+<img src="https://imgur.com/p73UTZ9.png" alt></p>
+<h3 id="Source">Source</h3>
+<p><img src="https://imgur.com/TX1JU5q.png" alt><br>
+Sources 頁面包含三個部分：</p>
+<ol>
+<li>文件導航 (File Navigator)：列出了所有依附於此頁面的文件。</li>
+<li>代碼編輯 (Code Editor)：展示程式碼。</li>
+<li>JavaScript Debugging：</li>
+</ol>
+<h4 id="debugging-操作">debugging 操作</h4>
+<table>
+<thead>
+<tr>
+<th>按鈕</th>
+<th style="text-align:center">操作</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="https://imgur.com/GQ1VrFh.png" width="35"></td>
+<td style="text-align:center">Resume</td>
+<td>繼續執行直到下一個斷點。如果沒有遇到斷點，則繼續正常執行。</td>
+</tr>
+<tr>
+<td><img src="https://imgur.com/cPPUvKC.png" width="35"></td>
+<td style="text-align:center">Long Resume</td>
+<td>繼續執行，將斷點停用 500 毫秒。便於暫時跳過斷點，否則會持續暫停執行代碼，例如，循環內的斷點。點擊並按住 Resume，直到展開以顯示操作。</td>
+</tr>
+<tr>
+<td><img src="https://imgur.com/qNWOS6e.png" width="35"></td>
+<td style="text-align:center">Step Over</td>
+<td>運行下一條指令，但不會進入到函數中，會在無形中執行函數調用，跳過函數內部。執行會在該函數執行後立即暫停。如果我們對該函數的內部執行不感興趣，這命令會很有用。</td>
+</tr>
+<tr>
+<td><img src="https://imgur.com/JQnb7H3.png" width="40"></td>
+<td style="text-align:center">Step Into</td>
+<td>如果下一行包含一個函數調用，Step Into 將跳轉並在其第一行暫停該函數。</td>
+</tr>
+<tr>
+<td><img src="https://imgur.com/IZrFrbH.png" width="40"></td>
+<td style="text-align:center">Step Out</td>
+<td>函數調用後，執行當前函數剩餘部分，然後在下一個語句暫停。</td>
+</tr>
+<tr>
+<td><img src="https://imgur.com/lKQK3Bj.png" width="35"></td>
+<td style="text-align:center">Step</td>
+<td>運行下一條語句。一次接一次地點擊，整個腳本的語句會被逐個執行。</td>
+</tr>
+<tr>
+<td><img src="https://imgur.com/MGhfpuH.png" width="35"></td>
+<td style="text-align:center">Deactivate breakpoints</td>
+<td>暫時停用所有斷點。用於繼續完整執行，不會真正移除斷點。再次點擊以重新啟用斷點</td>
+</tr>
+<tr>
+<td><img src="https://imgur.com/UZGcRJh.png" width="35"></td>
+<td style="text-align:center">Activate breakpoints</td>
+<td>啟用斷點</td>
+</tr>
+</tbody>
+</table>
+<h4 id="debugging-狀態">debugging 狀態</h4>
+<p><img src="https://imgur.com/NDSHkql.png" alt></p>
+<ol>
+<li>Watch<br>
+顯示任意表達式的當前值。可以點擊加號 + 然後輸入一個表達式。便會隨時顯示它的值，並在執行過程中自動重新計算該表達式。(同在 scope 中看到的變數)</li>
+<li>Call Stack<br>
+檢視目前堆疊上的函式或程序呼叫。</li>
+<li>Scope<br>
+顯示當前的變量。 Local 顯示當前函數中的變量；Global 顯示全局變量（不在任何函數中）。</li>
+<li>斷點<br>
+在程式碼中設定進入中斷點有許多好處，可以讓 JavaScript 發生例外狀況的時候透過中斷點暫停執行，並檢查當下的 區域變數 (Locals)、設定監看式 (Watch) 與瀏覽呼叫堆疊 (Call Stack) 等等，對於程式的除錯非常有幫助。<br>
+Javascript 斷點添加的方式有以下：<br>
+<font color="DarkBlue"><strong>Sources 斷點</strong></font><br>
+直接在 source 頁面中，點擊　Activate breakpoints 再點欲加入段點的行號即可完成操作。當斷點添加完畢後，刷新頁面後會執行到斷點位置停住，在 sources 中會看到當前作用域(Scope)中所有變量和值。<br>
+<font color="DarkBlue"><strong>條件斷點</strong></font><br>
+在Sources里還可以設置條件斷點，在斷點位置的右鍵菜單中選擇「Edit Breakpoint…」可以設置觸發斷點的條件，就是寫一個表達式，表達式為 true 時才觸發斷點。<br>
+<font color="DarkBlue"><strong>Debugger 斷點</strong></font><br>
+Debugger斷點的添加就是通過在代碼中添加&quot;debugger;&quot;語句，當代碼執行到該語句的時候就會自動斷點。</li>
+</ol>
+<h6 id="參考資料">參考資料</h6>
+<p>[1] <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developers.google.com/web/tools/chrome-devtools/javascript/step-code">https://developers.google.com/web/tools/chrome-devtools/javascript/step-code</a><br>
+[2] <a target="_blank" rel="external nofollow noopener noreferrer" href="https://zh.javascript.info/debugging-chrome">https://zh.javascript.info/debugging-chrome</a></p>
+<h6 id="補充">補充</h6>
+<p>常常在 debug 的時候會佐以 log 去查看每個階段的變數，但在 debugger 查看 array 或是 object 的變數時，Chrome 會顯示最新的值，而非這個 log 時間點的值，舉例：</p>
+<img src="https://imgur.com/tcSMSza.png">
+<p>解決方法是，在印 array 前先將 array 轉成字串</p>
+<p><img src="https://imgur.com/k93iP9W.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+              <a href="/tags/debugging/" rel="tag"># debugging</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Git-git-server/" rel="prev" title="[Git] Build a Git Server on Ubuntu">
+                  <i class="fa fa-chevron-left"></i> [Git] Build a Git Server on Ubuntu
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Build-Zookeeper-Cluster/" rel="next" title="[Zookeeper] 建立 Zookeeper Cluster">
+                  [Zookeeper] 建立 Zookeeper Cluster <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

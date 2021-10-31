@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Replica Set Installation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[MongoDB] Install MongoDB Replica Set with Docker">
+<meta property="og:url" content="https://ulahsieh.github.io/MongoDB-Install-MongoDB-Replica-Set-with-Docker/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Replica Set Installation">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/Q9CMsDT.png">
+<meta property="article:published_time" content="2020-12-15T14:09:00.000Z">
+<meta property="article:modified_time" content="2020-12-15T14:09:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="Replica Set">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/Q9CMsDT.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/MongoDB-Install-MongoDB-Replica-Set-with-Docker/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/MongoDB-Install-MongoDB-Replica-Set-with-Docker/","path":"MongoDB-Install-MongoDB-Replica-Set-with-Docker/","title":"[MongoDB] Install MongoDB Replica Set with Docker"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[MongoDB] Install MongoDB Replica Set with Docker | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Replica-Set-Installation"><span class="nav-number">1.</span> <span class="nav-text">Replica Set Installation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Pre-requisties"><span class="nav-number">1.1.</span> <span class="nav-text">Pre-requisties</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%B6%E6%A7%8B"><span class="nav-number">1.2.</span> <span class="nav-text">架構</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%96%8B%E5%A7%8B%E5%AE%89%E8%A3%9D"><span class="nav-number">1.3.</span> <span class="nav-text">開始安裝</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A8%AD%E7%BD%AE%E7%B6%B2%E8%B7%AF"><span class="nav-number">1.3.1.</span> <span class="nav-text">設置網路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B0%E5%A2%9E%E7%B6%B2%E8%B7%AF"><span class="nav-number">1.3.2.</span> <span class="nav-text">新增網路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B7%91-container"><span class="nav-number">1.3.3.</span> <span class="nav-text">跑 container</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%B2%E5%85%A5-container-%E8%A8%AD%E7%BD%AE-replication"><span class="nav-number">1.3.4.</span> <span class="nav-text">進入 container 設置 replication</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%96%8B%E5%A7%8B%E5%AF%AB%E8%B3%87%E6%96%99"><span class="nav-number">1.3.5.</span> <span class="nav-text">開始寫資料</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/MongoDB-Install-MongoDB-Replica-Set-with-Docker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [MongoDB] Install MongoDB Replica Set with Docker
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-12-15 22:09:00" itemprop="dateCreated datePublished" datetime="2020-12-15T22:09:00+08:00">2020-12-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Database/" itemprop="url" rel="index"><span itemprop="name">Database</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Database/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>587</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="Replica-Set-Installation">Replica Set Installation</h3>
+<span id="more"></span>
+<h4 id="Pre-requisties">Pre-requisties</h4>
+<p>確認是否安裝 Docker，並確認 docker daemon 是否有跑起來</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker -v</span><br><span class="line">$ docker images</span><br></pre></td></tr></table></figure>
+<p>下載最新版的官方 mongo image</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker pull mongo</span><br></pre></td></tr></table></figure>
+<h4 id="架構">架構</h4>
+<p><img src="https://imgur.com/Q9CMsDT.png" alt></p>
+<h4 id="開始安裝">開始安裝</h4>
+<h5 id="設置網路">設置網路</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@test ~]# docker network ls</span><br><span class="line">NETWORK ID     NAME            DRIVER    SCOPE</span><br><span class="line">cd9c58204dfa   bridge          bridge    local</span><br><span class="line">3954d16a34fc   host            host      local</span><br><span class="line">146f0c7f58e7   none            null      local</span><br></pre></td></tr></table></figure>
+<h5 id="新增網路">新增網路</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker network create mongo-cluster</span><br></pre></td></tr></table></figure>
+<h5 id="跑-container">跑 container</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker run -d --name mongo1 --network mongo-cluster -p 30001:30001 -v mongo1:/data/db mongo:latest mongod --replSet myReplica --port 30001 --dbpath /data/db</span><br><span class="line">$ docker run -d --name mongo2 --network mongo-cluster -p 30002:30002 -v mongo2:/data/db mongo:latest mongod --replSet myReplica --port 30002 --dbpath /data/db</span><br><span class="line">$ docker run -d --name mongo3 --network mongo-cluster -p 30003:30003 -v mongo3:/data/db mongo:latest mongod --replSet myReplica --port 30003 --dbpath /data/db</span><br></pre></td></tr></table></figure>
+<h5 id="進入-container-設置-replication">進入 container 設置 replication</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ docker exec -it mongo1 mongo --port 30001</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; rs.initiate(&#123;&quot;_id&quot;:&quot;myReplica&quot;,&quot;members&quot;:[&#123;&quot;_id&quot;:0,&quot;host&quot;:&quot;mongo1:30001&quot;&#125;,&#123;&quot;_id&quot;:1,&quot;host&quot;:&quot;mongo2:30002&quot;&#125;,&#123;&quot;_id&quot;:2,&quot;host&quot;:&quot;mongo3:30003&quot;&#125;]&#125;)</span><br></pre></td></tr></table></figure>
+<p>第一個參數的 <code>_id</code> 必須與跑 mongod 的 --replSet 參數相同，第二個參數 <code>members</code> 需列出所有欲加入 replica set 的 node。而因為所有 container 都加在 mongo-cluster 的 docker network，所以可以直接使用 container name 辨別。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">&quot;ok&quot; : 1,</span><br><span class="line">&quot;$clusterTime&quot; : &#123;</span><br><span class="line">&quot;clusterTime&quot; : Timestamp(1608026586, 1),</span><br><span class="line">&quot;signature&quot; : &#123;</span><br><span class="line">&quot;hash&quot; : BinData(0,&quot;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;),</span><br><span class="line">&quot;keyId&quot; : NumberLong(0)</span><br><span class="line">&#125;</span><br><span class="line">&#125;,</span><br><span class="line">&quot;operationTime&quot; : Timestamp(1608026586, 1)</span><br><span class="line">&#125;</span><br><span class="line">myReplica:SECONDARY&gt;</span><br><span class="line">myReplica:PRIMARY&gt;</span><br></pre></td></tr></table></figure>
+<p>成功初始化群集後，應該可以看到回傳的訊息顯示 <code>ok = 1</code>。並且 shell 最前面會先變成 <code>myReplica:SECONDARY&gt;</code>，再按一下 enter，就能成功變成 <code>myReplica:PRIMARY&gt;</code>。先是 SECONDARY 的原因是因為還沒選出 PRIMARY。</p>
+<h5 id="開始寫資料">開始寫資料</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; use test</span><br><span class="line">&gt; db.col1.insert(&#123;hello:&#x27;world&#x27;&#125;)</span><br><span class="line">WriteResult(&#123; &quot;nInserted&quot; : 1 &#125;)</span><br><span class="line">&gt; db.col1.find()</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;87362127767493de37ff95ed&quot;), &quot;hello&quot; : &quot;world&quot; &#125;</span><br></pre></td></tr></table></figure>
+<p>再試試看連到第二台 MongoDB 找資料室不是已經備份成功了。在使用 Secondary 資料庫搜尋前，需要先下 <code>db2.setSlaveOk ()</code> 讓 shell 知道我們有意要用非 primary 資料庫查詢。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; db2 = (new Mongo(&#x27;mongo2:30002&#x27;)).getDB(&#x27;test&#x27;)</span><br><span class="line">test</span><br><span class="line">&gt; db2.setSlaveOk()</span><br><span class="line">&gt; db2.col1.find()</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(87362127767493de37ff95ed&quot;), &quot;hello&quot; : &quot;world&quot;  &#125;</span><br></pre></td></tr></table></figure>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.sohamkamani.com/blog/2016/06/30/docker-mongo-replica-set/">https://www.sohamkamani.com/blog/2016/06/30/docker-mongo-replica-set/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+              <a href="/tags/Replica-Set/" rel="tag"># Replica Set</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/MongoDB-Introduction-and-Install-on-BareMetal/" rel="prev" title="[MongoDB] Introduction and Installation on Bare Metal">
+                  <i class="fa fa-chevron-left"></i> [MongoDB] Introduction and Installation on Bare Metal
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/MongoDB-Install-Only-Shell/" rel="next" title="[MongoDB] Install MongoDB Shell">
+                  [MongoDB] Install MongoDB Shell <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

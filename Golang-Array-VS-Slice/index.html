@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Array 陣列的長度固定，且為陣列類型的一部份。 （[4]int 以及 [5]int 為兩種獨立且不相容的不同type） 宣告及初始化array 123456789101112131415161718&#x2F;&#x2F; var [len]Type，無初始化值，則初始值為zero valuevar arr1 [2]int&#x2F;&#x2F; var [len]Type，並給初始值var arr2 &#x3D; [2]int&amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Golang] Array v.s. Slice">
+<meta property="og:url" content="https://ulahsieh.github.io/Golang-Array-VS-Slice/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Array 陣列的長度固定，且為陣列類型的一部份。 （[4]int 以及 [5]int 為兩種獨立且不相容的不同type） 宣告及初始化array 123456789101112131415161718&#x2F;&#x2F; var [len]Type，無初始化值，則初始值為zero valuevar arr1 [2]int&#x2F;&#x2F; var [len]Type，並給初始值var arr2 &#x3D; [2]int&amp;#123;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/X3yxgmp.png">
+<meta property="og:image" content="https://imgur.com/vsjGEip.png">
+<meta property="article:published_time" content="2019-12-30T12:41:00.000Z">
+<meta property="article:modified_time" content="2019-12-30T12:41:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="golang">
+<meta property="article:tag" content="array">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/X3yxgmp.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Golang-Array-VS-Slice/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Golang-Array-VS-Slice/","path":"Golang-Array-VS-Slice/","title":"[Golang] Array v.s. Slice"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Golang] Array v.s. Slice | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Array"><span class="nav-number">1.</span> <span class="nav-text">Array</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%A3%E5%91%8A%E5%8F%8A%E5%88%9D%E5%A7%8B%E5%8C%96array"><span class="nav-number">1.1.</span> <span class="nav-text">宣告及初始化array</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Array-%E7%BC%BA%E9%BB%9E"><span class="nav-number">1.2.</span> <span class="nav-text">Array 缺點</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Slice"><span class="nav-number">2.</span> <span class="nav-text">Slice</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%A3%E5%91%8Aslice"><span class="nav-number">2.1.</span> <span class="nav-text">宣告slice</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Slice%E7%9A%84%E5%90%84%E7%A8%AE%E4%BD%BF%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">Slice的各種使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#re-slicing-%E9%87%8D%E6%96%B0%E5%88%87%E7%89%87"><span class="nav-number">2.2.1.</span> <span class="nav-text">re-slicing 重新切片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#copy-%E6%8B%B7%E8%B2%9D"><span class="nav-number">2.2.2.</span> <span class="nav-text">copy 拷貝</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Append-%E6%93%B4%E5%A2%9E"><span class="nav-number">2.2.3.</span> <span class="nav-text">Append 擴增</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#append%E5%BA%95%E5%B1%A4array%E7%9A%84%E5%85%B1%E7%94%A8%E8%88%87%E5%88%86%E8%A3%82"><span class="nav-number">2.2.4.</span> <span class="nav-text">append底層array的共用與分裂</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B5%90%E8%AB%96"><span class="nav-number">3.</span> <span class="nav-text">結論</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Golang-Array-VS-Slice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Golang] Array v.s. Slice
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-12-30 20:41:00" itemprop="dateCreated datePublished" datetime="2019-12-30T20:41:00+08:00">2019-12-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<h3 id="Array">Array</h3>
+<p>陣列的長度固定，且為陣列類型的一部份。<br>
+（<code>[4]int</code> 以及 <code>[5]int</code> 為兩種獨立且不相容的不同type）</p>
+<h4 id="宣告及初始化array">宣告及初始化array</h4>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// var [len]Type，無初始化值，則初始值為zero value</span></span><br><span class="line"><span class="keyword">var</span> arr1 [<span class="number">2</span>]<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// var [len]Type，並給初始值</span></span><br><span class="line"><span class="keyword">var</span> arr2 = [<span class="number">2</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// var [...]Type，讓complier自行計算長度</span></span><br><span class="line"><span class="keyword">var</span> arr3 = [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// := [len]Type，在func中使用簡短宣告符號，無給初始值</span></span><br><span class="line">arr4 := [<span class="number">2</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// := [len]Type，並給初始值</span></span><br><span class="line">arr5 := [<span class="number">2</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// := [...]Type，讓complier自行計算長度</span></span><br><span class="line">arr6 := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>當賦值和傳遞array時，是複製整個陣列內容</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	arr1 := [<span class="number">2</span>]<span class="keyword">string</span>&#123;<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;banana&quot;</span>&#125;</span><br><span class="line">	arr2 := [<span class="number">2</span>]<span class="keyword">string</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	arr2 = arr1</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;arr1: %p, %v \n&quot;</span>, &amp;arr1, arr1)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;arr2: %p, %v \n&quot;</span>, &amp;arr2, arr2)</span><br><span class="line"></span><br><span class="line">	arr3(arr1)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">arr3</span><span class="params">(x [2]<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;arr3: %p, %v \n&quot;</span>, &amp;x, x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>執行結果</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">arr1: 0x40a0e0, [apple banana] </span><br><span class="line">arr2: 0x40a0f0, [apple banana] </span><br><span class="line">arr3: 0x40a120, [apple banana] </span><br></pre></td></tr></table></figure>
+<h4 id="Array-缺點">Array 缺點</h4>
+<p>上面三個array的位址皆不相同，驗證傳遞時都是複製整個陣列<br>
+如此，可發現使用array的兩個弊處</p>
+<table><tr><td bgcolor="AliceBlue">
+1. array是固定長度, 使用起來很不彈性<p></p>
+2. 傳遞時複製整個組數，array一大時，便會消耗大量記憶體
+</td></tr></table>
+<div class="danger">
+<p>所以在大多數的Go code中，<font color="DarkBlue"><strong>slice較常被使用</strong></font></p>
+</div>
+<h3 id="Slice">Slice</h3>
+<p>slice為Go中的一種資料結構，定義在 <code>src/runtime/slice.go</code> 中：<br>
+src/runtime/slice.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> slice <span class="keyword">struct</span> &#123;</span><br><span class="line">	array unsafe.Pointer</span><br><span class="line">	<span class="built_in">len</span>   <span class="keyword">int</span></span><br><span class="line">	<span class="built_in">cap</span>   <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/X3yxgmp.png" alt></p>
+<p>各field代表如下:</p>
+<table><tr><td bgcolor="AliceBlue">
+1. pointer：指向底層陣列開始的位置 <p></p>
+2. len：lenth, 為slice的實際長度 <p></p>
+3. cap：capacity, 為當前分給slice的容量大小    
+</td></tr></table>
+<h4 id="宣告slice">宣告slice</h4>
+<p>slice宣告方式有兩種，一種是直接像array一樣宣告, 只差不須指定大小：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">fmt.Println(<span class="built_in">len</span>(a))  <span class="comment">//5</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(b))  <span class="comment">//5</span></span><br></pre></td></tr></table></figure>
+<p>另一種是使用內建函數make<br>
+<code>func make([]T, len, cap) []T</code><br>
+make可以事先指定底層陣列長度以及欲使用的容量大小</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">b := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>, <span class="number">5</span>) <span class="comment">//b == [0, 0, 0, 0, 0]</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(b))  <span class="comment">//5</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(b))  <span class="comment">//5</span></span><br></pre></td></tr></table></figure>
+<p>使用make時，<font color="DarkBlue">capacity參數可以被省略</font>，而此時的cap==len</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">c := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)  <span class="comment">//c == [0, 0, 0, 0, 0]</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(c))  <span class="comment">//5</span></span><br><span class="line">fmt.Println(<span class="built_in">cap</span>(c))  <span class="comment">//5</span></span><br></pre></td></tr></table></figure>
+<p>由此得知，slice 本身是一個<span class="dotunderletter">引用型別</span>，底層會有個指標指向一個array。上面宣告的三個slice  a , b , c 都可以用下圖表示<br>
+<img src="https://imgur.com/vsjGEip.png" alt></p>
+<h4 id="Slice的各種使用">Slice的各種使用</h4>
+<h5 id="re-slicing-重新切片">re-slicing 重新切片</h5>
+<p>使用冒號間隔上下兩參數<code>[:]</code> 可以擷取slice特定範圍的值，<br>
+<code>[low-index:high-index]</code><br>
+表示取出從<code>low-index</code>開始的值到到<code>high-index減1</code>的值，high-index的索引代表<span class="dotunderletter">及於但不包含</span>(up to but not include)<br>
+兩個索引值都可以被忽略，忽略時，上邊界默認值為0, 下邊界默認值為len(x)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">y := x[:]  <span class="comment">// y == [1 2 3 4 5]</span></span><br><span class="line">y = x[:<span class="number">2</span>]  <span class="comment">// y == [1 2]</span></span><br><span class="line">y = x[<span class="number">2</span>:]  <span class="comment">// y == [3 4 5]</span></span><br><span class="line">y[<span class="number">2</span>] = <span class="number">0</span>   <span class="comment">// y == [3 4 0] ; x == [1 2 3 4 0]</span></span><br></pre></td></tr></table></figure>
+<p>須特別留意的是</p>
+<div class="danger">
+<p>使用<code>[:]</code>重新切片後，底層的陣列不變，意即y.ptr == x.ptr + 8 (位移了兩位)。 當修改了<code>y[2]</code>的值變是修改了<code>x[4]</code></p>
+</div>
+<p>若是不想要兩個slice共用同一個array，則要使用下一個內建函數copy</p>
+<h5 id="copy-拷貝">copy 拷貝</h5>
+<p>使用copy可以複製slice中的array到另一個新的slice的新的array<br>
+<code>copy(dist-slice, src-slice)</code></p>
+<p>若len(src)小於len(dist)，則會覆蓋目的端的前len(src)個數值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">y := []<span class="keyword">int</span>&#123;<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>&#125;</span><br><span class="line"><span class="built_in">copy</span>(x, y) <span class="comment">// x == [6 7 8 4 5] 把y複製進x</span></span><br><span class="line">y[<span class="number">2</span>] = <span class="number">0</span>  <span class="comment">// y == [6 7 0] ; x == [6 7 8 4 5] 改了y的值，x不受影響，因為底層array不同</span></span><br></pre></td></tr></table></figure>
+<p>若len(src)大於len(dist)，則會複製來源端與len(dist)等長的值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">y := []<span class="keyword">int</span>&#123;<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>&#125;</span><br><span class="line"><span class="built_in">copy</span>(y, x) <span class="comment">// y == [1 2 3] 把x複製進y</span></span><br></pre></td></tr></table></figure>
+<p>另外也可以結合<code>:</code>指定要複製的位置：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">y := []<span class="keyword">int</span>&#123;<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>&#125;</span><br><span class="line"><span class="built_in">copy</span>(y, x[<span class="number">2</span>:]) <span class="comment">// y == [3 4 5]，把x從index 2開始的值複製進y</span></span><br></pre></td></tr></table></figure>
+<h5 id="Append-擴增">Append 擴增</h5>
+<p>append用來在slice中添加資料，以下為用法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">x := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line"></span><br><span class="line">x = <span class="built_in">append</span>(x, <span class="number">6</span>)  <span class="comment">//append一個數給自己</span></span><br><span class="line"></span><br><span class="line">y := <span class="built_in">append</span>(x, <span class="number">7</span>, <span class="number">8</span>)  <span class="comment">//用別的slice append多個數再給自己</span></span><br><span class="line"> </span><br><span class="line">c = <span class="built_in">append</span>(b, a…) <span class="comment">//拿另一個slice append另一個slice再給自己</span></span><br></pre></td></tr></table></figure>
+<div class="danger">
+<p>問題來了，使用append函數時，底層的array會是一樣的嗎？　<br>
+答案是<span class="dotunderletter"><font color="Red" size="5"><strong>不一定</strong></font></span></p>
+</div>
+<p></p>
+<h5 id="append底層array的共用與分裂">append底層array的共用與分裂</h5>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">x := []<span class="keyword">int</span>&#123;&#125;  <span class="comment">//len(x) == cap(x) == 0</span></span><br><span class="line">y := <span class="built_in">append</span>(x, <span class="number">1</span>) <span class="comment">//len(y) == 1, cap(y) == 2</span></span><br><span class="line">x = <span class="built_in">append</span>(x, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>請問此時的<code>y[0]</code>是多少? <code>y[0] == 1</code><br>
+這個例子下 x &amp; y 分別會指向不同的array，因為在第二行，len(y) != cap(x) 的當下，y底層的array就已經另發配新的位址給新的array了</p>
+<p>如果x換成以下宣告:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">x := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">3</span>)  <span class="comment">//len(x) == 0, cap(x) == 3</span></span><br><span class="line">y := <span class="built_in">append</span>(x, <span class="number">1</span>) <span class="comment">//len(y) == len(x) == 1 &lt; cap(x) == 3</span></span><br><span class="line">x = <span class="built_in">append</span>(x, <span class="number">2</span>) <span class="comment">//len(y) == len(x) == 2 &lt; cap(x) == 3</span></span><br></pre></td></tr></table></figure>
+<p>請問此時的<code>y[0]</code>是多少？ <code>y[0] == 2</code></p>
+<p><code>y[0]</code>會改變的原因是在一開始宣告時記憶體就已經分配cap(x) == 3的空間給底層array，此時使用append加入一個數到array，因為len(y) == len(x) == 1 &lt; cap(x) =3，空間足夠，所以 <strong>x及y的指標會指向同一個位址！</strong> 而後再append一個數到array，也會因為空間足夠，所以兩個slices仍在同一個位址。</p>
+<p>再衍生另一個問題－<br>
+若原先的最後一行 <code>x = append(x, 2)</code> 改成 <code>x = append(x, 2, 3, 4, 5)</code>，<code>y[0]</code>是多少？</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">x := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">3</span>)</span><br><span class="line">y := <span class="built_in">append</span>(x, <span class="number">1</span>)</span><br><span class="line">x = <span class="built_in">append</span>(x, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<p>此時的 <code>y[0] == 1</code></p>
+<p>因為x插入了4個數值，len(x) = 4 &gt; cap(x) = 3，x使用的array便會換一個新的位址，並擴大capacity成len(x)的兩倍，意即cap(x) = 8<br>
+而原先的y保持原來的位址以及數值，len(y) = 1 &lt; cap(y) = 3</p>
+<p>由此可知，當在使用append時，如果len &gt;= len時，會開另一塊更大記憶體的array，再把原先的array複製進去。<br>
+擴大原則：當容量(cap)小於1024時，會擴大兩倍的容量；當大於1024後，擴大 1.25倍。</p>
+<h3 id="結論">結論</h3>
+<div class="warning">
+<ol>
+<li>使用slice比起使用固定長度的array來得有彈性</li>
+<li>slice本身為一個引用型別，底層有指標指向一個array</li>
+<li>重新切片指改變指標位址，底層陣列不變</li>
+<li>copy為另外建一個新的底層array</li>
+<li>使用slice時建議事先使用make並規劃好容量cap，這樣在使用append時可以避免反覆重新分配記憶體</li>
+</ol>
+</div>
+<h6 id="Reference">Reference</h6>
+<p><font color="GREY" size="2"><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.golang.org/go-slices-usage-and-internals">https://blog.golang.org/go-slices-usage-and-internals</a><br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://studygolang.com/articles/6557">https://studygolang.com/articles/6557</a><br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://halfrost.com/go_slice/">https://halfrost.com/go_slice/</a><br>
+</font></p>
+<p>2019的最後一篇文章，祝大家新年快樂 ✨ ☺️<br>
+希望明年一切都好，都能在想要的道路上開心的努力著！💪</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"># golang</a>
+              <a href="/tags/array/" rel="tag"># array</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Golang-Method/" rel="prev" title="[Golang] Method">
+                  <i class="fa fa-chevron-left"></i> [Golang] Method
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Golang-Function/" rel="next" title="[Golang] Function">
+                  [Golang] Function <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

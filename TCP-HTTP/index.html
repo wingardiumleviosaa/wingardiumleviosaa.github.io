@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="HTTP HyperText Transfer Protocol 超文本傳輸協定，是網頁的基礎通訊協定，基於 client-server 架構來 request-reponse，用來在 client 以及 server 間傳遞超媒體文件(如 HTML) 。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[TCP&#x2F;IP] 應用層 - HTTP">
+<meta property="og:url" content="https://ulahsieh.github.io/TCP-HTTP/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="HTTP HyperText Transfer Protocol 超文本傳輸協定，是網頁的基礎通訊協定，基於 client-server 架構來 request-reponse，用來在 client 以及 server 間傳遞超媒體文件(如 HTML) 。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/D8HQAS4.png">
+<meta property="og:image" content="https://imgur.com/PTiqaMj.png">
+<meta property="og:image" content="https://imgur.com/6nI08to.png">
+<meta property="og:image" content="https://imgur.com/Ps8Jvz5.png">
+<meta property="og:image" content="https://imgur.com/AAFk2Yw.png">
+<meta property="og:image" content="https://imgur.com/GlF8sd2.png">
+<meta property="article:published_time" content="2020-06-30T15:50:00.000Z">
+<meta property="article:modified_time" content="2020-06-30T15:50:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="HTTP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/D8HQAS4.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/TCP-HTTP/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/TCP-HTTP/","path":"TCP-HTTP/","title":"[TCP/IP] 應用層 - HTTP"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[TCP/IP] 應用層 - HTTP | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">1.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%8B%E4%BD%9C%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">運作模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Http-Method"><span class="nav-number">2.</span> <span class="nav-text">Http Method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Http-%E7%8B%80%E6%85%8B%E7%A2%BC"><span class="nav-number">3.</span> <span class="nav-text">Http 狀態碼</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E7%9A%84-request-%E8%87%AA%E5%B7%B1%E7%99%BC-%E5%AF%A6%E4%BD%9C-http-client"><span class="nav-number">4.</span> <span class="nav-text">自己的 request 自己發 - 實作 http client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E4%B8%80%E5%80%8B%E7%B0%A1%E6%98%93-http-server"><span class="nav-number">5.</span> <span class="nav-text">架一個簡易 http server</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/TCP-HTTP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [TCP/IP] 應用層 - HTTP
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-06-30 23:50:00" itemprop="dateCreated datePublished" datetime="2020-06-30T23:50:00+08:00">2020-06-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/" itemprop="url" rel="index"><span itemprop="name">程式初心者</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/TCP-IP/" itemprop="url" rel="index"><span itemprop="name">TCP/IP</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="HTTP">HTTP</h3>
+<p>HyperText Transfer Protocol 超文本傳輸協定，是網頁的基礎通訊協定，基於 client-server 架構來 request-reponse，用來在 client 以及 server 間傳遞超媒體文件(如 HTML) 。</p>
+<span id="more"></span>
+<h4 id="運作模型">運作模型</h4>
+<ol>
+<li>client 傳 <strong>http request</strong> 到 server</li>
+<li>server 回傳 <strong>http response</strong> (html)<br>
+<img src="https://imgur.com/D8HQAS4.png" alt><br>
+[1]</li>
+</ol>
+<ul>
+<li>HTTP Client 實現程式有瀏覽器、命令列工具 … 等</li>
+<li>HTTP Server 實現程式有 httpd、nginx、apache … 等</li>
+<li>https 的 s 代表 secure，是一個比 http 更安全的連線方式</li>
+</ul>
+<h3 id="Http-Method">Http Method</h3>
+<table>
+<thead>
+<tr>
+<th>METHOD</th>
+<th>安全性</th>
+<th>動作</th>
+<th>語意</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>O</td>
+<td>讀取</td>
+<td>請求所需要的資源。</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>O</td>
+<td>新增</td>
+<td>在請求中攜帶 request body，並執行特定資源的處理。</td>
+</tr>
+<tr>
+<td>HEAD</td>
+<td>X</td>
+<td>讀取</td>
+<td>server 僅回應狀態以及 header。</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>x</td>
+<td>完整更新</td>
+<td>請求更新一筆資源的所有內容，必須是存在的資源，資源傳遞必須完整，否則為空。</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>X</td>
+<td>部分更新</td>
+<td>請求更新一筆資源的部分內容，必須是存在的資源。</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>x</td>
+<td>刪除</td>
+<td>請求移除資源。</td>
+</tr>
+<tr>
+<td>[2]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="Http-狀態碼">Http 狀態碼</h3>
+<p>狀態碼通常都以開頭的數字做區分，例如 2 開頭的狀態碼都是代表成功。</p>
+<ul>
+<li>1xx Informationa - 參考資訊</li>
+<li>2xx Successful - 成功</li>
+<li>3xx Redirection - 重新導向</li>
+<li>4xx Client Error - 用戶端錯誤</li>
+<li>5xx Server Error - 伺服器錯誤<br>
+詳細代碼可參考 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81">wiki</a>。</li>
+</ul>
+<h3 id="自己的-request-自己發-實作-http-client">自己的 request 自己發 - 實作 http client</h3>
+<p>前面有提到實現 http client 有瀏覽器還有其他諸如 CLI、爬蟲 … 的程式。這邊我們來實作一個使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.npmjs.com/package/request">request</a> node module 的 http client。</p>
+<ol>
+<li><code>$ npm install request</code></li>
+<li>在 index.js 檔案中貼上<br>
+<img src="https://imgur.com/PTiqaMj.png" alt></li>
+<li><code>$ node index.js</code>，就可以收到 server 的回覆<br>
+<img src="https://imgur.com/6nI08to.png" alt></li>
+</ol>
+<h3 id="架一個簡易-http-server">架一個簡易 http server</h3>
+<p>使用 Node.js 的內建模組 <code>http</code>，</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>)</span><br><span class="line"><span class="keyword">var</span> server = http.createServer(handelRequest)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handelRequest</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(req.url === <span class="string">&#x27;/&#x27;</span>)&#123;   <span class="comment">//根據 request 的資源</span></span><br><span class="line">        res.write(<span class="string">&#x27;welcome!&#x27;</span>) <span class="comment">//給 相對應的 response</span></span><br><span class="line">        res.end()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(req.url === <span class="string">&#x27;/hello&#x27;</span>) &#123;</span><br><span class="line">        res.write(<span class="string">&#x27;hello&#x27;</span>)</span><br><span class="line">        res.end()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(req.url === <span class="string">&#x27;/redirect&#x27;</span>) &#123;</span><br><span class="line">        res.writeHead(<span class="number">302</span>, &#123;  <span class="comment">//如果 url 是 /redirect 的話則轉址到 /hello</span></span><br><span class="line">            <span class="string">&#x27;Location&#x27;</span> : <span class="string">&#x27;/hello&#x27;</span></span><br><span class="line">        &#125;)</span><br><span class="line">        res.end()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    res.writeHead(<span class="number">404</span>) </span><br><span class="line">    res.end()</span><br><span class="line">&#125;</span><br><span class="line">server.listen(<span class="number">5000</span>) <span class="comment">//port</span></span><br></pre></td></tr></table></figure>
+<p><code>$ node index.js</code> 執行後，開啟瀏覽器輸入 <code>127.0.0.1:5000</code>，便可以看到 response 的結果。<br>
+<img src="https://imgur.com/Ps8Jvz5.png" alt></p>
+<p>第 14 行，如果網址結尾是 /redirect 的話，轉到其他位址。<br>
+<img src="https://imgur.com/AAFk2Yw.png" alt></p>
+<p>第 21 行，代表如果帶錯誤的 url 的話，回復 404 status code。<br>
+<img src="https://imgur.com/GlF8sd2.png" alt></p>
+<h6 id="Reference">Reference</h6>
+<p>[1]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://techthatmatter.com/best-fastest-bsnl-dns-servers/">https://techthatmatter.com/best-fastest-bsnl-dns-servers/</a><br>
+[2]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://hackmd.io/@monkenWu/Sk9Q5VoV4/https%3A%2F%2Fhackmd.io%2F%40gen6UjQISdy0QDN62cYPYQ%2FH1yxwXyNN?type=book">https://hackmd.io/@monkenWu/Sk9Q5VoV4/https%3A%2F%2Fhackmd.io%2F%40gen6UjQISdy0QDN62cYPYQ%2FH1yxwXyNN?type=book</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/HTTP/" rel="tag"># HTTP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/TCP-UPD/" rel="prev" title="[TCP/IP] 傳輸層 - TCP , UDP">
+                  <i class="fa fa-chevron-left"></i> [TCP/IP] 傳輸層 - TCP , UDP
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Java-what-are-JDK-JRE-JDK/" rel="next" title="[Java] What are JDK, JRE, JDK ?">
+                  [Java] What are JDK, JRE, JDK ? <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

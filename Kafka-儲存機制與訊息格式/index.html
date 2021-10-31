@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Partition &amp; Segment 在 kafka 中，同一個 topic 下有多個不同的 partition，每個 partition 就是一個目錄。每個 partition（目錄）又會細分到多個大小相等的 segment 文件中，每個 segment 中的消息數量不一定相等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Kafka] 儲存機制與訊息格式">
+<meta property="og:url" content="https://ulahsieh.github.io/Kafka-%E5%84%B2%E5%AD%98%E6%A9%9F%E5%88%B6%E8%88%87%E8%A8%8A%E6%81%AF%E6%A0%BC%E5%BC%8F/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Partition &amp; Segment 在 kafka 中，同一個 topic 下有多個不同的 partition，每個 partition 就是一個目錄。每個 partition（目錄）又會細分到多個大小相等的 segment 文件中，每個 segment 中的消息數量不一定相等。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/mopFRPT.png">
+<meta property="article:published_time" content="2021-09-05T13:44:00.000Z">
+<meta property="article:modified_time" content="2021-09-05T13:44:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/mopFRPT.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Kafka-%E5%84%B2%E5%AD%98%E6%A9%9F%E5%88%B6%E8%88%87%E8%A8%8A%E6%81%AF%E6%A0%BC%E5%BC%8F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Kafka-%E5%84%B2%E5%AD%98%E6%A9%9F%E5%88%B6%E8%88%87%E8%A8%8A%E6%81%AF%E6%A0%BC%E5%BC%8F/","path":"Kafka-儲存機制與訊息格式/","title":"[Kafka] 儲存機制與訊息格式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Kafka] 儲存機制與訊息格式 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Partition-Segment"><span class="nav-number">1.</span> <span class="nav-text">Partition &amp; Segment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Commit-Log"><span class="nav-number">1.1.</span> <span class="nav-text">Commit Log</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RecordBatch"><span class="nav-number">1.1.1.</span> <span class="nav-text">RecordBatch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Record"><span class="nav-number">1.1.2.</span> <span class="nav-text">Record</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">序列化和反序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer-Config-%E8%A8%AD%E5%AE%9A"><span class="nav-number">2.1.</span> <span class="nav-text">Producer Config 設定</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">2.1.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kafka-%E5%84%B2%E5%AD%98%E6%A9%9F%E5%88%B6%E8%88%87%E8%A8%8A%E6%81%AF%E6%A0%BC%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Kafka] 儲存機制與訊息格式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-09-05 21:44:00" itemprop="dateCreated datePublished" datetime="2021-09-05T21:44:00+08:00">2021-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Partition-Segment">Partition &amp; Segment</h2>
+<p>在 kafka 中，同一個 topic 下有多個不同的 partition，每個 partition 就是一個目錄。每個 partition（目錄）又會細分到多個大小相等的 segment 文件中，每個 segment 中的消息數量不一定相等。</p>
+<span id="more"></span>
+<p>segment 文件是由 2 部分組成，分別為 .index 和 .log 結尾的文件：</p>
+<ul>
+<li>index 結尾文件表示索引文件，用於索引 log 文件。</li>
+<li>log 結尾文件表示數據文件。</li>
+</ul>
+<h3 id="Commit-Log">Commit Log</h3>
+<p>Kafka 儲存訊息的檔案被它叫做 log，按照 Kafka 文件的說法是：</p>
+<blockquote>
+<p>Each partition is an ordered, immutable sequence of messages that is continually appended to—a commit log</p>
+</blockquote>
+<p>這反應出來的Kafka的行為是：訊息被不斷地append到檔案末尾。</p>
+<p>這種簡單的log形式的檔案結構能夠更好地實現 Kafka 訴求的功能：高吞吐量、多副本、訊息持久化。</p>
+<p>Kafka 中的數據單位是 message (record)，在Kafka Protocol 中，Message 具體的格式為</p>
+<blockquote>
+<p>Messages consist of a variable-length header, a variable-length opaque key byte array and a variable-length opaque value byte array.</p>
+</blockquote>
+<p>message format 的格式可以在 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://kafka.apache.org/documentation/#messageformat">kafka 文檔</a>中查找</p>
+<p>消息格式版本 v2</p>
+<p><img src="https://imgur.com/mopFRPT.png" alt></p>
+<p>RecordBatch 裡包含很多records，record 包含 Header。</p>
+<h4 id="RecordBatch">RecordBatch</h4>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th style="text-align:center">類型</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>baseOffset</td>
+<td style="text-align:center">int64</td>
+<td>當前RecordBatch起始位置。Record 中的offset delta與該baseOffset相加才得到真正的offset值</td>
+</tr>
+<tr>
+<td>batchLength</td>
+<td style="text-align:center">int32</td>
+<td>RecordBatch 總長</td>
+</tr>
+<tr>
+<td>partitionLeaderEpoch</td>
+<td style="text-align:center">int32</td>
+<td>標記 partition 中 leader replica 的元信息</td>
+</tr>
+<tr>
+<td>magic</td>
+<td style="text-align:center">int8</td>
+<td>V2 版本魔術值為 2</td>
+</tr>
+<tr>
+<td>crc</td>
+<td style="text-align:center">int32</td>
+<td>校驗碼， 效驗部分從開始到結束全部數據，但除了partitionLeaderEpoch值</td>
+</tr>
+<tr>
+<td>attributes</td>
+<td style="text-align:center">int16</td>
+<td>消息屬性，0~2:表示壓縮類型第3位：時間戳類型第4位：是否是事務型記錄5表示ControlRecord，這類記錄總是單條出現，它只在broker內處理</td>
+</tr>
+<tr>
+<td>lastOffsetDelta</td>
+<td style="text-align:center">int32</td>
+<td>RecordBatch 最後一個Record 的相對位移，用於broker 確認RecordBatch 中Records 的組裝正確性</td>
+</tr>
+<tr>
+<td>firstTimestamp</td>
+<td style="text-align:center">int64</td>
+<td>RecordBatch 第一條Record 的時間戳</td>
+</tr>
+<tr>
+<td>maxTimestamp</td>
+<td style="text-align:center">int64</td>
+<td>RecordBatch 中最大的時間戳，一般情況下是最後一條Record的時間戳，用於broker 判斷RecordBatch 中Records 的組裝是否正確</td>
+</tr>
+<tr>
+<td>producerId</td>
+<td style="text-align:center">int64</td>
+<td>生產者編號，用於支持冪等性（Exactly Once 語義）</td>
+</tr>
+<tr>
+<td>producerEpoch</td>
+<td style="text-align:center">int16</td>
+<td>同producerEpoch，支持冪等性</td>
+</tr>
+<tr>
+<td>baseSequence</td>
+<td style="text-align:center">int32</td>
+<td>同上，支持冪等性，也用於效驗是否重複Record</td>
+</tr>
+<tr>
+<td>records</td>
+<td style="text-align:center">[record]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="Record">Record</h4>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th style="text-align:center">類型</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>length</td>
+<td style="text-align:center">varints</td>
+<td>消息中長度</td>
+</tr>
+<tr>
+<td>attributes</td>
+<td style="text-align:center">int8</td>
+<td>unused，沒有使用了，但仍佔據了1B大小</td>
+</tr>
+<tr>
+<td>timestamp delta</td>
+<td style="text-align:center">varlong</td>
+<td>時間戳增量。一般佔據8個字節</td>
+</tr>
+<tr>
+<td>offset delta</td>
+<td style="text-align:center">varint</td>
+<td>位移增量</td>
+</tr>
+<tr>
+<td>key length</td>
+<td style="text-align:center">varint</td>
+<td>key的長度</td>
+</tr>
+<tr>
+<td>key</td>
+<td style="text-align:center">byte[]</td>
+<td>key的值</td>
+</tr>
+<tr>
+<td>valuelen</td>
+<td style="text-align:center">varint</td>
+<td>value值的長度</td>
+</tr>
+<tr>
+<td>value</td>
+<td style="text-align:center">byte[]</td>
+<td>value的實際值</td>
+</tr>
+<tr>
+<td>headers</td>
+<td style="text-align:center">[header]</td>
+<td>頭部結構，支持應用級別的擴展</td>
+</tr>
+</tbody>
+</table>
+<p>Record 消息中的關鍵字，字段類型好多都是採用了varints，動態類型，這樣有利於kafka根據具體的值來確定需要幾個字節保存。</p>
+<h2 id="序列化和反序列化">序列化和反序列化</h2>
+<p>kafka 內部發送和接收消息的時候，使用的是 byte[] 字節數組的方式 (RPC底層也是用這種通訊格式)。但是我們在應用層其實可以使用更多的數據類型，比如 int，short， long，String等，這歸功於 kafka 的序列化和反序列化機制。</p>
+<p>可以在 producer 的 config 設置指定要使用的編碼方式。</p>
+<h3 id="Producer-Config-設定">Producer Config 設定</h3>
+<p><em>key.serializer = org.apache.kafka.common.serialization.StringSerializer value.serializer = org.apache.kafka.common.serialization.StringSerializer</em></p>
+<p>訊息的序列化功能，producer 在傳送時訊息可以是字串也可以是物件，在傳送時必須做序列化，除了 String 之外，預設還支援 ByteArray、ByteBuffer、Bytes、Double、Integer、Long，另外也可以實作自己的 serializer，但必須要 implement -<br>
+<code>org.apache.kafka.common.serialization.Serializer</code>。<br>
+可以參考這篇<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.opencodez.com/java/implement-custom-value-serializer-apache-kafka.htm">文章</a>。</p>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/jiujuan/p/15024666.html">https://www.cnblogs.com/jiujuan/p/15024666.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/nifi-Consume-Kafka-Topic-and-Put-to-MongoDB/" rel="prev" title="[nifi] Consume Kafka Topic and Put to MongoDB">
+                  <i class="fa fa-chevron-left"></i> [nifi] Consume Kafka Topic and Put to MongoDB
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Kubernetes-Minikube/" rel="next" title="[Kubernetes] Minikube">
+                  [Kubernetes] Minikube <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

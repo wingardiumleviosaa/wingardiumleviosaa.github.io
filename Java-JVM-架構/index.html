@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="前一篇介紹到 Java 程式經過編譯後會產生 .class 檔 (bytecode)，只能運行在 JVM 上，而 JVM 在運算時，如同電腦需要記憶體儲存運算所需的各種資料及指令，這篇文章將紀錄 JVM 的架構。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Java] JVM 架構">
+<meta property="og:url" content="https://ulahsieh.github.io/Java-JVM-%E6%9E%B6%E6%A7%8B/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="前一篇介紹到 Java 程式經過編譯後會產生 .class 檔 (bytecode)，只能運行在 JVM 上，而 JVM 在運算時，如同電腦需要記憶體儲存運算所需的各種資料及指令，這篇文章將紀錄 JVM 的架構。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/qbAYLHV.png">
+<meta property="og:image" content="https://imgur.com/H8aD6Eh.png">
+<meta property="og:image" content="https://imgur.com/iMbW3Un.png">
+<meta property="og:image" content="https://imgur.com/ZumQcTh.png">
+<meta property="og:image" content="https://imgur.com/WDOImGT.png">
+<meta property="og:image" content="https://imgur.com/GT53vZO.png">
+<meta property="og:image" content="https://imgur.com/AsMKt4b.png">
+<meta property="og:image" content="https://imgur.com/oturBUp.png">
+<meta property="og:image" content="https://imgur.com/AsMKt4b.png">
+<meta property="og:image" content="https://imgur.com/AoP8OjJ.png">
+<meta property="article:published_time" content="2020-07-01T08:41:00.000Z">
+<meta property="article:modified_time" content="2020-07-01T08:41:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JRE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/qbAYLHV.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Java-JVM-%E6%9E%B6%E6%A7%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Java-JVM-%E6%9E%B6%E6%A7%8B/","path":"Java-JVM-架構/","title":"[Java] JVM 架構"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Java] JVM 架構 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-Structure"><span class="nav-number">1.</span> <span class="nav-text">JVM Structure</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Class-Loader"><span class="nav-number">1.1.</span> <span class="nav-text">Class Loader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Execution-Engine"><span class="nav-number">1.2.</span> <span class="nav-text">Execution Engine</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Runtime-Data-Areas"><span class="nav-number">1.3.</span> <span class="nav-text">Runtime Data Areas</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PC-Register"><span class="nav-number">1.3.1.</span> <span class="nav-text">PC Register</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM-Stack"><span class="nav-number">1.3.2.</span> <span class="nav-text">JVM Stack</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E8%AE%8A%E9%87%8F%E8%A1%A8-Local-Variable-Array"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">局部變量表 (Local Variable Array)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%81%8B%E7%AE%97%E5%85%83%E6%A3%A7-Operand-Stack"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">運算元棧 (Operand Stack)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8B%95%E6%85%8B%E9%80%A3%E6%8E%A5-Dynamic-Linking"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">動態連接 (Dynamic Linking)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Native-Method-Stack"><span class="nav-number">1.3.3.</span> <span class="nav-text">Native Method Stack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Heap"><span class="nav-number">1.3.4.</span> <span class="nav-text">Heap</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A0%86%E8%A8%98%E6%86%B6%E9%AB%94%E5%88%86%E9%85%8D"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">堆記憶體分配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Garbage-Collection"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">Garbage Collection</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#heap-%E5%A4%A7%E5%B0%8F%E5%B0%8D-GC-%E7%9A%84%E5%BD%B1%E9%9F%BF"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">heap 大小對 GC 的影響</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MetaSpace-Java8-%E4%BB%A5%E5%89%8D%E4%BB%A5%E5%BE%8C"><span class="nav-number">1.3.5.</span> <span class="nav-text">MetaSpace (Java8 以前以後)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">1.3.5.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Java-JVM-%E6%9E%B6%E6%A7%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Java] JVM 架構
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-07-01 16:41:00" itemprop="dateCreated datePublished" datetime="2020-07-01T16:41:00+08:00">2020-07-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>前一篇介紹到 Java 程式經過編譯後會產生 .class 檔 (bytecode)，只能運行在 JVM 上，而 JVM 在運算時，如同電腦需要記憶體儲存運算所需的各種資料及指令，這篇文章將紀錄 JVM 的架構。</p>
+<span id="more"></span>
+<h2 id="JVM-Structure">JVM Structure</h2>
+<p><img src="https://imgur.com/qbAYLHV.png" alt> [1]<br>
+上圖為 JVM 執行一個 Java 程式的過程：</p>
+<h3 id="Class-Loader">Class Loader</h3>
+<p>用於將編譯好的 <code>.class</code> 文件 － <strong>Java Bytecode</strong> 加載到 Runtime Data Areas。</p>
+<h3 id="Execution-Engine">Execution Engine</h3>
+<p>用於執行 Java Bytecode 或是 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/Native%20methods">native method</a>.</p>
+<p>Java Bytecode 是以人類仍然可以理解的語言而不是機器語言編寫的。因此，Execution Engine 透過以下兩種方式將字節碼轉為 JVM 中的機器語言。</p>
+<ol>
+<li>Interpreter</li>
+<li>JIT (Just-In-Time) Compiler</li>
+</ol>
+<table><tr><td bgcolor="#FAFAFA">
+<b>什麼時候用 Interpreter 什麼時候用 Compiler?</b><br>
+The application code is initially interpreted, but the JVM monitors which part of bytecode are frequently executed and translates them to machine code for direct execution on the hardware. 
+For bytecode which is executed only a few times, interpret it will saves the compilation time and reduces the initial latency; 
+For frequently executed bytecode, JIT compilation will be used after an initial phase of slow interpretation. 
+By interpreting the initial code, execution statistics can be collected before compilation, which helps to perform better optimization.[3]
+</td></tr></table>
+<p><img src="https://imgur.com/H8aD6Eh.png" alt> [2]<br>
+<img src="https://imgur.com/iMbW3Un.png" alt> [3]</p>
+<h3 id="Runtime-Data-Areas">Runtime Data Areas</h3>
+<p>JVM 運行時所需的的記憶體區塊，總共可以分為六區</p>
+<ul>
+<li>PC Register, JVM Stack 以及 Native Method Stack 依賴於<strong>單個</strong>執行緒的啟動/結束來建立與銷毀。</li>
+<li>Heap, Metaspace(Metod Area &amp; Runtime Constant Pool) 是隨著JVM的啟動而存在，為<strong>全部</strong>的執行緒共享。</li>
+</ul>
+<p><img src="https://imgur.com/ZumQcTh.png" alt> [4]</p>
+<h4 id="PC-Register">PC Register</h4>
+<p>Program Counter Register，紀錄當前執行緒所執行到的 bytecode 中的指令位址。為了執行緒切換後能恢復到正確的執行位置，每條執行緒都需要有一個獨立的 program counter，各執行緒之間獨立儲存。</p>
+<h4 id="JVM-Stack">JVM Stack</h4>
+<p>用來放 frame，每個 method 在執行的同時都會建立一個 stack frame，用於儲存局部變數表 (Local Variable Array)、運算元堆疊 (Operand Stack) 和動態連接 (Dynamic Linking) 以及返回值(Return Value)。每個 method 從呼叫直至結束 (return)，都對應著一個 stack frame 在此區塊中入/出 (push/pop) stack 的過程。<br>
+JVM Statck 的大小可以是固定的，或是動態擴展的。如果 thread 需要一個比固定大小大的Stack，會發生 <strong>StackOverflowError</strong>；如果動態擴展 Stack 時沒有足夠的記憶體空間，則會發生 <strong>OutOfMemoryError</strong>。<br>
+<img src="https://imgur.com/WDOImGT.png" alt><br>
+<img src="https://imgur.com/GT53vZO.png" alt><br>
+[5]</p>
+<h5 id="局部變量表-Local-Variable-Array">局部變量表 (Local Variable Array)</h5>
+<p>局部變量表用於存放方法參數和方法內部定義的局部變量，其大小在編譯期(.class 前)就被確定。<br>
+Java 代碼 <code>int a=0; int b=1; int c=2;</code> 對應的局部變量表如下：</p>
+<table>
+<thead>
+<tr>
+<th>Start</th>
+<th>Length</th>
+<th>Slot</th>
+<th>Name</th>
+<th>Signature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>12</td>
+<td>0</td>
+<td>a</td>
+<td>I</td>
+</tr>
+<tr>
+<td>4</td>
+<td>10</td>
+<td>1</td>
+<td>b</td>
+<td>I</td>
+</tr>
+<tr>
+<td>6</td>
+<td>8</td>
+<td>2</td>
+<td>c</td>
+<td>I</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Start: 變量偏移量。</li>
+<li>Length: 作用域範圍長度。 <code>Start,Start+Length</code> 就是該變量的作用域。</li>
+<li>Slot: 變量槽，一個 Slot (一行) 能存儲 32bit 的 primitive type、reference type、returnAddress 數據，long/dobule 則需要兩個 Slot。</li>
+</ul>
+<h5 id="運算元棧-Operand-Stack">運算元棧 (Operand Stack)</h5>
+<p>用 push,pop 操作數據。operand stack 只是一個臨時的計算過程，要用到 Local variable table 裡面的值，然後得出結果，放入到 local variables 區。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Java 代碼</span></span><br><span class="line"><span class="keyword">int</span> a=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> b=<span class="number">2</span>;</span><br><span class="line"><span class="keyword">int</span> c=a+b;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 運算元棧</span><br><span class="line">0: iconst_1 // push 1到操作棧。大於5的int值會用到 bipush &lt;i&gt; 指令。</span><br><span class="line">1: istore_0 // pop 頂元素，存儲到index=0的本地變量。</span><br><span class="line">2: iconst_2 // push 2 到操作棧</span><br><span class="line">3: istore_1 // pop棧頂元素，存儲到index=1的本地變量。</span><br><span class="line">4: iload_0 // 把index=0的本地變量加載到棧頂</span><br><span class="line">5: iload_1 // 把index=1的本地變量加載到棧頂</span><br><span class="line">6: iadd // 把棧頂兩個數pop出來相加，並把結果存放到棧頂</span><br><span class="line">7: istore_2 // 結果存儲到index=2的本地變量</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="動態連接-Dynamic-Linking">動態連接 (Dynamic Linking)</h5>
+<p>指符號引用（Symbolic References）轉換成為直接引用（Direct References）的過程。每個 Frame 內部都包含一個指向 runtime constant pool 的引用來支援當前方法的程式碼。</p>
+<ul>
+<li>符號引用：以一組符號來描述所引用的目標，符號可以是任何形式的字面量，只要使用時能無歧義地定位到目標即可。方法名，類名，字段名都是符號引用。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">1</span>; <span class="comment">//把整數 1 賦值給 int 型變量 i，整數 1 就是字面量，</span></span><br><span class="line">String s = <span class="string">&quot;abc&quot;</span>; <span class="comment">//abc 是字面量。</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>直接引用：可以是直接指向目標的指針、相對偏移量或是一個能間接定位到目標的句柄。如果有了直接引用，那么引用的目標一定是已經存在於內存中。</li>
+</ul>
+<h4 id="Native-Method-Stack">Native Method Stack</h4>
+<p>此區塊主要執行native method。</p>
+<h4 id="Heap">Heap</h4>
+<p>用於儲存物件的實例(object instance)和陣列，也是 GC 管理的主要區域，因此也被稱為 GC 堆 — Garbage Collected Heap。Heap 是在 JVM 啟動時建立的，為所有執行緒共有。堆的大小可以固定，也可以擴大縮小且不需要是連續空間。</p>
+<h5 id="堆記憶體分配">堆記憶體分配</h5>
+<p>現在的 GC 都採 generation-collect 分代收集算法，所以 Heap 記憶體可劃分為：<br>
+<img src="https://imgur.com/AsMKt4b.png" alt> [6]</p>
+<ul>
+<li>Young Generation（年輕代）</li>
+<li>Old Generation（老年代）<br>
+其中Young generation可以進一步分為3個區塊: Eden space， Survivor 1 和 Survivor 2</li>
+</ul>
+<h5 id="Garbage-Collection">Garbage Collection</h5>
+<p>垃圾回收(garbage collection)是指將佔記憶體空間(heap)的不再被參考的物件<br>
+清除的過程。</p>
+<p>年輕代回收：又稱小型回收 (minor collection)，執行時機是當年輕代的空間滿的時候會觸發。當新物件產生時會放置在 Eden space，當 Eden space 滿了，JVM 會啟動 Minor GC，把存活的物件往 Survivor 1 或 2 移及以原本在 Survivor 1 或 2 的存活物件往另一個 Survivor 空間移。當 JVM 執行多次 Minor GC 後，會把符合條件的存活物件往 Tenured generation 移，這個過程我們稱為Minor GC。</p>
+<p>老年代或永久代回收稱為完整回收(full collection)或主要回收(major collection)。當 old generation 滿了時，JVM 會回收 Tenured generation 的空間，稱為 Major/Full GC。</p>
+<h5 id="heap-大小對-GC-的影響">heap 大小對 GC 的影響</h5>
+<p>空間比較小的時候，打掃動作比較快，但是相對垃圾累積也比較快滿，所以打掃需要比較頻繁。相反地，空間大，需要打掃的頻率比較低，但是一打掃起來就很費時。通常就是在「時間」、「空間」、「頻率」三者之間作取捨而已。<br>
+Minor GC 和 Major/Full都是 “Stop the World” 事件，只是 Minor GC 時間非常短(幾百milli-seconds)，使用者較不容易察覺;而 Full GC 時間相對上長很多，且 heap size 愈大時間愈久；因此應儘量避免或減少 Full GC 發生。</p>
+<p>若Heap space沒空間存放新建立的物作，則JVM會丟出OutOfMemoryError或 java.lang.OutOfMemoryError heap space</p>
+<h4 id="MetaSpace-Java8-以前以後">MetaSpace (Java8 以前以後)</h4>
+<p><strong>Java 7</strong><br>
+<img src="https://imgur.com/oturBUp.png" alt><br>
+<strong>Java 8</strong><br>
+<img src="https://imgur.com/AsMKt4b.png" alt>[6]<br>
+下面這張能更清楚 java 8 的改變:<br>
+<img src="https://imgur.com/AoP8OjJ.png" alt>[7]<br>
+原先存在 heap 用來存放存放 byte code, JIT information, class metadata 以及 static 的變數, 方法的永久代 PermGen 被移到 native memory 的 metaspace 了。</p>
+<h6 id="Reference">Reference</h6>
+<p>[1]<a target="_blank" rel="external nofollow noopener noreferrer" href="http://mauryasunil007.blogspot.com/2016/04/understanding-jvm-internal-architecture.html">http://mauryasunil007.blogspot.com/2016/04/understanding-jvm-internal-architecture.html</a><br>
+[2]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.datawareventures.com/single-post/2015/10/09/Field-Specialization-Just-another-JIT">https://www.datawareventures.com/single-post/2015/10/09/Field-Specialization-Just-another-JIT</a><br>
+[3]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://stackoverflow.com/questions/1326071/is-java-a-compiled-or-an-interpreted-programming-language">https://stackoverflow.com/questions/1326071/is-java-a-compiled-or-an-interpreted-programming-language</a><br>
+[4]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.jamesdbloom.com/JVMInternals.html">https://blog.jamesdbloom.com/JVMInternals.html</a><br>
+[5]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://alvinalexander.com/scala/fp-book/recursion-jvm-stacks-stack-frames/">https://alvinalexander.com/scala/fp-book/recursion-jvm-stacks-stack-frames/</a><br>
+[6]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.deistercloud.com/content/Axional%20development%20libraries.20/Axional%20Server.4/Tunning.xml?embedded=true">https://docs.deistercloud.com/content/Axional development libraries.20/Axional Server.4/Tunning.xml?embedded=true</a><br>
+[7]<a target="_blank" rel="external nofollow noopener noreferrer" href="https://stackoverflow.com/questions/39675406/difference-between-metaspace-and-native-memory-in-java">https://stackoverflow.com/questions/39675406/difference-between-metaspace-and-native-memory-in-java</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/JRE/" rel="tag"># JRE</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Java-what-are-JDK-JRE-JDK/" rel="prev" title="[Java] What are JDK, JRE, JDK ?">
+                  <i class="fa fa-chevron-left"></i> [Java] What are JDK, JRE, JDK ?
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Install-Java-on-Win10/" rel="next" title="[Java] Install Java on Win10">
+                  [Java] Install Java on Win10 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

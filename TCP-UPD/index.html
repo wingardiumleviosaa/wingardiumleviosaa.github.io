@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="傳輸層 Transport Layer Port 連接埠&#x2F;端口。有了網際網路層的 IP 位址之後，就可以把檔案傳輸到目標電腦上，但是一台電腦上可能有許多不同的應用程式，沒辦法知道這個檔案要由電腦上的哪一個應用程式處理，因此出現了 port。使用 port 就可以區別這些服務，如果有服務的程式在監聽這個埠號的話，就會收到 request。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[TCP&#x2F;IP] 傳輸層 - TCP , UDP">
+<meta property="og:url" content="https://ulahsieh.github.io/TCP-UPD/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="傳輸層 Transport Layer Port 連接埠&#x2F;端口。有了網際網路層的 IP 位址之後，就可以把檔案傳輸到目標電腦上，但是一台電腦上可能有許多不同的應用程式，沒辦法知道這個檔案要由電腦上的哪一個應用程式處理，因此出現了 port。使用 port 就可以區別這些服務，如果有服務的程式在監聽這個埠號的話，就會收到 request。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/Lk5Jcq1.png">
+<meta property="article:published_time" content="2020-06-30T15:30:00.000Z">
+<meta property="article:modified_time" content="2020-06-30T15:30:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="TCP&#x2F;IP">
+<meta property="article:tag" content="TCP">
+<meta property="article:tag" content="UDP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/Lk5Jcq1.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/TCP-UPD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/TCP-UPD/","path":"TCP-UPD/","title":"[TCP/IP] 傳輸層 - TCP , UDP"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[TCP/IP] 傳輸層 - TCP , UDP | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%82%B3%E8%BC%B8%E5%B1%A4-Transport-Layer"><span class="nav-number">1.</span> <span class="nav-text">傳輸層 Transport Layer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Port"><span class="nav-number">1.1.</span> <span class="nav-text">Port</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP"><span class="nav-number">1.2.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E9%80%A3%E7%B7%9A-%E4%B8%89%E6%AC%A1%E4%BA%A4%E6%8F%A1"><span class="nav-number">1.2.1.</span> <span class="nav-text">建立連線 - 三次交握</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%82%B3%E9%80%81%E8%A8%8A%E6%81%AF"><span class="nav-number">1.2.2.</span> <span class="nav-text">傳送訊息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B5%90%E6%9D%9F%E9%80%A3%E7%B7%9A-%E5%9B%9B%E6%AC%A1%E6%8F%AE%E6%89%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">結束連線 - 四次揮手</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UDP"><span class="nav-number">1.3.</span> <span class="nav-text">UDP</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">1.3.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/TCP-UPD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [TCP/IP] 傳輸層 - TCP , UDP
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-06-30 23:30:00" itemprop="dateCreated datePublished" datetime="2020-06-30T23:30:00+08:00">2020-06-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/" itemprop="url" rel="index"><span itemprop="name">程式初心者</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/TCP-IP/" itemprop="url" rel="index"><span itemprop="name">TCP/IP</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>909</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="傳輸層-Transport-Layer">傳輸層 Transport Layer</h2>
+<h3 id="Port">Port</h3>
+<p>連接埠/端口。有了網際網路層的 IP 位址之後，就可以把檔案傳輸到目標電腦上，但是一台電腦上可能有許多不同的應用程式，沒辦法知道這個檔案要由電腦上的哪一個應用程式處理，因此出現了 port。使用 port 就可以區別這些服務，如果有服務的程式在監聽這個埠號的話，就會收到 request。</p>
+<span id="more"></span>
+<p>常用的 port 有： http 80, https 443, ftp 21。</p>
+<h3 id="TCP">TCP</h3>
+<p>Transmission Control Protocol 傳輸控制協定，TCP 為<strong>可靠</strong>的傳輸協定，通訊前須先建立「連線」，連線完成後進行「通訊」，通訊完畢後「中斷連線」，應用如 http, ftp。</p>
+<p><img src="https://imgur.com/Lk5Jcq1.png" alt></p>
+<h4 id="建立連線-三次交握">建立連線 - 三次交握</h4>
+<ol>
+<li>Client 傳送建立連線訊息給 Server，裡面有個包個數字 x (例如 1000)。</li>
+<li>Server 收到後，將這個 x 記錄下來，然後回發個訊息 y (例如 8000) 以及ack(x+1)， x + 1 的目的是因為這樣才能證明是 Server是收到 Client 的訊息)</li>
+<li>Client 收到後，也回應個 ack(y+1)（同理這樣才能證明是 Server 寫的）<br>
+經過以上三次交握，連線建立。</li>
+</ol>
+<h4 id="傳送訊息">傳送訊息</h4>
+<ol>
+<li>Client 發送資料長度為 20 byte 的資料給 Server</li>
+<li>Server 收到後回 ack 為 x + 20 的訊息給 Client</li>
+<li>Client 再次發送資料長度為 20 byte 的資料給 Server</li>
+<li>過一段時間 timeout 後，Client 再發送一次</li>
+<li>Server 收到後回 ack 為 x + 20 的訊息給 Client</li>
+</ol>
+<h4 id="結束連線-四次揮手">結束連線 - 四次揮手</h4>
+<ol>
+<li>Client 發送一個斷線訊息Finish &amp; x 給 Server</li>
+<li>Server 收到後回發 x + 1 訊息給 Client</li>
+<li>接下來 Server 接續發送一個斷線訊息 Finish &amp; y 給 A</li>
+<li>Client 收到後再回發一個 y + 1 訊息給 Server (Server 就正式斷線)</li>
+<li>Client 正式斷線，資源釋放</li>
+</ol>
+<h3 id="UDP">UDP</h3>
+<p>User Datagram Protocol，使用者資料元協定，UDP 為<strong>不可靠</strong>的傳輸協定，使用在要求速度的應用上，不在乎是否送達，實例如視訊，掉了一兩個畫面不影響功能。</p>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://ithelp.ithome.com.tw/articles/10205476">https://ithelp.ithome.com.tw/articles/10205476</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TCP-IP/" rel="tag"># TCP/IP</a>
+              <a href="/tags/TCP/" rel="tag"># TCP</a>
+              <a href="/tags/UDP/" rel="tag"># UDP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/IP/" rel="prev" title="[TCP/IP] 網路層 - IP">
+                  <i class="fa fa-chevron-left"></i> [TCP/IP] 網路層 - IP
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/TCP-HTTP/" rel="next" title="[TCP/IP] 應用層 - HTTP">
+                  [TCP/IP] 應用層 - HTTP <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

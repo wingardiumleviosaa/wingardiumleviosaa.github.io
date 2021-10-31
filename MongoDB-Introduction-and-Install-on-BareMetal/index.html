@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="文件導向式(document-oriented)資料庫，儲存文件（document）或物件（object），沒有 row 的概念，取而代之的是 document。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[MongoDB] Introduction and Installation on Bare Metal">
+<meta property="og:url" content="https://ulahsieh.github.io/MongoDB-Introduction-and-Install-on-BareMetal/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="文件導向式(document-oriented)資料庫，儲存文件（document）或物件（object），沒有 row 的概念，取而代之的是 document。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/SAZKb1H.png">
+<meta property="article:published_time" content="2020-12-15T13:55:00.000Z">
+<meta property="article:modified_time" content="2020-12-15T13:55:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="MongoDB">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/SAZKb1H.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/MongoDB-Introduction-and-Install-on-BareMetal/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/MongoDB-Introduction-and-Install-on-BareMetal/","path":"MongoDB-Introduction-and-Install-on-BareMetal/","title":"[MongoDB] Introduction and Installation on Bare Metal"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[MongoDB] Introduction and Installation on Bare Metal | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Features"><span class="nav-number">1.</span> <span class="nav-text">Features</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E9%BB%9E"><span class="nav-number">2.</span> <span class="nav-text">缺點</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%84%B2%E5%AD%98%E6%9E%B6%E6%A7%8B"><span class="nav-number">3.</span> <span class="nav-text">儲存架構</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#document"><span class="nav-number">3.1.</span> <span class="nav-text">document</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#collection"><span class="nav-number">3.2.</span> <span class="nav-text">collection</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8-Ubuntu-18-04-%E4%B8%8A%E5%AE%89%E8%A3%9D-MongoDB-4-4-Community-Edition"><span class="nav-number">4.</span> <span class="nav-text">在 Ubuntu 18.04 上安裝 MongoDB 4.4 Community Edition</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8E%E5%85%A5-apt-%E4%BD%BF%E7%94%A8%E7%9A%84%E5%85%AC%E9%91%B0"><span class="nav-number">4.1.</span> <span class="nav-text">導入 apt 使用的公鑰</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B0%E5%A2%9E-MongoDB-%E7%9A%84-list-file"><span class="nav-number">4.2.</span> <span class="nav-text">新增 MongoDB 的 list file</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0-apt-%E4%B8%A6%E5%AE%89%E8%A3%9D-mongo"><span class="nav-number">4.3.</span> <span class="nav-text">更新 apt 並安裝 mongo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E7%89%88%E6%9C%AC"><span class="nav-number">4.4.</span> <span class="nav-text">固定版本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A8%AD%E5%AE%9A-ulimit"><span class="nav-number">4.5.</span> <span class="nav-text">設定 ulimit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mongod-conf"><span class="nav-number">4.6.</span> <span class="nav-text">mongod.conf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%95%9F%E5%8B%95-mongodb-service"><span class="nav-number">4.7.</span> <span class="nav-text">啟動 mongodb service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%B2%E5%85%A5-mongoDB"><span class="nav-number">4.8.</span> <span class="nav-text">進入 mongoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">4.8.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/MongoDB-Introduction-and-Install-on-BareMetal/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [MongoDB] Introduction and Installation on Bare Metal
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-12-15 21:55:00" itemprop="dateCreated datePublished" datetime="2020-12-15T21:55:00+08:00">2020-12-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Database/" itemprop="url" rel="index"><span itemprop="name">Database</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Database/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>文件導向式(document-oriented)資料庫，儲存文件（document）或物件（object），沒有 row 的概念，取而代之的是 document。</p>
+<span id="more"></span>
+<h3 id="Features">Features</h3>
+<ul>
+<li>schema-less：擁有彈性的 schema</li>
+<li>易於橫向擴展，document 的數據模型能很容易在多台伺服器之間進行數據分割。</li>
+<li>性能：MongoDB 能預分配，以利用額外的空間換取穩定，同時盡可能把多的內存用作 cache，試圖為每次查詢自動選擇正確的索引。查詢(使用索引)、插入(自動分片)等操作的速度很快。</li>
+<li>Map/Reduce 的聚合（aggregation）功能：更多可能性，且提供方便的資料分組、處理與二次加工等操作</li>
+<li>副本（Replication）&amp; 容錯移轉（failover）：提供資料的高可用性（HA, High Availability）</li>
+</ul>
+<h3 id="缺點">缺點</h3>
+<p>不支援事務操作 : 所以通常不適合應用在銀行或會計這種系統上，因為不包證一致性。<br>
+占用比較多空間 : 主要是有兩個原因，首先是它會預分配空間，為了提高效能，而第二個原因是欄位所占用的空間。</p>
+<h3 id="儲存架構">儲存架構</h3>
+<h4 id="document">document</h4>
+<p>Document 是 mongodb 的核心，它就是 Key-Value 的對應組合。資料的儲存架構是以類似 JSON 的資料結構 <strong>BSON</strong>(Binary JSON) 儲存，每筆資料的 key 和 value 都是區分大小寫。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">     _id: <span class="string">&quot;948794777&quot;</span>,</span><br><span class="line">     name: <span class="string">&quot;Robby&quot;</span>,</span><br><span class="line">     age: <span class="number">30</span>,</span><br><span class="line">     email: <span class="string">&quot;Robby&quot;</span>,</span><br><span class="line">     skill: [</span><br><span class="line">            &#x27;javascript&#x27;,</span><br><span class="line">            &#x27;java&#x27;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>_id：雖然稱為 NoSQL，但系統會自動幫你產生</li>
+<li>key 區分大小寫，且不能相同</li>
+</ul>
+<h4 id="collection">collection</h4>
+<p>Collection 是一組 Document，如果把它用來與關聯式資料庫比較，他就是 Table 裡面存放了很多 Row (document)。Collection 是動態的，一個 collection 裡的document 可以是各種類型。如下；</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123; id : <span class="number">1</span>, name : <span class="string">&quot;mark&quot;</span> &#125;</span><br><span class="line">&#123; age : <span class="number">100</span> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="在-Ubuntu-18-04-上安裝-MongoDB-4-4-Community-Edition">在 Ubuntu 18.04 上安裝 MongoDB 4.4 Community Edition</h3>
+<div class="info">
+<p>MongoDB 4.4 Community Edition 僅支援 64-bit 的 20.04、18.04、16.04 Ubuntu 版本。<br>
+官方的套件是由 MongoDB Inc. 維護的 mongodb-org，並且會在 repo 中保持最新版本。而 Ubuntu 提供的套件是 mongodb 非為官方套件，在安裝官方套件前須前解除安裝。</p>
+</div>
+<h4 id="導入-apt-使用的公鑰">導入 apt 使用的公鑰</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<p>如果成功會返回 <code>OK</code>；失敗的話請先安裝 <code>gnupg</code>，<code>sudo apt-get install gnupg -y</code>。</p>
+<h4 id="新增-MongoDB-的-list-file">新增 MongoDB 的 list file</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ echo &quot;deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse&quot; | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list</span><br></pre></td></tr></table></figure>
+<p>成功後會在 /etc/apt/sources.list.d 下建立 mongodb-org-4.4.list 清單。</p>
+<h4 id="更新-apt-並安裝-mongo">更新 apt 並安裝 mongo</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get install -y mongodb-org</span><br></pre></td></tr></table></figure>
+<p>安裝過程會自動創建使用者 <code>mongodb</code> 以及數據目錄 <code>/var/lib/mongodb</code> 以及日誌目錄 <code>/var/log/mongodb</code>。如果要更改使用 mongod 進程的使用者的話，則這兩個目錄的權限也要修改。</p>
+<h4 id="固定版本">固定版本</h4>
+<p>為了防止在 apt update 時將最新版本下載更新，所以可以選擇將 package 固定在當前安裝的版本上。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ echo &quot;mongodb-org hold&quot; | sudo dpkg --set-selections &amp;&amp; echo &quot;mongodb-org-server hold&quot; | sudo dpkg --set-selections &amp;&amp; echo &quot;mongodb-org-shell hold&quot; | sudo dpkg --set-selections &amp;&amp; echo &quot;mongodb-org-mongos hold&quot; | sudo dpkg --set-selections &amp;&amp; echo &quot;mongodb-org-tools hold&quot; | sudo dpkg --set-selections</span><br></pre></td></tr></table></figure>
+<h4 id="設定-ulimit">設定 ulimit</h4>
+<p>大多數類 Unix 操作系統都限制 process 可使用的系統資源。這些限制可能會對 MongoDB 的運作造成停擺。在 4.4 版如果 ulimt 的 open file 數值小於 64000 會直接報 startup error 的錯誤。<br>
+先使用 ps 查看 mongo 的使用者名稱，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ ps aux | grep mongod</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/SAZKb1H.png" alt></p>
+<p>修改 <code>limit.conf</code> 檔案</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo vi /etc/security/limits.conf</span><br></pre></td></tr></table></figure>
+<p>加入以下條件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mongodb soft fsize unlimited</span><br><span class="line">mongodb hard fsize unlimited</span><br><span class="line">mongodb soft cpu unlimited</span><br><span class="line">mongodb hard cpu unlimited</span><br><span class="line">mongodb soft as unlimited</span><br><span class="line">mongodb hard as unlimited</span><br><span class="line">mongodb soft memlock unlimited</span><br><span class="line">mongodb hard memlock unlimited</span><br><span class="line">mongodb soft nofile 64000</span><br><span class="line">mongodb hard nofile 64000</span><br><span class="line">mongodb soft nproc 64000</span><br><span class="line">mongodb hard nproc 64000</span><br></pre></td></tr></table></figure>
+<p>之後重登入使用者，並可以使更改生效。</p>
+<h4 id="mongod-conf">mongod.conf</h4>
+<p>設置檔在啟動時生效。如果在運行 MongoDB 實例時更改配置文件，則必須重新啟動服務以使更改生效。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Where and how to store data.</span><br><span class="line">storage:</span><br><span class="line">  dbPath: /var/lib/mongodb</span><br><span class="line">  journal:</span><br><span class="line">    enabled: true</span><br><span class="line"></span><br><span class="line"># where to write logging data.</span><br><span class="line">systemLog:</span><br><span class="line">  destination: file</span><br><span class="line">  logAppend: true</span><br><span class="line">  path: /var/log/mongodb/mongod.log</span><br><span class="line"></span><br><span class="line"># network interfaces</span><br><span class="line">net:</span><br><span class="line">  port: 27017</span><br><span class="line">  bindIp: 127.0.0.1</span><br><span class="line">  # 綁定監聽的 ip，默認 127.0.0.1，只能通過本地連接。若不限制 IP，務必確保認證安全，多個 IP 用逗號分隔。</span><br><span class="line"></span><br><span class="line"># how the process runs</span><br><span class="line">processManagement:</span><br><span class="line">  timeZoneInfo: /usr/share/zoneinfo</span><br></pre></td></tr></table></figure>
+<h4 id="啟動-mongodb-service">啟動 mongodb service</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl daemon-reload</span><br><span class="line">$ sudo systemctl start mongod</span><br></pre></td></tr></table></figure>
+<p>確認啟用狀態</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl status mongod</span><br></pre></td></tr></table></figure>
+<p>確保 MongoDB 會在系統重啟後自動啟動</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl enable mongod</span><br></pre></td></tr></table></figure>
+<h4 id="進入-mongoDB">進入 mongoDB</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ mongo</span><br></pre></td></tr></table></figure>
+<p>如果要有指定特定 port 進入 shell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ mongo --port 3000</span><br></pre></td></tr></table></figure>
+<p>如果要連到 remote mongoDB</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 使用 connection string進入</span><br><span class="line">$ mongo &quot;mongodb://10.1.5.10:27017&quot;</span><br><span class="line"># 或是使用參數</span><br><span class="line">$ mongo --host 10.1.5.10:27017</span><br><span class="line"># 或是使用參數</span><br><span class="line">$ mongo --host 10.1.5.10 --port 27017</span><br></pre></td></tr></table></figure>
+<p>使用驗證連到 mongo shell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 使用 connection string 登入</span><br><span class="line">$ mongo &quot;mongodb://alice@10.1.5.10:27017/?authSource=admin&quot;</span><br><span class="line"># 或是使用參數登入</span><br><span class="line">mongo --username alice --password --authenticationDatabase admin --host 10.1.5.10 --port 27017</span><br></pre></td></tr></table></figure>
+<p>不需要在 command line 裡把密碼打出來，shell 會自動跳出密碼輸入提示。</p>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/">https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://ithelp.ithome.com.tw/articles/10184679">https://ithelp.ithome.com.tw/articles/10184679</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Install-Docker-Docker-Compose-on-CentOS7/" rel="prev" title="[Docker] Install Docker & Docker Compose on CentOS7">
+                  <i class="fa fa-chevron-left"></i> [Docker] Install Docker & Docker Compose on CentOS7
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/MongoDB-Install-MongoDB-Replica-Set-with-Docker/" rel="next" title="[MongoDB] Install MongoDB Replica Set with Docker">
+                  [MongoDB] Install MongoDB Replica Set with Docker <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

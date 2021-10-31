@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="新硬碟放入機器後要做三件事情，分割、格式化、掛載，才可以開始儲存資料；">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Linux] 分割 &amp; 格式化 &amp; 掛載硬碟">
+<meta property="og:url" content="https://ulahsieh.github.io/Linux-disk-format/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="新硬碟放入機器後要做三件事情，分割、格式化、掛載，才可以開始儲存資料；">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-15T02:14:44.000Z">
+<meta property="article:modified_time" content="2020-10-15T02:14:44.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Linux-disk-format/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Linux-disk-format/","path":"Linux-disk-format/","title":"[Linux] 分割 & 格式化 & 掛載硬碟"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Linux] 分割 & 格式化 & 掛載硬碟 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%A1%AC%E7%A2%9F%E7%8B%80%E6%85%8B"><span class="nav-number">1.</span> <span class="nav-text">查看硬碟狀態</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E7%A2%9F%E5%88%86%E5%89%B2%E9%A1%9E%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">硬碟分割類型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BIOS-MBR"><span class="nav-number">2.1.</span> <span class="nav-text">BIOS&#x2F;MBR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UEFI-GPT"><span class="nav-number">2.2.</span> <span class="nav-text">UEFI&#x2F;GPT</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%B2%E5%85%A5%E6%AD%A3%E9%A1%8C"><span class="nav-number"></span> <span class="nav-text">進入正題</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%89%B2"><span class="nav-number">1.</span> <span class="nav-text">分割</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E6%96%BC-2TB-%E7%A1%AC%E7%A2%9F%E7%94%A8-MBR"><span class="nav-number">1.1.</span> <span class="nav-text">小於 2TB 硬碟用 MBR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E6%96%BC-2TB-%E7%A1%AC%E7%A2%9F%E7%94%A8-GPT"><span class="nav-number">1.2.</span> <span class="nav-text">大於 2TB 硬碟用 GPT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">格式化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%9B%E8%BC%89%E7%A1%AC%E7%A2%9F"><span class="nav-number">3.</span> <span class="nav-text">掛載硬碟</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Linux-disk-format/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Linux] 分割 & 格式化 & 掛載硬碟
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-10-15 10:14:44" itemprop="dateCreated datePublished" datetime="2020-10-15T10:14:44+08:00">2020-10-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>892</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>新硬碟放入機器後要做三件事情，分割、格式化、掛載，才可以開始儲存資料；</p>
+<span id="more"></span>
+<h3 id="查看硬碟狀態">查看硬碟狀態</h3>
+<p>查看目前電腦中的硬碟</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ root@srv1:/# ls /dev/sd*</span><br><span class="line">/dev/sda  /dev/sda1  /dev/sda2  /dev/sdb  /dev/sdc</span><br></pre></td></tr></table></figure>
+<p>列出目前系統硬碟掛載狀態</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ df -h</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@srv1:/# df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">udev             32G     0   32G   0% /dev</span><br><span class="line">tmpfs           6.3G  2.2M  6.3G   1% /run</span><br><span class="line">/dev/sda2       458G   36G  399G   9% /</span><br><span class="line">tmpfs            32G     0   32G   0% /dev/shm</span><br><span class="line">tmpfs           5.0M     0  5.0M   0% /run/lock</span><br><span class="line">tmpfs            32G     0   32G   0% /sys/fs/cgroup</span><br><span class="line">tmpfs           6.3G     0  6.3G   0% /run/user/1000</span><br></pre></td></tr></table></figure>
+<h3 id="硬碟分割類型">硬碟分割類型</h3>
+<p>硬碟分割有兩種模式：</p>
+<ol>
+<li>傳統 BIOS/MBR</li>
+<li>新型 UEFI/GPT (目前有圖形介面的 BIOS 皆屬之)</li>
+</ol>
+<h4 id="BIOS-MBR">BIOS/MBR</h4>
+<p>主開機紀錄（Master Boot Record，MBR）是電腦開機後存取硬碟時首先會讀取的第一個磁區。<br>
+開機過程是 BIOS → MBR → 啟動 OS。</p>
+<h4 id="UEFI-GPT">UEFI/GPT</h4>
+<p>統一可延伸韌體介面（Unified Extensible Firmware Interface，UEFI），傳統 BIOS 的改良，GPT（GUID Partition Table）就是取代 MBR 的新的磁碟分割表。<br>
+開機過程是 UEFI → GPT → 啟動 OS。</p>
+<h2 id="進入正題">進入正題</h2>
+<h3 id="分割">分割</h3>
+<h4 id="小於-2TB-硬碟用-MBR">小於 2TB 硬碟用 MBR</h4>
+<p>使用 <code>fdisk</code> 分割，後面接要分割的硬碟。進入後下 <code>m</code> 列出指令簡介；</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">root@srv1:/<span class="comment"># fdisk /dev/sdb</span></span><br><span class="line"></span><br><span class="line">Welcome to fdisk (util-linux 2.34).</span><br><span class="line">Changes will remain <span class="keyword">in</span> memory only, until you decide to write them.</span><br><span class="line">Be careful before using the write <span class="built_in">command</span>.</span><br><span class="line"></span><br><span class="line">Device does not contain a recognized partition table.</span><br><span class="line">Created a new DOS disklabel with disk identifier 0x587447ca.</span><br><span class="line"></span><br><span class="line">Command (m <span class="keyword">for</span> <span class="built_in">help</span>): m</span><br><span class="line"></span><br><span class="line">Help:</span><br><span class="line"></span><br><span class="line">  DOS (MBR)</span><br><span class="line">   a   toggle a bootable flag</span><br><span class="line">   b   edit nested BSD disklabel</span><br><span class="line">   c   toggle the dos compatibility flag</span><br><span class="line"></span><br><span class="line">  Generic</span><br><span class="line">   d   delete a partition</span><br><span class="line">   F   list free unpartitioned space</span><br><span class="line">   l   list known partition types</span><br><span class="line">   n   add a new partition</span><br><span class="line">   p   <span class="built_in">print</span> the partition table</span><br><span class="line">   t   change a partition <span class="built_in">type</span></span><br><span class="line">   v   verify the partition table</span><br><span class="line">   i   <span class="built_in">print</span> information about a partition</span><br><span class="line"></span><br><span class="line">  Misc</span><br><span class="line">   m   <span class="built_in">print</span> this menu</span><br><span class="line">   u   change display/entry units</span><br><span class="line">   x   extra functionality (experts only)</span><br><span class="line"></span><br><span class="line">  Script</span><br><span class="line">   I   load disk layout from sfdisk script file</span><br><span class="line">   O   dump disk layout to sfdisk script file</span><br><span class="line"></span><br><span class="line">  Save &amp; Exit</span><br><span class="line">   w   write table to disk and <span class="built_in">exit</span></span><br><span class="line">   q   quit without saving changes</span><br><span class="line"></span><br><span class="line">  Create a new label</span><br><span class="line">   g   create a new empty GPT partition table</span><br><span class="line">   G   create a new empty SGI (IRIX) partition table</span><br><span class="line">   o   create a new empty DOS partition table</span><br><span class="line">   s   create a new empty Sun partition table</span><br></pre></td></tr></table></figure>
+<p>使用 <code>p</code> 印出目前已被分隔的硬碟，使用 <code>n</code> 開始分割，因為只要分割一個，所以一直按 enter 保持預設選項。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Command (m for help): p</span><br><span class="line">Disk /dev/sdb: 465.78 GiB, 500107862016 bytes, 976773168 sectors</span><br><span class="line">Disk model: ST3500418AS</span><br><span class="line">Units: sectors of 1 * 512 = 512 bytes</span><br><span class="line">Sector size (logical/physical): 512 bytes / 512 bytes</span><br><span class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br><span class="line">Disklabel type: dos</span><br><span class="line">Disk identifier: 0x587447ca</span><br><span class="line"></span><br><span class="line">Command (m for help): n</span><br><span class="line">Partition type</span><br><span class="line">   p   primary (0 primary, 0 extended, 4 free)</span><br><span class="line">   e   extended (container for logical partitions)</span><br><span class="line">Select (default p):</span><br><span class="line"></span><br><span class="line">Using default response p.</span><br><span class="line">Partition number (1-4, default 1):</span><br><span class="line">First sector (2048-976773167, default 2048):</span><br><span class="line">Last sector, +/-sectors or +/-size&#123;K,M,G,T,P&#125; (2048-976773167, default 976773167):</span><br><span class="line"></span><br><span class="line">Created a new partition 1 of type &#x27;Linux&#x27; and of size 465.8 GiB.</span><br></pre></td></tr></table></figure>
+<p>最後記得下 <code>w</code> 使分割生效。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Command (m for help): w</span><br><span class="line">The partition table has been altered.</span><br><span class="line">Calling ioctl() to re-read partition table.</span><br><span class="line">Syncing disks.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="大於-2TB-硬碟用-GPT">大於 2TB 硬碟用 GPT</h4>
+<p>因為手邊沒有大於 2T 的硬碟，這邊列出進入的畫面以及用法，大致上跟 fdisk 差不多。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@srv1:/# gdisk /dev/sdb</span><br><span class="line">GPT fdisk (gdisk) version 1.0.5</span><br><span class="line"></span><br><span class="line">Partition table scan:</span><br><span class="line">  MBR: not present</span><br><span class="line">  BSD: not present</span><br><span class="line">  APM: not present</span><br><span class="line">  GPT: not present</span><br><span class="line"></span><br><span class="line">Creating new GPT entries.</span><br><span class="line"></span><br><span class="line">Command (? for help): ?</span><br><span class="line">b       back up GPT data to a file</span><br><span class="line">c       change a partition&#x27;s name</span><br><span class="line">d       delete a partition</span><br><span class="line">i       show detailed information on a partition</span><br><span class="line">l       list known partition types</span><br><span class="line">n       add a new partition</span><br><span class="line">o       create a new empty GUID partition table (GPT)</span><br><span class="line">p       print the partition table</span><br><span class="line">q       quit without saving changes</span><br><span class="line">r       recovery and transformation options (experts only)</span><br><span class="line">s       sort partitions</span><br><span class="line">t       change a partition&#x27;s type code</span><br><span class="line">v       verify disk</span><br><span class="line">w       write table to disk and exit</span><br><span class="line">x       extra functionality (experts only)</span><br><span class="line">?       print this menu</span><br></pre></td></tr></table></figure>
+<h3 id="格式化">格式化</h3>
+<p>格式化意即建置檔案系統 (make filesystem)，使用 mkfs 指令，按下 tab 鍵後可以發現有許多可以指定的檔案系統，最常用的是 ext4 以及 xfs。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@srv1:/# mkfs</span><br><span class="line">mkfs         mkfs.btrfs   mkfs.ext2    mkfs.ext4    mkfs.minix   mkfs.ntfs    mkfs.xfs</span><br><span class="line">mkfs.bfs     mkfs.cramfs  mkfs.ext3    mkfs.fat     mkfs.msdos   mkfs.vfat</span><br></pre></td></tr></table></figure>
+<p>以下將使用 ext4 來格式化</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@srv1:/# mkfs.ext4 [option] 硬碟名稱</span><br><span class="line">選項與參數：</span><br><span class="line">-b  ：設定 block 的大小，有 1K, 2K, 4K 的容量。</span><br><span class="line">-I  ：inode-size，指定 inode 大小。</span><br><span class="line">等等的還有很多參數，默認配置文件在 /etc/mke2fs.conf 設置。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@srv1:/# mkfs.ext4 /dev/sdb1</span><br><span class="line">mke2fs 1.45.5 (07-Jan-2020)</span><br><span class="line">Creating filesystem with 122096385 4k blocks and 30531584 inodes</span><br><span class="line">Filesystem UUID: 06b9962b-ce9e-486c-9038-110d89564419</span><br><span class="line">Superblock backups stored on blocks:</span><br><span class="line">        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,</span><br><span class="line">        4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,</span><br><span class="line">        102400000</span><br><span class="line"></span><br><span class="line">Allocating group tables: done</span><br><span class="line">Writing inode tables: done</span><br><span class="line">Creating journal (262144 blocks): done</span><br><span class="line">Writing superblocks and filesystem accounting information: done</span><br><span class="line"></span><br><span class="line">root@srv1:/#</span><br></pre></td></tr></table></figure>
+<h3 id="掛載硬碟">掛載硬碟</h3>
+<p>在 Linux 下面的磁碟掛載設定都是寫在 <code>/etc/fstab</code> 中，先看一下裡面內容；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /etc/fstab: static file system information.</span><br><span class="line">#</span><br><span class="line"># Use &#x27;blkid&#x27; to print the universally unique identifier for a</span><br><span class="line"># device; this may be used with UUID= as a more robust way to name devices</span><br><span class="line"># that works even if disks are added and removed. See fstab(5).</span><br><span class="line">#</span><br><span class="line"># &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;</span><br><span class="line"># / was on /dev/sda2 during curtin installation</span><br><span class="line">/dev/disk/by-uuid/2106ed6e-8db6-4a23-af57-02accf7f2bbb / ext4 defaults 0 0</span><br><span class="line">/swap.img       none    swap    sw      0       0</span><br></pre></td></tr></table></figure>
+<p>用 <code>blkid</code> 指令列出所有磁碟的 UUID：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@nexmasa-srv1:/# blkid</span><br><span class="line">/dev/sda1: PARTUUID=&quot;ffba582c-4540-40b0-8881-8262b0fe846a&quot;</span><br><span class="line">/dev/sda2: UUID=&quot;2106ed6e-8db6-4a23-af57-02accf7f2bbb&quot; TYPE=&quot;ext4&quot; PARTUUID=&quot;a4c6e542-de4e-41ad-94c1-8cfcc3fc743b&quot;</span><br><span class="line">/dev/sdb1: UUID=&quot;fb78cf8d-9b15-408d-b005-ee8eb60231a7&quot; TYPE=&quot;ext4&quot; PARTUUID=&quot;cbcd5e7c-01&quot;</span><br><span class="line">root@nexmasa-srv1:/#</span><br></pre></td></tr></table></figure>
+<p>把欲掛載硬碟的 UUID 記起來，並寫到 <code>/etc/fstab</code> 中：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">UUID=fb78cf8d-9b15-408d-b005-ee8eb60231a7 /mnt/newdisk ext4 defaults 0 0</span><br></pre></td></tr></table></figure>
+<p><strong>並重新開機，就大功告成了!</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@srv1:/# df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">udev             32G     0   32G   0% /dev</span><br><span class="line">tmpfs           6.3G  2.2M  6.3G   1% /run</span><br><span class="line">/dev/sda2       458G   36G  399G   9% /</span><br><span class="line">tmpfs            32G     0   32G   0% /dev/shm</span><br><span class="line">tmpfs           5.0M     0  5.0M   0% /run/lock</span><br><span class="line">tmpfs            32G     0   32G   0% /sys/fs/cgroup</span><br><span class="line">tmpfs           6.3G     0  6.3G   0% /run/user/1000</span><br><span class="line">/dev/sdb1       458G   73M  435G   1% /mnt/newdisk</span><br></pre></td></tr></table></figure>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.netadmin.com.tw/netadmin/zh-tw/technology/23D09E63D4CD46349410CDA0E36FC465">https://www.netadmin.com.tw/netadmin/zh-tw/technology/23D09E63D4CD46349410CDA0E36FC465</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.claytontan.net/2020/01/10/%E7%A3%81%E7%A2%9F%E5%88%86%E5%89%B2-mbr-vs-gpt/">https://www.claytontan.net/2020/01/10/磁碟分割-mbr-vs-gpt/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.gtwang.org/linux/linux-add-format-mount-harddisk/">https://blog.gtwang.org/linux/linux-add-format-mount-harddisk/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/vue-admin-template1/" rel="prev" title="[Vue] 解析 vue-admin-template">
+                  <i class="fa fa-chevron-left"></i> [Vue] 解析 vue-admin-template
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/CSS-overflow-usecase/" rel="next" title="[CSS] overflow 應用">
+                  [CSS] overflow 應用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

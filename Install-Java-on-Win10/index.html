@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="選擇 Java 版本 Java 更新速度之快，截至今天已經出到 Java 14 了！本來是想隨波逐流的裝 Java 8 但參考了這篇文章後，還是決定裝 11。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Java] Install Java on Win10">
+<meta property="og:url" content="https://ulahsieh.github.io/Install-Java-on-Win10/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="選擇 Java 版本 Java 更新速度之快，截至今天已經出到 Java 14 了！本來是想隨波逐流的裝 Java 8 但參考了這篇文章後，還是決定裝 11。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/Ue4j8TH.png">
+<meta property="og:image" content="https://imgur.com/Em1c46E.png">
+<meta property="og:image" content="https://imgur.com/G8DUM6M.png">
+<meta property="og:image" content="https://imgur.com/YHyPdOX.png">
+<meta property="og:image" content="https://imgur.com/M4ZkQXa.png">
+<meta property="article:published_time" content="2020-07-01T09:41:00.000Z">
+<meta property="article:modified_time" content="2020-07-01T09:41:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/Ue4j8TH.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Install-Java-on-Win10/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Install-Java-on-Win10/","path":"Install-Java-on-Win10/","title":"[Java] Install Java on Win10"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Java] Install Java on Win10 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%B8%E6%93%87-Java-%E7%89%88%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">選擇 Java 版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D"><span class="nav-number">2.</span> <span class="nav-text">安裝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A8%AD%E5%AE%9A-PATH-%E7%B3%BB%E7%B5%B1%E8%AE%8A%E6%95%B8"><span class="nav-number">3.</span> <span class="nav-text">設定 PATH 系統變數</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A2%BA%E8%AA%8D%E5%AE%89%E8%A3%9D"><span class="nav-number">4.</span> <span class="nav-text">確認安裝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hello-World"><span class="nav-number">5.</span> <span class="nav-text">Hello World!</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B7%A8%E8%AD%AF%E6%AA%94%E6%A1%88"><span class="nav-number">6.</span> <span class="nav-text">編譯檔案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%B7%E8%A1%8C"><span class="nav-number">7.</span> <span class="nav-text">執行</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Install-Java-on-Win10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Java] Install Java on Win10
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-07-01 17:41:00" itemprop="dateCreated datePublished" datetime="2020-07-01T17:41:00+08:00">2020-07-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>572</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="選擇-Java-版本">選擇 Java 版本</h3>
+<p>Java 更新速度之快，截至今天已經出到 Java 14 了！本來是想隨波逐流的裝 Java 8 但參考了這篇<a target="_blank" rel="external nofollow noopener noreferrer" href="https://medium.com/swlh/why-do-people-stick-with-java8-acb95ef65f0c">文章</a>後，還是決定裝 11。</p>
+<span id="more"></span>
+<p>JDK 可以從 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://adoptopenjdk.net/releases.html">AdoptOpenJDK</a> 下載，AdoptOpenJDK 是 Java 使用者社群建立的，致力於倡導 OpenJDK，上面支援的作業系統以及對應的 JDK 版本 (8~11) 最齊全。</p>
+<h3 id="安裝">安裝</h3>
+<p>在網站上下載 .msi 檔後執行，在客製安裝頁面一併把第三個選項 <code>Set JAVA_HOME variable</code> 設起來。<br>
+<img src="https://imgur.com/Ue4j8TH.png" alt></p>
+<h3 id="設定-PATH-系統變數">設定 PATH 系統變數</h3>
+<p>設定 path 環境變數的目的是為了要上作業系統找到 Java 在哪。<br>
+編輯系統變數欄位中的 <code>Path</code>，並加入 <code>%JAVA_HOME%</code> 的選項，然後把它移到最前面。當電腦中安裝兩個以上的不同版本的 Java，則環境變數放在前面的會先被執行。<br>
+<img src="https://imgur.com/Em1c46E.png" alt></p>
+<h3 id="確認安裝">確認安裝</h3>
+<p>開啟 CMD 並下下方兩個指令，確認安裝是否成功。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ java -version</span><br><span class="line">$ javac -version</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/G8DUM6M.png" alt></p>
+<h3 id="Hello-World">Hello World!</h3>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Hello.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String []args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World!&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="warning">
+<p>關於程式內部詳細的解說，之後的文章會記錄。<br>
+(不過本來因為數據中台的專案要用 Map Reduce 所以學的，但因為工作又有小變動，所以不知道何年何月才可以再繼續看 Java，先暫緩了 😝 )</p>
+</div>
+<h3 id="編譯檔案">編譯檔案</h3>
+<p>使用 javac 公用程式來編譯檔案。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ javac Hello.java</span><br></pre></td></tr></table></figure>
+<p>完成後在目錄下就會出現一個 <code>Hello.class</code> 的 java 位元碼 (bytecode)。<br>
+<img src="https://imgur.com/YHyPdOX.png" alt></p>
+<h3 id="執行">執行</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ java Hello</span><br></pre></td></tr></table></figure>
+<p>使用 java 工具程式執行，不須帶附檔名，Java 會根據類別名稱自動載入 .class 檔案。<br>
+<img src="https://imgur.com/M4ZkQXa.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Java-JVM-%E6%9E%B6%E6%A7%8B/" rel="prev" title="[Java] JVM 架構">
+                  <i class="fa fa-chevron-left"></i> [Java] JVM 架構
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/API/" rel="next" title="[API] 簡介及實作 & 資料交換格式 - XML, JSON, SOAP">
+                  [API] 簡介及實作 & 資料交換格式 - XML, JSON, SOAP <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

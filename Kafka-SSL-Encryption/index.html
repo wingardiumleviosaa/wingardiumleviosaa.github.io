@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Kafka 目前支持 SSL、SASL&#x2F;Kerberos、SASL&#x2F;PLAIN 三種認證機制，這篇文章將紀錄如何在 Kafka broker 與 clinet 端建立 TLS&#x2F;SSL 連線。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Kafka] server - client &amp; client - server SSL 加密">
+<meta property="og:url" content="https://ulahsieh.github.io/Kafka-SSL-Encryption/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Kafka 目前支持 SSL、SASL&#x2F;Kerberos、SASL&#x2F;PLAIN 三種認證機制，這篇文章將紀錄如何在 Kafka broker 與 clinet 端建立 TLS&#x2F;SSL 連線。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/Y4sFl2r.png">
+<meta property="og:image" content="https://imgur.com/2ksa435.png">
+<meta property="og:image" content="https://imgur.com/gMdBG1h.png">
+<meta property="og:image" content="https://imgur.com/FNmDaCa.png">
+<meta property="og:image" content="https://imgur.com/rZR6yHh.png">
+<meta property="article:published_time" content="2020-09-04T04:00:00.000Z">
+<meta property="article:modified_time" content="2020-09-04T04:00:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/Y4sFl2r.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Kafka-SSL-Encryption/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Kafka-SSL-Encryption/","path":"Kafka-SSL-Encryption/","title":"[Kafka] server - client & client - server SSL 加密"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Kafka] server - client & client - server SSL 加密 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%AF%86%E9%91%B0-%E8%AD%89%E6%9B%B8-CA"><span class="nav-number">1.</span> <span class="nav-text">生成密鑰&#x2F; 證書&#x2F; CA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%90%84%E5%80%8B%E5%AF%A6%E4%BE%8B%E4%B8%AD%E7%94%9F%E6%88%90-keystore"><span class="nav-number">1.1.</span> <span class="nav-text">在各個實例中生成 keystore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E4%BB%BB%E4%B8%80%E5%8F%B0%E6%A9%9F%E5%99%A8%E4%B8%AD%E7%94%A2%E7%94%9F-CA"><span class="nav-number">1.2.</span> <span class="nav-text">在任一台機器中產生 CA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90-truststore"><span class="nav-number">1.3.</span> <span class="nav-text">生成 truststore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%87%E5%90%84%E4%BC%BA%E6%9C%8D%E5%99%A8%E7%9A%84%E8%AD%89%E6%9B%B8%E5%B0%8E%E5%87%BA%E4%B8%A6%E4%BD%BF%E7%94%A8-CA-%E7%B0%BD%E5%90%8D"><span class="nav-number">1.4.</span> <span class="nav-text">將各伺服器的證書導出並使用 CA 簽名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-broker-%E7%AB%AF"><span class="nav-number">2.</span> <span class="nav-text">配置 broker 端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-Kafka-%E7%9A%84%E9%85%8D%E7%BD%AE%E6%AA%94-server-properties"><span class="nav-number">2.1.</span> <span class="nav-text">修改 Kafka 的配置檔 server.properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%95%9F%E5%8B%95-Kafka-%E4%B8%A6%E6%B8%AC%E8%A9%A6%E9%80%A3%E7%B7%9A"><span class="nav-number">2.2.</span> <span class="nav-text">啟動 Kafka 並測試連線</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-client-%E7%AB%AF"><span class="nav-number">3.</span> <span class="nav-text">配置 client 端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%AC%E8%A9%A6%E9%80%A3%E7%B7%9A"><span class="nav-number">4.</span> <span class="nav-text">測試連線</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">4.0.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Kafka-SSL-Encryption/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Kafka] server - client & client - server SSL 加密
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-09-04 12:00:00" itemprop="dateCreated datePublished" datetime="2020-09-04T12:00:00+08:00">2020-09-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Kafka 目前支持 SSL、SASL/Kerberos、SASL/PLAIN 三種認證機制，這篇文章將紀錄如何在 Kafka broker 與 clinet 端建立 TLS/SSL 連線。</p>
+<span id="more"></span>
+<p>另外關於 SASL 連線機制，可以參考 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://kafka.apache.org/25/documentation.html#security_sasl">官網文件</a> 或是 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.orchome.com/553">中文版文件</a>。</p>
+<p>步驟如下：</p>
+<h2 id="生成密鑰-證書-CA">生成密鑰/ 證書/ CA</h2>
+<h3 id="在各個實例中生成-keystore">在各個實例中生成 keystore</h3>
+<p>需要在集群中的每台機器上單獨生成，keystore 包含了兩個東西：</p>
+<ul>
+<li>含有公鑰(Public Key)/私鑰(Private Key) 的 Key pair</li>
+<li>只包含公鑰的未簽名證書(Unsigned Certificate)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ keytool -keystore broker1.keystore.jks \</span><br><span class="line">  -alias broker1 -validity 3650 -genkey -keyalg RSA</span><br></pre></td></tr></table></figure>
+<p>產生過程中需輸入 keystore 的密碼以及證書的 Distinguished Name (DName)。其中最重要的是 <code>Common Name(CN)</code>，需為機器的 hostname；如果主機綁定了域名，則輸入完整包含域名的 FQDN。<br>
+<img src="https://imgur.com/Y4sFl2r.png" alt></p>
+<p>在其他 broker 以及 clinet 端重複以上動作。</p>
+<div class="info">
+<p>證書相當於一個 ID，來表明自己是誰（區分不同的服務器）。此時，這個證書還沒有被任何 CA（Certificate Authority，證書頒發機構）所認證（進行簽名）。證書可以通過下面兩種方式簽名：</p>
+<ul>
+<li>先自己生成一個證書，再讓 CA 簽名。(此篇將採用的方法)</li>
+<li>直接從 CA 申請一個。</li>
+</ul>
+</div>
+<hr>
+<h3 id="在任一台機器中產生-CA">在任一台機器中產生 CA</h3>
+<p>通常情況下，證書是要向 CA 申請的，但是如果參與者僅是自家客戶端，而非面向網際網路上的客戶端（例如瀏覽器），那麼可以自己生成一個 CA，然後讓這個 CA 去簽署其他證書。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ openssl req -new -x509 -keyout ca-key -out ca-cert -days 3650</span><br></pre></td></tr></table></figure>
+<p>產生過程中需輸入 PEM 密碼，以及證書相關資訊。而後會產生 CA 密鑰 <code>ca-key</code> 以及公鑰 <code>ca-cert</code>。<br>
+<img src="https://imgur.com/2ksa435.png" alt></p>
+<h3 id="生成-truststore">生成 truststore</h3>
+<p>truststore 包含了所有可以信賴的 CA。以下面腳本創建 truststore，並將上一步驟生成的 ca-cert 匯入。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">keytool -keystore ca.truststore.jks -alias CARoot -import -file ca-cert</span><br></pre></td></tr></table></figure>
+<p>並將這一個 truststore 傳送到叢集的所有機器中以確保：</p>
+<div class="warning">
+<p>當 client 與 broker 溝通時，client 只要檢查 broker 端的證書，確認該證書是由自己擁有的 truststore 中的 CA 頒發的，就認為此 broker 是可信的。<br>
+同理，當 broker 與 client 交互時，broker 只要檢查 client 端證書，確認該證書是由自己所有的 truststore 中的 CA 頒發的，就認為客戶端是可信的。</p>
+</div>
+<div class="info">
+<p>如果用不同的 CA 簽署證書，那麼就要將對象端的證書，或者該 CA，加入到本地端的 truststore 中。<br>
+這裡有一個信任鏈的關係：可以信任某一個實例的證書；也可以信任證書的頒發機構，即 CA，當信任 CA 時，就會信任所有由該 CA 頒發的證書。<br>
+<strong>因此，在內部使用的叢集中，所有的伺服器只要信任同一個 CA，使用同一個truststore 就可以了（那麼所有持有由該 CA 簽名的證書的服務器就都是可信的了）。</strong></p>
+</div>
+<p><font color="carol">將 CA 以及 ca.truststore.jks 複製到其他 broker 以及 clinet 端，使其共用同一把 CA。</font></p>
+<hr>
+<h3 id="將各伺服器的證書導出並使用-CA-簽名">將各伺服器的證書導出並使用 CA 簽名</h3>
+<p>從第一步驟的 keystore 中導出未簽名的證書</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">keytool -keystore broker1.keystore.jks -alias broker1 -certreq -file cert-broker1</span><br></pre></td></tr></table></figure>
+<p>使用 CA 對導出的 <code>cert-broker1</code> 進行簽名</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-broker1 -out cert-signed-broker1 -days 3650 -CAcreateserial -passin pass:&lt;PEM password&gt;</span><br></pre></td></tr></table></figure>
+<p>將 CA 證書以及簽名好的 <code>cert-signed-broker1</code> 證書導回至 <code>keystore</code><br>
+<strong>注意先後順序</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ keytool -keystore broker1.keystore.jks -alias CARoot -import -file ca-cert</span><br><span class="line">$ keytool -keystore broker1.keystore.jks -alias broker1 -import -file cert-signed-broker1</span><br></pre></td></tr></table></figure>
+<p>在其他 broker 以及 clinet 端重複以上動作。</p>
+<p>最後架構中的金鑰結構會長得像下面這樣<br>
+<img src="https://imgur.com/gMdBG1h.png" alt></p>
+<hr>
+<h2 id="配置-broker-端">配置 broker 端</h2>
+<h3 id="修改-Kafka-的配置檔-server-properties">修改 Kafka 的配置檔 <code>server.properties</code></h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">listeners=PLAINTEXT://0.0.0.0:9092,SSL://0.0.0.0:9093</span><br><span class="line">advertised.listeners=PLAINTEXT://broker1:9092,SSL://broker1:9093</span><br><span class="line"></span><br><span class="line"># SSL 配置</span><br><span class="line">ssl.keystore.location=/opt/ssl/broker1.keystore.jks</span><br><span class="line">ssl.keystore.password=000000</span><br><span class="line">ssl.key.password=000000</span><br><span class="line">ssl.truststore.location=/opt/ssl/ca.truststore.jks</span><br><span class="line">ssl.truststore.password=000000</span><br><span class="line">ssl.keystore.type=JKS</span><br><span class="line">ssl.truststore.type=JKS</span><br><span class="line">ssl.client.auth=required</span><br><span class="line">ssl.secure.random.implementation=SHA1PRNG</span><br><span class="line">ssl.endpoint.identification.algorithm=</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ssl.client.auth： <code>required</code> 這個選項則要求客戶端也必須持有經過 CA 簽名的證書； <code>requested</code> 要求進行客戶端身份認證但沒有證書的客戶端也可以連接；<code>none</code> 默認值，指服務端不須驗證客戶端。</li>
+<li>ssl.secure.random.implementation：用來指定資料加密方法。<br>
+JRE/JDK有默認的偽隨機數生成器（PRNG）用於加密操作，因此不需要使用 ssl.secure.random.implementation 來配置具體的實現方法。但是，某些實現方法是有性能問題的（特別是Linux系統上的默認選項：NativePRNG, 利用的是一個全局鎖），為以防 SSL 連接性能成為問題，請考慮明確設置使用的實現方法。 SHA1PRNG 方式的實現是非阻塞的，在高負載的情況下也能有很好的性能表現（單broker 在有副本的情況下達 50MB 每秒的生產消息）。</li>
+<li>ssl.endpoint.identification.algorithm：kafka 2.0 開始的默認值是 https，即需要驗證主機名。如果不需要驗證主機名，那麼可以這麼設置 等於空即可。</li>
+</ul>
+<p>**另外還有一個選項 <code>security.inter.broker.protocol</code> 這邊沒有配置，如果要指定 broker 間也要使用 SSL，則將值設為 <code>SSL</code>（默認為　PLAINTEXT）。**因為集群內的所有 broker 都位於內網，所以這個例子沒有特別開啟，這也是上面為什麼 listeners 要同時配置 PLAINTEXT 和 SSL 的原因。</p>
+<h3 id="啟動-Kafka-並測試連線">啟動 Kafka 並測試連線</h3>
+<p>運行服務端</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bin/kafka-server-start.sh -daemon config/server.properties </span><br></pre></td></tr></table></figure>
+<p>再通過下面的命令來驗證 SSL 連接是否運行正常</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">openssl s_client -debug -connect localhost:9093 -tls1</span><br></pre></td></tr></table></figure>
+<p>成功的話可以看到以下訊息<br>
+<img src="https://imgur.com/FNmDaCa.png" alt></p>
+<hr>
+<h2 id="配置-client-端">配置 client 端</h2>
+<p>新增 <code>client-ssl.properties</code> 檔案，並設置以下參數：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">security.protocol=SSL</span><br><span class="line">ssl.keystore.location=/opt/ssl/client1.keystore.jks</span><br><span class="line">ssl.keystore.password=000000</span><br><span class="line">ssl.truststore.location=/opt/ssl/ca.truststore.jks</span><br><span class="line">ssl.truststore.password=000000</span><br><span class="line">ssl.key.password=000000</span><br><span class="line">ssl.endpoint.identification.algorithm=</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="測試連線">測試連線</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bin/kafka-console-producer --bootstrap-server broker1:9093 --topic test --producer.config client-ssl.properties</span><br><span class="line">bin/kafka-console-consumer --bootstrap-server broker1:9093 --topic test --consumer.config client-ssl.properties --from-beginning</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/rZR6yHh.png" alt></p>
+<hr>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://kafka.apache.org/25/documentation.html#security">https://kafka.apache.org/25/documentation.html#security</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.denglin.me/kafka-security-1/">https://www.denglin.me/kafka-security-1/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://www.tracefact.net/tech/108.html">http://www.tracefact.net/tech/108.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Zookeeper-Encryption3/" rel="prev" title="[Zookeeper] Encryption - node-node & client-node">
+                  <i class="fa fa-chevron-left"></i> [Zookeeper] Encryption - node-node & client-node
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Kubernetes_basic/" rel="next" title="[Kubernetes] 架構, 節點及組件介紹">
+                  [Kubernetes] 架構, 節點及組件介紹 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

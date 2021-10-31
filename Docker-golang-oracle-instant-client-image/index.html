@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="紀錄一下建立的過程中總共遇到兩個問題：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Docker] 建立 golang 中使用到 oracle instant client 的 image">
+<meta property="og:url" content="https://ulahsieh.github.io/Docker-golang-oracle-instant-client-image/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="紀錄一下建立的過程中總共遇到兩個問題：">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/aODpLcK.png">
+<meta property="og:image" content="https://imgur.com/NU8XcVr.png">
+<meta property="article:published_time" content="2021-09-07T14:05:00.000Z">
+<meta property="article:modified_time" content="2021-09-07T14:05:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="alpine">
+<meta property="article:tag" content="oracle instant clinet">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/aODpLcK.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Docker-golang-oracle-instant-client-image/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Docker-golang-oracle-instant-client-image/","path":"Docker-golang-oracle-instant-client-image/","title":"[Docker] 建立 golang 中使用到 oracle instant client 的 image"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Docker] 建立 golang 中使用到 oracle instant client 的 image | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#standard-init-linux-go-xxx-exec-user-process-caused-%E2%80%9Cno-such-file-or-directory%E2%80%9D"><span class="nav-number">1.</span> <span class="nav-text">standard_init_linux.go:xxx: exec user process caused “no such file or directory”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9C%E6%85%8B%E7%B7%A8%E8%AD%AF-%E5%8B%95%E6%85%8B%E7%B7%A8%E8%AD%AF"><span class="nav-number">1.1.1.</span> <span class="nav-text">靜態編譯 &amp; 動態編譯</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Alpine-%E9%8F%A1%E5%83%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">Alpine 鏡像</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%8C%AF%E8%AA%A4%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.2.</span> <span class="nav-text">錯誤原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">解決方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A3%9C%E5%85%85"><span class="nav-number">1.4.</span> <span class="nav-text">補充</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Alpine-%E9%8F%A1%E5%83%8F%E7%9A%84%E9%99%90%E8%A3%BD%E6%88%96%E8%80%85%E5%89%8D%E6%8F%90%E6%A2%9D%E4%BB%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">Alpine 鏡像的限製或者前提條件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E6%94%AF%E6%8C%81"><span class="nav-number">1.4.2.</span> <span class="nav-text">版本支持</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">1.4.2.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#ORA-00000-DPI-1047-Cannot-locate-a-64-bit-Oracle-Client-library-%E2%80%9CError-loading-shared-library-libnsl-so-1-No-such-file-or-directory-needed-by-instantclient-18-5-libclntsh-so-%E2%80%9D"><span class="nav-number">2.</span> <span class="nav-text">ORA-00000: DPI-1047: Cannot locate a 64-bit Oracle Client library: “Error loading shared library libnsl.so.1: No such file or directory (needed by &#x2F;instantclient_18_5&#x2F;libclntsh.so)”.</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference-2"><span class="nav-number">2.0.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Docker-golang-oracle-instant-client-image/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Docker] 建立 golang 中使用到 oracle instant client 的 image
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-09-07 22:05:00" itemprop="dateCreated datePublished" datetime="2021-09-07T22:05:00+08:00">2021-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>紀錄一下建立的過程中總共遇到兩個問題：</p>
+<span id="more"></span>
+<h2 id="standard-init-linux-go-xxx-exec-user-process-caused-“no-such-file-or-directory”">standard_init_linux.go:xxx: exec user process caused “no such file or directory”</h2>
+<p>之前在 build golang 的時候沒有用到 C library，所以在編譯的時候 CGO 都是關閉的。但目前要 build 的這隻程式有使用到 oracle 第三方套件 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/godror/godror"><code>godror</code></a>  需要用到 C library，所以在使用原生 alpine image 時，跑 container 起來會遇到 <code>standard_init_linux.go:228: exec user process caused &quot;no such file or directory&quot;</code> 的錯誤。</p>
+<h3 id="概念">概念</h3>
+<h4 id="靜態編譯-動態編譯">靜態編譯 &amp; 動態編譯</h4>
+<p>靜態編譯指的是，在編譯可執行文件的時候，將可執行文件需要調用的對應庫都集成到可執行文件內部，使得可執行文件不需要其他任何依賴就能運行。</p>
+<p>默認情況下，golang 的編譯是動態編譯，通過環境變量 CGO_ENABLED 控制，默認開啟，允許在 Go 代碼中調用 C 代碼。</p>
+<h4 id="Alpine-鏡像">Alpine 鏡像</h4>
+<p>Alpine 是眾多 Linux 發行版中的一員，和 CentOS、Ubuntu 一樣，只是一個發行版的名字，號稱小巧安全，有自己的包管理工具 apk，開發者可以使用 apk 在基於 alpine 的鏡像中添加需要的包或工具。</p>
+<p>相比於其他 Docker 鏡像，它的容量非常小，僅僅只有 5 MB 左右（對比 Ubuntu 系列鏡像接近 200 MB）</p>
+<h3 id="錯誤原因">錯誤原因</h3>
+<p>然而動態編譯完成後的二進制文件，放在同是使用動態庫的 Alpine 基礎鏡像中運行會報錯：<code>standard_init_linux.go:211: exec user process caused &quot;no such file or directory&quot;</code></p>
+<p>但是放在 ubuntu 基礎鏡像中可以運行。原因是因為兩者使用的 C library 不一樣，在製作 Alpine 的時候，是基於<code>musl libc</code> 和 busybox 構建的，與基於標準 C 執行庫 GNU C library (glibc) 上編譯出來的應用程序不兼容，導致動態依賴的二進制文件在運行時找不到依賴的文件。</p>
+<h3 id="解決方式">解決方式</h3>
+<ol>
+<li>使用動態編譯後運行在大基礎鏡像中，即包含動態調用的 C 庫的基礎鏡像</li>
+<li>手動安裝 C Library，使用動態編譯後運行在小基礎鏡像，將鏡像分為 <code>build</code> 和 <code>run</code> 兩個階段。</li>
+</ol>
+<p>為了追求更小的 docker image，這裡使用第二個方法。</p>
+<p><img src="https://imgur.com/aODpLcK.png" alt></p>
+<p>範例一：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">//Dockerfile</span><br><span class="line"></span><br><span class="line"># build stage</span><br><span class="line">FROM golang:alpine as builder</span><br><span class="line">WORKDIR /go/src</span><br><span class="line">COPY httpserver.go .</span><br><span class="line">RUN go build -o httpd ./httpserver.go</span><br><span class="line"></span><br><span class="line"># run stage</span><br><span class="line">From alpine:latest</span><br><span class="line">WORKDIR /root/</span><br><span class="line">COPY --from=builder /go/src/httpd .</span><br><span class="line">RUN chmod +x /root/httpd</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;/root/httpd&quot;]</span><br></pre></td></tr></table></figure>
+<p>範例二：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine:edge AS build</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add --no-cache go gcc g++</span><br><span class="line">WORKDIR /</span><br><span class="line">COPY . .</span><br><span class="line">RUN CGO_ENABLED=1 go build /</span><br><span class="line"></span><br><span class="line">FROM alpine:edge</span><br><span class="line">WORKDIR /</span><br><span class="line">COPY --from=build /reverseapi /reverseapi</span><br><span class="line">ENTRYPOINT [ &quot;/reverseapi&quot; ]</span><br></pre></td></tr></table></figure>
+<h3 id="補充">補充</h3>
+<h4 id="Alpine-鏡像的限製或者前提條件">Alpine 鏡像的限製或者前提條件</h4>
+<p>是否可以使用 Alpine，大部分項目均可無視 musl libc 和 gnu libc 的區別，但是如果有相關的依賴gnu libc，則需要慎重考慮是否一定需要使用 Alpine 鏡像，因為 Alpine 鏡像的小巧正是建立在busybox 和 musl libc 基礎之上的，雖然在 Alpine 上也可以安裝 gnu libc，但是這種對應給人一種強烈的違和感，而且後續碰到的各種問題的概率較大。所以整體來說，如果沒有一定要使用 gnu libc 的項目可以考慮使用 Alpine 鏡像，否者還是不要使用較為穩妥。</p>
+<h4 id="版本支持">版本支持</h4>
+<p>需要注意的是不同的 Alpine 的版本當前所支持的gcc/g++的版本有所不同，如果不是從源碼編譯的安裝的情況下，需要注意此方面的限制，具體的查詢請參考<a target="_blank" rel="external nofollow noopener noreferrer" href="https://pkgs.alpinelinux.org">這裡</a></p>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.ardanlabs.com/blog/2020/02/docker-images-part2-details-specific-to-different-languages.html">https://www.ardanlabs.com/blog/2020/02/docker-images-part2-details-specific-to-different-languages.html</a></p>
+</li>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://promacanthus.netlify.app/experience/golang/01-%E7%BC%96%E8%AF%91%E7%9A%84%E5%9D%91/">https://promacanthus.netlify.app/experience/golang/01-编译的坑/</a></p>
+</li>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://tonybai.com/2017/12/21/the-concise-history-of-docker-image-building/">https://tonybai.com/2017/12/21/the-concise-history-of-docker-image-building/</a></p>
+</li>
+<li>
+<p>關於 alpine 鏡像使用 gcc &amp; g++ 要注意的問題<br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/liumiaocn/article/details/100903476">https://blog.csdn.net/liumiaocn/article/details/100903476</a></p>
+</li>
+</ul>
+<hr>
+<h2 id="ORA-00000-DPI-1047-Cannot-locate-a-64-bit-Oracle-Client-library-“Error-loading-shared-library-libnsl-so-1-No-such-file-or-directory-needed-by-instantclient-18-5-libclntsh-so-”">ORA-00000: DPI-1047: Cannot locate a 64-bit Oracle Client library: “Error loading shared library libnsl.so.1: No such file or directory (needed by /instantclient_18_5/libclntsh.so)”.</h2>
+<p>在 image 中裝完 Oracle 的 instantclinet 後，直接跑起來會遇到找不到參考的 library 的錯誤</p>
+<p><img src="https://imgur.com/NU8XcVr.png" alt></p>
+<p>官網雖然有<a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.oracle.com/en/database/oracle/oracle-database/18/lnoci/instant-client.html#GUID-7D65474A-8790-4E81-B535-409010791C2F">參考文檔</a>，但是因為我用的 base image 是 alpine，有些功能跟 library 放的地方跟其他 Linux 如 ubuntu 或 centos 不一樣，所以決定安裝該有的 Library 後，再自己手動建 symbol link。</p>
+<p>最後的 Dockerfile 長這樣：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine:edge AS build</span><br><span class="line">RUN apk update</span><br><span class="line">RUN apk upgrade</span><br><span class="line">RUN apk add --no-cache go gcc g++</span><br><span class="line">WORKDIR /</span><br><span class="line">COPY . .</span><br><span class="line">RUN CGO_ENABLED=1 go build /</span><br><span class="line"></span><br><span class="line">FROM alpine:edge</span><br><span class="line">WORKDIR /</span><br><span class="line"><span class="comment"># COPY ./config /config</span></span><br><span class="line">RUN wget https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip &amp;&amp; \</span><br><span class="line">    unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip &amp;&amp; \</span><br><span class="line">    apk add --no-cache libaio libnsl libc6-compat gcc &amp;&amp; ln -s /usr/lib/* /instantclient_18_5 &amp;&amp; \</span><br><span class="line">    <span class="built_in">cd</span> /instantclient_18_5 &amp;&amp; \</span><br><span class="line">    ln -s libnsl.so.2 /usr/lib/libnsl.so.1 &amp;&amp; \</span><br><span class="line">    ln -s /lib/libc.so.6 /usr/lib/libresolv.so.2 &amp;&amp; \</span><br><span class="line">    ln -s /lib/libc.musl-x86_64.so.1 /usr/lib/ld-linux-x86-64.so.2</span><br><span class="line">ENV LD_LIBRARY_PATH=/instantclient_18_5</span><br><span class="line">COPY --from=build /reverseapi /reverseapi</span><br><span class="line">ENTRYPOINT [ <span class="string">&quot;/reverseapi&quot;</span> ]</span><br></pre></td></tr></table></figure>
+<div class="info">
+<p>在測試的時候是安裝完整的 instantclinet，但應該可以裝 lite 版本的，以減少不必要的 image 大小。</p>
+</div>
+<div class="info">
+<p>在 debug 的時候可以直接進去 container 裡面找錯誤訊息中找不到的 library 放哪，然後在自己手動建 link</p>
+</div>
+<h6 id="Reference-2">Reference</h6>
+<ul>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://stackoverflow.com/questions/53263972/oracle-on-alpine-linux">https://stackoverflow.com/questions/53263972/oracle-on-alpine-linux</a></p>
+</li>
+<li>
+<p>19 版的可以參考下面大大分享的<br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/Shrinidhikulkarni7/OracleClient_Alpine">https://github.com/Shrinidhikulkarni7/OracleClient_Alpine</a></p>
+</li>
+<li>
+<p>關於 alpine 中下 ldconfig 的錯誤<br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://stackoverflow.com/questions/36990951/ldconfig-seems-no-functional-under-alpine-3-3">https://stackoverflow.com/questions/36990951/ldconfig-seems-no-functional-under-alpine-3-3</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
+              <a href="/tags/alpine/" rel="tag"># alpine</a>
+              <a href="/tags/oracle-instant-clinet/" rel="tag"># oracle instant clinet</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Kubernetes-Minikube/" rel="prev" title="[Kubernetes] Minikube">
+                  <i class="fa fa-chevron-left"></i> [Kubernetes] Minikube
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/terraform-Upgrade/" rel="next" title="[Terraform] Upgrade to the Latest Version">
+                  [Terraform] Upgrade to the Latest Version <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

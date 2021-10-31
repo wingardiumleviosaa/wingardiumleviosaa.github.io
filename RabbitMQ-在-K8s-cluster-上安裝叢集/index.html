@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="先決條件  kubernetes 1.17 版以上 RabbitMQ image 3.8.8+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[RabbitMQ] 在 K8s cluster 上安裝叢集">
+<meta property="og:url" content="https://ulahsieh.github.io/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="先決條件  kubernetes 1.17 版以上 RabbitMQ image 3.8.8+">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/2DecQC8.png">
+<meta property="og:image" content="https://imgur.com/ejZ1MXz.png">
+<meta property="article:published_time" content="2020-12-30T09:31:00.000Z">
+<meta property="article:modified_time" content="2020-12-30T09:31:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="RabbitMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/2DecQC8.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86/","path":"RabbitMQ-在-K8s-cluster-上安裝叢集/","title":"[RabbitMQ] 在 K8s cluster 上安裝叢集"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[RabbitMQ] 在 K8s cluster 上安裝叢集 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%B1%BA%E6%A2%9D%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">先決條件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-operator"><span class="nav-number">2.</span> <span class="nav-text">安裝 operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-RabbitMQ-Cluster"><span class="nav-number">3.</span> <span class="nav-text">安裝 RabbitMQ Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%96%E5%82%99-yaml-%E6%AA%94"><span class="nav-number">3.1.</span> <span class="nav-text">準備 yaml 檔</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%96%8B%E5%A7%8B%E5%BB%BA%E7%AB%8B"><span class="nav-number">3.2.</span> <span class="nav-text">開始建立</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5-TLS"><span class="nav-number">4.</span> <span class="nav-text">加入 TLS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-Secret"><span class="nav-number">4.1.</span> <span class="nav-text">建立 Secret</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">4.2.</span> <span class="nav-text">修改配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%B2%E5%85%A5-Rabbit-Management"><span class="nav-number">5.</span> <span class="nav-text">進入 Rabbit Management</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E5%BE%97%E4%BD%BF%E7%94%A8%E8%80%85%E5%B8%B3%E5%AF%86"><span class="nav-number">5.1.</span> <span class="nav-text">取得使用者帳密</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">5.1.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/RabbitMQ-%E5%9C%A8-K8s-cluster-%E4%B8%8A%E5%AE%89%E8%A3%9D%E5%8F%A2%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [RabbitMQ] 在 K8s cluster 上安裝叢集
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-12-30 17:31:00" itemprop="dateCreated datePublished" datetime="2020-12-30T17:31:00+08:00">2020-12-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/RabbitMQ/" itemprop="url" rel="index"><span itemprop="name">RabbitMQ</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>901</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="先決條件">先決條件</h3>
+<ul>
+<li>kubernetes 1.17 版以上</li>
+<li>RabbitMQ image 3.8.8+</li>
+</ul>
+<span id="more"></span>
+<h3 id="安裝-operator">安裝 operator</h3>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl apply -f <span class="string">&quot;https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml&quot;</span></span><br><span class="line">namespace/rabbitmq-system created</span><br><span class="line">customresourcedefinition.apiextensions.k8s.io/rabbitmqclusters.rabbitmq.com created</span><br><span class="line">serviceaccount/rabbitmq-cluster-operator created</span><br><span class="line">role.rbac.authorization.k8s.io/rabbitmq-cluster-leader-election-role created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/rabbitmq-cluster-operator-role created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rabbitmq-cluster-leader-election-rolebinding created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/rabbitmq-cluster-operator-rolebinding created</span><br><span class="line">deployment.apps/rabbitmq-cluster-operator created</span><br></pre></td></tr></table></figure>
+<p>確認 CRD 部屬完成</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ kubectl get customresourcedefinitions.apiextensions.k8s.io | grep rabbitmq</span><br><span class="line">rabbitmqclusters.rabbitmq.com                         2020-12-29T06:22:27Z</span><br></pre></td></tr></table></figure>
+<h3 id="安裝-RabbitMQ-Cluster">安裝 RabbitMQ Cluster</h3>
+<p>RabbitMQ server 透過 <code>RabbitmqCluster</code> 資源來建立，整個集群資源(如 pod, svc, statefulSet)都會建在同一個指定 namespace 下。</p>
+<h4 id="準備-yaml-檔">準備 yaml 檔</h4>
+<p>準備一個 yaml 檔來定義 <code>RabbitmqCluster</code> 資源：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ mkdir rbmq &amp;&amp; cd rbmq &amp;&amp; touch rbmq.yaml</span><br><span class="line">$ vim rbmq.yaml</span><br></pre></td></tr></table></figure>
+<p>定義了 cluster name 為 <code>rbmq</code>、指定放在 <code>rabbitmq</code> namespace 下，複本數指定為 <code>3</code>、service 類型為 <code>LoadBalancer</code> (前提是 k8s 集群有建置 LB 套件)、指定 storageClass 以及空間。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rabbitmq.com/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">RabbitmqCluster</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">rbmq</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">rabbitmq</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">service:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br><span class="line">  <span class="attr">persistence:</span></span><br><span class="line">    <span class="attr">storageClassName:</span> <span class="string">standard</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">20Gi</span></span><br></pre></td></tr></table></figure>
+<div class="warning">
+<p>persistence 可以不寫，但 k8s 集群必須事先設置 default 的 StorageClass，若無填寫則會使用 default storageClass。否則集群將不會被 scheduled 成功，因為 rabbitMQ 需要有 persistent volume。</p>
+</div>
+<p>p.s. 使用 <code>$ kubectl get sc</code> 取得目前 k8s 集群的 StorageClass 資源<br>
+<img src="https://imgur.com/2DecQC8.png" alt></p>
+<h4 id="開始建立">開始建立</h4>
+<p>應用上一步驟定義好的 <code>RabbitmqCluster</code> 資源，如果不使用與 operator 相同的 namespace 的話，需要先自己創一個。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">$ kubectl create ns rabbitmq</span><br><span class="line">$ kubectl apply -f rbmq.yaml</span><br></pre></td></tr></table></figure>
+<p>驗證資源是否都有建立成功</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">$ kubectl get all -n rabbitmq</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/ejZ1MXz.png" alt></p>
+<h3 id="加入-TLS">加入 TLS</h3>
+<h4 id="建立-Secret">建立 Secret</h4>
+<p>需先準備好一組含有 key 跟 cert 的 pem 格式的金鑰，如果沒有就按照下面指令創建。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ openssl req -x509 -newkey rsa:2048 -sha256 -nodes -keyout key.pem -out cert.pem -days 3650</span><br></pre></td></tr></table></figure>
+<p>使用現有的金鑰做成 secret</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">$ kubectl create secret -n rabbitmq tls rbmq-tls-secret --cert=/root/cert.pem --key=/root/key.pem</span><br></pre></td></tr></table></figure>
+<h4 id="修改配置">修改配置</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">$ kubectl edit rabbitmqcluster rbmq</span><br></pre></td></tr></table></figure>
+<p>在 spec.tls.secretName 中加上剛剛的 secret。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="attr">secretName:</span> <span class="string">rbmq-tls-secret</span></span><br></pre></td></tr></table></figure>
+<p>保存後離開就可以看到集群上已經開啟了 tls。</p>
+<h3 id="進入-Rabbit-Management">進入 Rabbit Management</h3>
+<p>開啟瀏覽器，輸入 LoadBalancer 配置的 <code>ip:15672</code> 進入 Rabbit Management。</p>
+<h4 id="取得使用者帳密">取得使用者帳密</h4>
+<p>admin user 的帳密儲存在 secret 中，資源名字為 cluster name 加上 <code>-default-user</code>，帳密皆以 base44 編碼儲存。使用以下命令取得帳號以及密碼：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ kubectl -n rabbitmq get secret rbmq-default-user -o jsonpath=&quot;&#123;.data.username&#125;&quot; | base64 --decode</span><br><span class="line">$ kubectl -n rabbitmq get secret rbmq-default-user -o jsonpath=&quot;&#123;.data.password&#125;&quot; | base64 --decode</span><br></pre></td></tr></table></figure>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.rabbitmq.com/kubernetes/operator">https://www.rabbitmq.com/kubernetes/operator</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/MongoDB-cannot-connect-with-replicaSet/" rel="prev" title="[MongoDB] 無法使用 replicaSet 連線問題">
+                  <i class="fa fa-chevron-left"></i> [MongoDB] 無法使用 replicaSet 連線問題
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Kubernetes-Object-%E5%9F%BA%E6%9C%AC%E5%B0%8D%E8%B1%A1%E4%BB%8B%E7%B4%B9/" rel="next" title="[Kubernetes] Object 基本對象介紹">
+                  [Kubernetes] Object 基本對象介紹 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

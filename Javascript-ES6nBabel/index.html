@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="ECMAScript ECMAScript是一個開發標準(規範)，而 Javascript 就是根據此標準來實作。 ES6 指的是 ECMAScript 第六版，於 2015 年發布，所以又稱 ES2015。ES6 包含了許多新的語法，將於下面用 Javascript 介紹。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Javascript] ES6 新語法 &amp; babel 轉譯器簡介">
+<meta property="og:url" content="https://ulahsieh.github.io/Javascript-ES6nBabel/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="ECMAScript ECMAScript是一個開發標準(規範)，而 Javascript 就是根據此標準來實作。 ES6 指的是 ECMAScript 第六版，於 2015 年發布，所以又稱 ES2015。ES6 包含了許多新的語法，將於下面用 Javascript 介紹。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-27T05:39:00.000Z">
+<meta property="article:modified_time" content="2020-06-27T05:39:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="Node.js">
+<meta property="article:tag" content="Babel">
+<meta property="article:tag" content="ES6">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Javascript-ES6nBabel/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Javascript-ES6nBabel/","path":"Javascript-ES6nBabel/","title":"[Javascript] ES6 新語法 & babel 轉譯器簡介"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Javascript] ES6 新語法 & babel 轉譯器簡介 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ECMAScript"><span class="nav-number">1.</span> <span class="nav-text">ECMAScript</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E7%9A%84%E8%AE%8A%E6%95%B8%E5%AE%A3%E5%91%8A%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">新的變數宣告方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B9%E4%BE%BF%E7%9A%84%E4%B8%B2%E6%8E%A5%E5%AD%97%E4%B8%B2-Template-Literals"><span class="nav-number">3.</span> <span class="nav-text">更方便的串接字串 - Template Literals</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%A7%8B-Destructuring"><span class="nav-number">4.</span> <span class="nav-text">解構 Destructuring</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E6%A7%8B%E9%99%A3%E5%88%97"><span class="nav-number">4.0.1.</span> <span class="nav-text">解構陣列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E6%A7%8B%E7%89%A9%E4%BB%B6"><span class="nav-number">4.0.2.</span> <span class="nav-text">解構物件</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%95%E9%96%8B%E9%81%8B%E7%AE%97%E5%AD%90-Spread-Operator"><span class="nav-number">5.</span> <span class="nav-text">展開運算子 Spread Operator</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8-%E5%B1%95%E9%96%8B%E9%99%A3%E5%88%97%E3%80%82"><span class="nav-number">5.0.1.</span> <span class="nav-text">用 ... 展開陣列。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8-%E5%B1%95%E9%96%8B%E7%89%A9%E4%BB%B6%E3%80%82"><span class="nav-number">5.0.2.</span> <span class="nav-text">用 ... 展開物件。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-%E4%BE%86%E8%A4%87%E8%A3%BD%E5%80%BC"><span class="nav-number">5.0.3.</span> <span class="nav-text">使用 ... 來複製值</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E9%A4%98%E5%8F%83%E6%95%B8-Rest-Parameter"><span class="nav-number">6.</span> <span class="nav-text">其餘參數 Rest Parameter</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%87%89%E7%94%A8%E5%9C%A8%E9%99%A3%E5%88%97%E5%8F%8A%E7%89%A9%E4%BB%B6%E4%B8%8A"><span class="nav-number">6.0.1.</span> <span class="nav-text">應用在陣列及物件上</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%87%89%E7%94%A8%E5%9C%A8%E5%87%BD%E5%BC%8F%E7%9A%84%E5%8F%83%E6%95%B8%E4%B8%8A"><span class="nav-number">6.0.2.</span> <span class="nav-text">應用在函式的參數上</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A0%90%E8%A8%AD%E5%80%BC-Default-Parameters"><span class="nav-number">7.</span> <span class="nav-text">預設值 Default Parameters</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%AD%E9%A0%AD%E5%87%BD%E5%BC%8F-arrow-function"><span class="nav-number">8.</span> <span class="nav-text">箭頭函式 arrow function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#export-import-%E7%9A%84%E6%96%B0%E5%AF%AB%E6%B3%95"><span class="nav-number">9.</span> <span class="nav-text">export &amp; import 的新寫法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%80%8B%E5%88%A5-export"><span class="nav-number">9.0.1.</span> <span class="nav-text">個別 export</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B5%B1%E4%B8%80-export"><span class="nav-number">9.0.2.</span> <span class="nav-text">統一 export</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E5%90%8D-import"><span class="nav-number">9.0.3.</span> <span class="nav-text">指名 import</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8-%E5%85%A8%E9%83%A8-import"><span class="nav-number">9.0.4.</span> <span class="nav-text">用 * 全部 import</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#export-default-import-default"><span class="nav-number">9.0.5.</span> <span class="nav-text">export default &amp; import default</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Babel"><span class="nav-number">10.</span> <span class="nav-text">Babel</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Source"><span class="nav-number">10.0.0.1.</span> <span class="nav-text">Source</span></a></li></ol></li></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Javascript-ES6nBabel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Javascript] ES6 新語法 & babel 轉譯器簡介
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-06-27 13:39:00" itemprop="dateCreated datePublished" datetime="2020-06-27T13:39:00+08:00">2020-06-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="ECMAScript">ECMAScript</h3>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://zh.wikipedia.org/wiki/ECMAScript">ECMAScript</a>是一個開發標準(規範)，而 Javascript 就是根據此標準來實作。<br>
+ES6 指的是 ECMAScript 第六版，於 2015 年發布，所以又稱 ES2015。ES6 包含了許多新的語法，將於下面用 Javascript 介紹。</p>
+<span id="more"></span>
+<h3 id="新的變數宣告方式">新的變數宣告方式</h3>
+<ol>
+<li>const：用於宣告不會變的常數。<br>
+但如果今天宣告的常數是物件的話，因為物件的底層存的是位址，所以即使宣告的方式為 const 但物件內的屬性值是可以改變的。</li>
+<li>let：使用 let 宣告的變數的生存範圍 (scope) 僅限於變數所在的 block 中。</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">10</span> &gt; <span class="number">5</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> a = <span class="number">10</span></span><br><span class="line">        <span class="keyword">let</span> b = <span class="number">20</span></span><br><span class="line">        <span class="built_in">console</span>.log(b)</span><br><span class="line">    &#125;</span><br><span class="line">    consle.log(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>b 的生存範圍僅限於 if 區塊中；而 a 的生存範圍則是整個 function。</p>
+<div class="info">
+<p>作用域愈小愈好，才不會干擾到其他人，所以比較建議使用 let。</p>
+</div>
+<h3 id="更方便的串接字串-Template-Literals">更方便的串接字串 - Template Literals</h3>
+<p>字串串接使用 <code>` `</code> 取代原先使用的單引號 <code>' '</code> 或是雙引號 <code>&quot; &quot;</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//以前</span></span><br><span class="line"><span class="keyword">var</span> name = <span class="string">&#x27;jack&#x27;</span></span><br><span class="line"><span class="keyword">var</span> str = <span class="string">&#x27;hello&#x27;</span> + name + <span class="string">&#x27;, it is&#x27;</span> +  <span class="keyword">new</span> <span class="built_in">Date</span>() + <span class="string">&#x27;now!&#x27;</span></span><br><span class="line"><span class="keyword">var</span> str1 = <span class="string">&#x27;hello\nworld\nhello\nJavascript&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//ES6</span></span><br><span class="line"><span class="keyword">var</span> newStr = <span class="string">`hello <span class="subst">$&#123;name.toUpperCase()&#125;</span>, it is <span class="subst">$&#123;<span class="keyword">new</span> <span class="built_in">Date</span>()&#125;</span> now!`</span></span><br><span class="line"><span class="keyword">var</span> newStr1 = <span class="string">`hello</span></span><br><span class="line"><span class="string">world,</span></span><br><span class="line"><span class="string">hello</span></span><br><span class="line"><span class="string">Javascript!`</span></span><br></pre></td></tr></table></figure>
+<p>以前在使用單雙引號串接字串的時候，如果遇到換行或是要跟字串相接的狀況時需要使用加號串，很麻煩！<br>
+現在 ES6 提供反引號來串接，當遇到變數的時候只需要在反引號內使用 <code>$&#123;變數&#125;</code> 或 <code>$&#123;javascript code&#125;</code> 包起來，就可以不必再打一大堆加號跟引號了。</p>
+<h3 id="解構-Destructuring">解構 Destructuring</h3>
+<p>陣列或物件的元素可以使用解構指定給變數</p>
+<h5 id="解構陣列">解構陣列</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="keyword">var</span> [first, second, third, fourth] = arr　<span class="comment">// 1, 2, 3, 4</span></span><br><span class="line"><span class="keyword">var</span> [one, two] = arr <span class="comment">// 1, 2</span></span><br></pre></td></tr></table></figure>
+<h5 id="解構物件">解構物件</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">    <span class="attr">name</span> : <span class="string">&#x27;jack&#x27;</span>,</span><br><span class="line">    <span class="attr">age</span> : <span class="number">20</span>,</span><br><span class="line">    <span class="attr">address</span> : <span class="string">&#x27;taiwan&#x27;</span>,</span><br><span class="line">    <span class="attr">family</span> : &#123;</span><br><span class="line">        <span class="attr">father</span> : <span class="string">&#x27;david&#x27;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> &#123;name, age&#125; = obj</span><br><span class="line"><span class="keyword">var</span> &#123;family&#125; = obj  <span class="comment">//&#123;father : &#x27;david&#x27;&#125;</span></span><br><span class="line"><span class="keyword">var</span> &#123;father&#125; = family  <span class="comment">//david，再次解構 family 這個物件</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>陣列解構使用 <code>[]</code></li>
+<li>物件解構使用 <code>&#123;&#125;</code>，且變數需與物件屬性<strong>相同</strong>名稱</li>
+<li>解構可以部份解構或雙層解構，會自動對應</li>
+<li>部分解構如第三行，只寫兩個變數，就會自動對應前兩個元素</li>
+<li>雙層解構如最後兩行，可以直接變成一行 <code>var &#123;family : &#123;father&#125;&#125; = obj</code></li>
+</ul>
+<p>補充另一個很酷的用法！</p>
+<p>在以前函數傳物件的時候要使用裏面的變數:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(obj.a)</span><br><span class="line">&#125;</span><br><span class="line">test(&#123;</span><br><span class="line">    <span class="attr">a</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">b</span> : <span class="number">2</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>現在有了解構的話就可以這樣寫：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">&#123;a, b&#125;</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a)</span><br><span class="line">&#125;</span><br><span class="line">test(&#123;</span><br><span class="line">    <span class="attr">a</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">b</span> : <span class="number">2</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="展開運算子-Spread-Operator">展開運算子 Spread Operator</h3>
+<h5 id="用-展開陣列。">用 <code>...</code> 展開陣列。</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">var</span> arr2 = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, arr]  <span class="comment">//[4, 5, 6, [1, 2, 3]]</span></span><br><span class="line"><span class="keyword">var</span> arr3 = [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, ...arr] <span class="comment">//[4, 5, 6, 1, 2, 3]</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a, b, c</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b + c</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(add(...arr))</span><br></pre></td></tr></table></figure>
+<h5 id="用-展開物件。">用 <code>...</code> 展開物件。</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">    <span class="attr">a</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">b</span> : <span class="number">2</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">    ...obj1,</span><br><span class="line">    <span class="attr">c</span> : <span class="number">3</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj3 = &#123;</span><br><span class="line">    ...obj1,</span><br><span class="line">    <span class="attr">b</span> : <span class="number">3</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj3 = &#123;</span><br><span class="line">    <span class="attr">b</span> : <span class="number">2</span>,</span><br><span class="line">    ...obj1,  <span class="comment">//在後面的變數會蓋掉前面的</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(obj2) <span class="comment">//&#123;a : 1, b : 2, c : 3&#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(obj3) <span class="comment">//&#123;a : 1, b : 3&#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(obj3) <span class="comment">//&#123;b : 2, a : 1&#125;</span></span><br></pre></td></tr></table></figure>
+<h5 id="使用-來複製值">使用 <code>...</code> 來複製<strong>值</strong></h5>
+<p>陣列放入展開的陣列會是一個擁有不同位址的新陣列，所以要單純複製值的話，要使用展開運算。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">var</span> arr1 = arr  <span class="comment">//傳址</span></span><br><span class="line"><span class="keyword">var</span> arr2 = [...arr]  <span class="comment">//傳值</span></span><br><span class="line"><span class="built_in">console</span>.log(arr===arr1) <span class="comment">//輸出 true</span></span><br><span class="line"><span class="built_in">console</span>.log(arr===arr2) <span class="comment">//輸出 false</span></span><br></pre></td></tr></table></figure>
+<p>下面很酷：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> nest = [<span class="number">4</span>]</span><br><span class="line">arr1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, nest]</span><br><span class="line">arr2 = [...arr1]</span><br><span class="line"><span class="built_in">console</span>.log(arr1[<span class="number">3</span>]===arr2[<span class="number">3</span>]) <span class="comment">//輸出 true</span></span><br></pre></td></tr></table></figure>
+<p>arr1 中的 nest 是用傳址放進來的，所以儘管 arr2 使用展開的 arr1，arr2 中的 <code>[4]</code> 也還會是同一個位址。</p>
+<h3 id="其餘參數-Rest-Parameter">其餘參數 Rest Parameter</h3>
+<p>可以理解成『反向』展開，通常和解構一起使用，必須放在最後面。</p>
+<h5 id="應用在陣列及物件上">應用在陣列及物件上</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="keyword">var</span> [first, ...rest] = arr</span><br><span class="line"><span class="built_in">console</span>.log(first, rest) <span class="comment">//1 [2, 3, 4]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    <span class="attr">a</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="attr">b</span> : <span class="number">2</span>,</span><br><span class="line">    <span class="attr">c</span> : <span class="number">3</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> &#123;a, ...obj2&#125; = obj</span><br><span class="line"><span class="built_in">console</span>.log(obj2) <span class="comment">//&#123;b:2, c:3&#125;</span></span><br></pre></td></tr></table></figure>
+<h5 id="應用在函式的參數上">應用在函式的參數上</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">...args</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(args)</span><br><span class="line">    <span class="keyword">return</span> args[<span class="number">0</span>]+args[<span class="number">1</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(add(<span class="number">1</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="預設值-Default-Parameters">預設值 Default Parameters</h3>
+<p>在 function 的參數加入預設值，當在呼叫時沒有給相對應的參數時，就會用預設值當值傳入。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">repeat</span>(<span class="params">str = <span class="string">&#x27;ya&#x27;</span>, times = <span class="number">3</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> str.repeat(times)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(repeat(<span class="string">&#x27;abc&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="箭頭函式-arrow-function">箭頭函式 arrow function</h3>
+<p>可以簡化函式的寫法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> test = <span class="function"><span class="keyword">function</span> (<span class="params">n</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>簡化成</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> test = <span class="function">(<span class="params">n</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果只有一個參數的話 () 可以省略掉；<br>
+如果在 return 就能做事並回傳的話 {} 可以省略掉。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line"><span class="built_in">console</span>.log(</span><br><span class="line">    arr</span><br><span class="line">      .filter(<span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> value &gt; <span class="number">3</span></span><br><span class="line">      &#125;)</span><br><span class="line">      .map(<span class="function"><span class="keyword">function</span>(<span class="params">value</span>)</span>&#123;</span><br><span class="line">          <span class="keyword">return</span> value *<span class="number">2</span></span><br><span class="line">      &#125;)</span><br><span class="line">)  <span class="comment">//輸出 [8, 10]</span></span><br></pre></td></tr></table></figure>
+<p>可以省略成</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line"><span class="built_in">console</span>.log(</span><br><span class="line">    arr</span><br><span class="line">      .filter(<span class="function"><span class="params">value</span> =&gt;</span> value &gt; <span class="number">3</span>)</span><br><span class="line">      .map(<span class="function"><span class="params">value</span> =&gt;</span> value *<span class="number">2</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="export-import-的新寫法">export &amp; import 的新寫法</h3>
+<h5 id="個別-export">個別 export</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//app.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> PI = <span class="number">3.14</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a,b</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="統一-export">統一 export</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//app.js</span></span><br><span class="line"><span class="keyword">const</span> PI = <span class="number">3.14</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a,b</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a+b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> &#123;</span><br><span class="line">    add <span class="keyword">as</span> addFunction,  <span class="comment">//使用 as 可以改名</span></span><br><span class="line">    PI</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="指名-import">指名 import</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.js</span></span><br><span class="line"><span class="keyword">import</span> &#123;PI, addFunction <span class="keyword">as</span> a&#125; <span class="keyword">from</span> <span class="string">&#x27;./app.js&#x27;</span></span><br><span class="line"><span class="comment">//import 也可以使用 as 改名</span></span><br><span class="line"><span class="built_in">console</span>.log(a(<span class="number">3</span>, <span class="number">5</span>), PI)</span><br></pre></td></tr></table></figure>
+<h5 id="用-全部-import">用 * 全部 import</h5>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.js</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> app <span class="keyword">from</span> <span class="string">&#x27;./app.js&#x27;</span></span><br><span class="line"><span class="built_in">console</span>.log(app.addFunction(<span class="number">3</span>, <span class="number">5</span>), app.PI)</span><br></pre></td></tr></table></figure>
+<h5 id="export-default-import-default">export default &amp; import default</h5>
+<p>可以不用加大括號</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//app.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a,b</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a+b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">var</span> PI=<span class="number">3.14</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.js</span></span><br><span class="line"><span class="keyword">import</span> add, &#123;PI&#125; <span class="keyword">from</span> <span class="string">&#x27;./app&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>p.s. Node.js 還沒支援這種新語法，所以要使用接下來介紹的轉譯器。</p>
+<h3 id="Babel">Babel</h3>
+<p>Babel 是 JavaScript 轉譯器，可將 ES6 以上的程式碼轉為 ES5 程式碼，以支援還沒支持新語法的瀏覽器或環境。</p>
+<div class="warning">
+<p>babel-node 執行的時候會佔大量的記憶體空間，官方不建議在 production 環境使用。</p>
+</div>
+<ol>
+<li>
+<p>安裝 babel-node<br>
+<code>$ install --save-dev @babel/core @babel/node</code></p>
+</li>
+<li>
+<p>安裝 presets 並配置 .babelrc 文件<br>
+因為 babel-node 對 import 語法默認是關閉的，因此需要安裝指定的 preset 並配置 .babelrc 文件來開啟語法支援。<br>
+<code>$ npm i @babel/preset-env --save-dev</code><br>
+新增 .babelrc 配置文件 <code>$ touch .babelrc</code>，並在文件中貼上：<br>
+<code>$ vi .babelrc</code></p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;presets&quot;: [ &quot;@babel/preset-env&quot; ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>執行 babel-node<br>
+<code>npx babel-node index.js</code></li>
+</ol>
+<h6 id="Source">Source</h6>
+<p>[All] 此篇為觀看 Lidemy JS102 的筆記，圖片來源以及部分內容取自上課影片</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+              <a href="/tags/Node-js/" rel="tag"># Node.js</a>
+              <a href="/tags/Babel/" rel="tag"># Babel</a>
+              <a href="/tags/ES6/" rel="tag"># ES6</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Week3-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6-Jest-%E7%B0%A1%E4%BB%8B/" rel="prev" title="[SQA] 單元測試 & Jest 簡介">
+                  <i class="fa fa-chevron-left"></i> [SQA] 單元測試 & Jest 簡介
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Week4-basic-net1/" rel="next" title="[TCP/IP] 網路基礎概念- 傳紙條、TCP/IP 四層概述">
+                  [TCP/IP] 網路基礎概念- 傳紙條、TCP/IP 四層概述 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

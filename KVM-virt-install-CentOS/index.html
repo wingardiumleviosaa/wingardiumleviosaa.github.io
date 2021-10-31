@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="安裝 KVM 套件 檢查 CPU 是否支援虛擬化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[KVM] virt-install 建立 CentOS 虛擬機">
+<meta property="og:url" content="https://ulahsieh.github.io/KVM-virt-install-CentOS/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="安裝 KVM 套件 檢查 CPU 是否支援虛擬化">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/KH80Y69.png">
+<meta property="og:image" content="https://imgur.com/BNCFa7v.png">
+<meta property="og:image" content="https://imgur.com/x72LCiP.png">
+<meta property="article:published_time" content="2021-09-16T02:52:26.000Z">
+<meta property="article:modified_time" content="2021-09-16T02:52:26.000Z">
+<meta property="article:author" content="Ula">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/KH80Y69.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/KVM-virt-install-CentOS/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/KVM-virt-install-CentOS/","path":"KVM-virt-install-CentOS/","title":"[KVM] virt-install 建立 CentOS 虛擬機"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[KVM] virt-install 建立 CentOS 虛擬機 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-KVM-%E5%A5%97%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">安裝 KVM 套件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-KVM-%E7%B6%B2%E7%B5%A1%E6%A9%8B%E6%8E%A5%E5%8A%9F%E8%83%BD"><span class="nav-number">2.</span> <span class="nav-text">配置 KVM 網絡橋接功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%96%8B%E5%A7%8B%E5%89%B5%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">開始創建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E5%AE%89%E8%A3%9D%E5%BE%8C%E9%80%B2%E5%85%A5-VM-%E8%A8%AD%E7%BD%AE%E7%B6%B2%E8%B7%AF"><span class="nav-number">4.</span> <span class="nav-text">完成安裝後進入 VM 設置網路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9B%E6%93%AC%E6%A9%9F%E7%9A%84%E5%85%B6%E4%BB%96%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="nav-number">5.</span> <span class="nav-text">虛擬機的其他管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Reference"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/KVM-virt-install-CentOS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [KVM] virt-install 建立 CentOS 虛擬機
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-09-16 10:52:26" itemprop="dateCreated datePublished" datetime="2021-09-16T10:52:26+08:00">2021-09-16</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="安裝-KVM-套件">安裝 KVM 套件</h3>
+<p>檢查 CPU 是否支援虛擬化</p>
+<span id="more"></span>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lscpu | grep -i virtualization</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/KH80Y69.png" alt><br>
+加入 qemu repo</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y centos-release-qemu-ev</span><br></pre></td></tr></table></figure>
+<p>安裝套件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y qemu-kvm-ev libvirt libvirt-python libguestfs-tools virt-install</span><br></pre></td></tr></table></figure>
+<p>確認 kvm module 有正常載入，如果執行結果有 kvm_xxx(CPU系列）則說明 kvm 服務已經啟動</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsmod | grep kvm</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/BNCFa7v.png" alt></p>
+<p>如果未啟動，可通過如下命令啟動</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl start libvirtd</span><br></pre></td></tr></table></figure>
+<p>將服務設為開機啟用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> libvirtd</span><br><span class="line">systemctl is-enabled libvirtd</span><br></pre></td></tr></table></figure>
+<h3 id="配置-KVM-網絡橋接功能">配置 KVM 網絡橋接功能</h3>
+<p>產生虛擬橋接器，並將實體網卡納入該 bridge 之下，使得將來 VM 可以使用 bridge 模式，具有獨立對外 IP。<br>
+<img src="https://imgur.com/x72LCiP.png" alt></p>
+<p>本機網路設定</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">nmcli con add <span class="built_in">type</span> bridge ifname br0</span><br><span class="line">nmcli connection show</span><br><span class="line"></span><br><span class="line"><span class="comment"># 10.1.5.1 為實體網卡個網路位置</span></span><br><span class="line">nmcli con modify bridge-br0 ipv4.method manual ipv4.address <span class="string">&quot;10.1.5.1/24&quot;</span> ipv4.gateway <span class="string">&quot;10.1.5.254&quot;</span> ipv4.dns <span class="string">&quot;10.1.1.3&quot;</span> autoconnect yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把原先使用的網卡 ens1f0 加在 bridge 裡</span></span><br><span class="line">nmcli con add <span class="built_in">type</span> bridge-slave ifname ens1f0 master bridge-br0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 啟用 bridge</span></span><br><span class="line">nmcli connection up bridge-br0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重啟網路</span></span><br><span class="line">systemctl restart network</span><br><span class="line">nmcli connection show</span><br></pre></td></tr></table></figure>
+<p>KVM 網路設定</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 其中 uuid 的欄位可用 uuidgen 產生</span></span><br><span class="line">cat &lt;&lt; <span class="string">EOF &gt; br0.xml</span></span><br><span class="line"><span class="string">&lt;network&gt;</span></span><br><span class="line"><span class="string">  &lt;name&gt;br0&lt;/name&gt;</span></span><br><span class="line"><span class="string">  &lt;uuid&gt;f9eae5e5-6bdd-4c72-bd10-6b97b6452126&lt;/uuid&gt;</span></span><br><span class="line"><span class="string">  &lt;bridge name=&quot;br0&quot;/&gt;</span></span><br><span class="line"><span class="string">  &lt;forward mode=&#x27;bridge&#x27;/&gt;</span></span><br><span class="line"><span class="string">&lt;/network&gt;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 新增網卡並啟用</span></span><br><span class="line">virsh net-define br0.xml</span><br><span class="line">virsh net-start br0</span><br><span class="line">virsh net-autostart br0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 將原先的 default 網卡刪掉</span></span><br><span class="line">virsh net-undefine default</span><br><span class="line">virsh net-destroy default</span><br><span class="line">virsh net-list --all</span><br></pre></td></tr></table></figure>
+<h3 id="開始創建">開始創建</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ virt-install --name centos7.9 \</span><br><span class="line">--disk path=/var/lib/libvirt/images/centos7.9,size=90,format=qcow2 \</span><br><span class="line">--vcpus 4 --memory 4096 --network bridge=br0 \</span><br><span class="line">--graphics none --os-type linux --os-variant centos7.0 \</span><br><span class="line">--location /var/lib/libvirt/images/CentOS-7-x86_64-Minimal-2009.iso \</span><br><span class="line">--extra-args <span class="string">&#x27;console=ttyS0&#x27;</span></span><br></pre></td></tr></table></figure>
+<!-- more -->
+<p>參數說明</p>
+<ul>
+<li>
+<p><code>--disk</code> 指定該虛擬機使用的存儲，有多種介質可選。比如指定本地文件可以使用 path 選項，如果指定文件不存在還需要設置 size 參數。如果不配置磁盤可以使用 <code>--disk none</code></p>
+</li>
+<li>
+<p><code>--graphics</code> 可選項，指定guest圖像顯示配置，如果不需要圖像顯示，可以使用 <code>--graphics none</code></p>
+</li>
+<li>
+<p><code>--console</code> 可選項，virt-install 會默認配置合適的 console，可以不填。</p>
+</li>
+<li>
+<p><code>--os-type</code> 是指定作業系統類型（可為 <code>linux</code> 或 <code>windows</code>）</p>
+</li>
+<li>
+<p><code>--os-variant</code> 可選項，指定guest操作系統，用於優化配置。可用的選項可以使用 <code>osinfo-query</code> 指令查詢</p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">osinfo-query os | grep CentOS</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>安裝源參數</p>
+<ul>
+<li><code>--location</code> 指定新創建虛擬機的安裝介質。使用該參數指定安裝介質時，默認是看不到guest安裝過程中的輸出文本的，需要另外配置參數<code>--extra-args 'console=ttyS0'</code></li>
+<li><code>--import</code> 指定新創建虛擬機跳過安裝階段，使用第一個 <code>--disk</code></li>
+</ul>
+</li>
+<li>
+<p><code>--network</code> 網路</p>
+<p>指定虛擬機連接的網絡配置，常用的兩種：</p>
+<ul>
+<li><code>bridge=BRIDGE</code><br>
+指定連接到host上名為BRIDGE的虛擬網橋上。</li>
+<li><code>network=NAME</code><br>
+指定連接到virsh管控的名為NAME的network上。</li>
+</ul>
+</li>
+</ul>
+<p>下完 virt-install 後就會跳出 CentOS 的命令列安裝配置畫面，有 <code>[!]</code> 基本都是要配置，按照順序往下配置，按對應的數字以進行設定。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Installation</span><br><span class="line"></span><br><span class="line"> 1) [x] Language settings                 2) [!] Timezone settings</span><br><span class="line">        (English (United States))                (Timezone is not set.)</span><br><span class="line"> 3) [!] Installation source               4) [!] Software selection</span><br><span class="line">        (Processing...)                          (Processing...)</span><br><span class="line"> 5) [!] Installation Destination          6) [x] Kdump</span><br><span class="line">        (No disks selected)                      (Kdump is enabled)</span><br><span class="line"> 7) [ ] Network configuration             8) [!] Root password</span><br><span class="line">        (Not connected)                          (Password is not set.)</span><br><span class="line"> 9) [!] User creation</span><br><span class="line">        (No user will be created)</span><br><span class="line">  Please make your choice from above [&#x27;q&#x27; to quit | &#x27;b&#x27; to begin installation |</span><br><span class="line">  &#x27;r&#x27; to refresh]:</span><br></pre></td></tr></table></figure>
+<ul>
+<li>3 的安裝源請選擇 <code>2) local ISO file</code></li>
+<li>5 Installation Destination 選擇安裝目的地並選擇 <code>2) Use All Space 使用所有空間</code>；最後分割方案選擇 <code>3) LVM 邏輯卷管理</code></li>
+</ul>
+<h3 id="完成安裝後進入-VM-設置網路">完成安裝後進入 VM 設置網路</h3>
+<p>通過 virsh console &lt;虛擬機器名稱&gt; 命令來連線虛擬機器</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 檢視虛擬機器</span><br><span class="line">$ virsh list              # 檢視在執行的虛擬機器</span><br><span class="line">$ virsh list --all         # 檢視所有虛擬機器</span><br><span class="line"></span><br><span class="line"> Id    Name                           State</span><br><span class="line">----------------------------------------------------</span><br><span class="line"> 7     centos7.9                       running</span><br></pre></td></tr></table></figure>
+<p>連線虛擬機器</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ virsh console centos7.9</span><br></pre></td></tr></table></figure>
+<p>配置虛擬機器網路，編輯 <code>vi /etc/sysconfig/network-scripts/ifcfg-eth0</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">TYPE=Ethernet</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">DEFROUTE=yes</span><br><span class="line">PEERDNS=yes</span><br><span class="line">PEERROUTES=yes</span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">IPV6INIT=yes</span><br><span class="line">IPV6_AUTOCONF=yes</span><br><span class="line">IPV6_DEFROUTE=yes</span><br><span class="line">IPV6_PEERDNS=yes</span><br><span class="line">IPV6_PEERROUTES=yes</span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">NAME=eth0</span><br><span class="line">UUID=adfa3b7d-bf60-47e6-8482-871dee686fb5</span><br><span class="line">DEVICE=eth0</span><br><span class="line">ONBOOT=yes</span><br><span class="line">IPADDR=10.1.5.1</span><br><span class="line">PREFIX=24</span><br><span class="line">GATEWAY=10.1.5.254</span><br><span class="line">DNS1=10.1.1.3</span><br></pre></td></tr></table></figure>
+<p>重啟網路</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ systemctl restart network</span><br></pre></td></tr></table></figure>
+<h3 id="虛擬機的其他管理命令">虛擬機的其他管理命令</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">virsh start centos7.9     # 虛擬機器開啟（啟動）：</span><br><span class="line">virsh reboot centos7.9    # 虛擬機器重新啟動</span><br><span class="line">virsh shutdown centos7.9  # 虛擬機器關機</span><br><span class="line">virsh destroy centos7.9   # 強制關機（強制斷電）</span><br><span class="line">virsh suspend centos7.9   # 暫停（掛起）KVM 虛擬機器</span><br><span class="line">virsh resume centos7.9    # 恢復被掛起的 KVM 虛擬機器</span><br><span class="line">virsh undefine centos7.9  # 該方法只刪除配置檔案，磁碟檔案未刪除</span><br><span class="line">virsh autostart centos7.9 # 隨物理機啟動而啟動（開機啟動）</span><br><span class="line">virsh autostart --disable centos7.9 # 取消標記為自動開始（取消開機啟動）</span><br></pre></td></tr></table></figure>
+<h6 id="Reference">Reference</h6>
+<ul>
+<li>關於更多 kvm 網路模式可以參考這篇分享 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.samyang.top/2018/12/kvm/">https://www.samyang.top/2018/12/kvm/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.itread01.com/content/1545319657.html">https://www.itread01.com/content/1545319657.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Kubernetes-Change-MetalLB-IP-Range/" rel="prev" title="[Kubernetes] Change MetalLB IP Range">
+                  <i class="fa fa-chevron-left"></i> [Kubernetes] Change MetalLB IP Range
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Data-Pipeline/" rel="next" title="Data Pipeline 意義、要解決什麼、應具備的功能">
+                  Data Pipeline 意義、要解決什麼、應具備的功能 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

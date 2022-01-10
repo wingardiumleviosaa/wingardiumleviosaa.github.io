@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="最近碰到一個需從網頁去擷取圖片的需求，原本拿到的 sample code 是由 python 的 selenium 爬的，但後來發現有大神將此包改寫成 golang tebeka&#x2F;selenium，所以就試著改寫看看，在此紀錄一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[golang] 使用 tebeka selenium 爬蟲模擬操控網頁">
+<meta property="og:url" content="https://ulahsieh.github.io/golang-tebeka-selenium/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="最近碰到一個需從網頁去擷取圖片的需求，原本拿到的 sample code 是由 python 的 selenium 爬的，但後來發現有大神將此包改寫成 golang tebeka&#x2F;selenium，所以就試著改寫看看，在此紀錄一下。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/xlxg7kZ.png">
+<meta property="og:image" content="https://imgur.com/TBkYGVS.png">
+<meta property="og:image" content="https://imgur.com/sO3eqDc.png">
+<meta property="og:image" content="https://imgur.com/jF71MfF.png">
+<meta property="article:published_time" content="2022-01-10T08:03:00.000Z">
+<meta property="article:modified_time" content="2022-01-10T08:03:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Golang">
+<meta property="article:tag" content="Selenium">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/xlxg7kZ.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/golang-tebeka-selenium/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/golang-tebeka-selenium/","path":"golang-tebeka-selenium/","title":"[golang] 使用 tebeka selenium 爬蟲模擬操控網頁"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[golang] 使用 tebeka selenium 爬蟲模擬操控網頁 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A8%99%E7%B6%B2%E9%A0%81%E7%88%AC%E5%8F%96%E9%9C%80%E6%B1%82"><span class="nav-number">1.</span> <span class="nav-text">目標網頁爬取需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%8B%E8%A1%8C%E7%92%B0%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">運行環境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%89%8D%E6%BA%96%E5%82%99"><span class="nav-number">3.</span> <span class="nav-text">事前準備</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BC%8F%E7%A2%BC"><span class="nav-number">4.</span> <span class="nav-text">程式碼</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">110</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/golang-tebeka-selenium/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [golang] 使用 tebeka selenium 爬蟲模擬操控網頁
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-10 16:03:00" itemprop="dateCreated datePublished" datetime="2022-01-10T16:03:00+08:00">2022-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近碰到一個需從網頁去擷取圖片的需求，原本拿到的 sample code 是由 python 的 selenium 爬的，但後來發現有大神將此包改寫成 golang <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/tebeka/selenium">tebeka/selenium</a>，所以就試著改寫看看，在此紀錄一下。</p>
+<span id="more"></span>
+<h3 id="目標網頁爬取需求">目標網頁爬取需求</h3>
+<p><img src="https://imgur.com/xlxg7kZ.png" alt><br>
+目標網頁是一個爐溫監控的網站，任務是爬取指定產品所經的迴焊爐的生產歷史紀錄。需要模擬的步驟如下</p>
+<ol>
+<li>查詢頁面需先輸入的參數有：
+<ul>
+<li>下拉式選單選取線別</li>
+<li>文字框時間範圍 （開始與結束）</li>
+<li>文字框產品編號</li>
+</ul>
+</li>
+<li>點選查詢按鈕</li>
+<li>回傳搜尋結果表格，點選表格的每一列的任意位置/欄位</li>
+<li>彈出一個 modal 視窗，內容為被點選列的詳細爐溫圖表<br>
+<img src="https://imgur.com/TBkYGVS.png" alt></li>
+<li>擷取螢幕並裁切圖片到目標範圍存到本機</li>
+<li>點選 OK 按鈕以關閉 modal 視窗</li>
+<li>繼續點選下列，重複 3～6 步驟，直到表格的最後一列資訊</li>
+</ol>
+<h3 id="運行環境">運行環境</h3>
+<ul>
+<li>Ubuntu v20.04</li>
+<li>Golang v1.15</li>
+<li>Google Chrome v96.0.4664.110</li>
+</ul>
+<h3 id="事前準備">事前準備</h3>
+<p>須在 ubuntu 下載 Chrome 以及相對應的 chromedriver。</p>
+<ol>
+<li>更新系统</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>安裝相關的必要套件</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libxss1 libappindicator1 libindicator7</span><br><span class="line"># 安裝 xvfb 以便可以用 headless 模式（跑在背景，不開啟瀏覽器）運行 Chrome</span><br><span class="line">sudo apt-get install xvfb</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>下載安裝包</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>安装 chrome</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dpkg </span><br><span class="line"># 安装chrome，安裝過程中由於缺少一些依賴而報錯是正常的</span><br><span class="line">sudo dpkg -i google-chrome*.deb</span><br><span class="line">#自動安裝上一步缺少的依賴</span><br><span class="line">sudo apt-get install -f</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>下載 chromedriver<br>
+確認安裝的 Chrome 版本，並下載與之匹配的 chromedriver。<br>
+<img src="https://imgur.com/sO3eqDc.png" alt></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget -N https://chromedriver.storage.googleapis.com/96.0.4664.110/chromedriver_linux64.zip</span><br><span class="line">unzip chromedriver_linux64.zip</span><br><span class="line"># 移動 driver 到指定資料夾</span><br><span class="line">sudo mv -f /home/ula/Downloads/chromedriver ~</span><br></pre></td></tr></table></figure>
+<h3 id="程式碼">程式碼</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;image&quot;</span></span><br><span class="line">	<span class="string">&quot;image/png&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;strconv&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/anaskhan96/soup&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/tebeka/selenium&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/tebeka/selenium/chrome&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 1. enable selenium service</span></span><br><span class="line">	opts := []selenium.ServiceOption&#123;</span><br><span class="line">		<span class="comment">//selenium.Output(os.Stderr), // Output debug information to STDERR</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// lauch a webdriver instance</span></span><br><span class="line">	service, err := selenium.NewChromeDriverService(<span class="string">&quot;/home/nexdata/chromedriver&quot;</span>, <span class="number">9515</span>, opts...)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;Error starting the ChromeDriver server: %v&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// delay service shutdown</span></span><br><span class="line">	<span class="keyword">defer</span> service.Stop()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 2. call browser</span></span><br><span class="line">	caps := selenium.Capabilities&#123;</span><br><span class="line">		<span class="string">&quot;browserName&quot;</span>: <span class="string">&quot;chrome&quot;</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// set chrome arguments</span></span><br><span class="line">	chromeCaps := chrome.Capabilities&#123;</span><br><span class="line">		Args: []<span class="keyword">string</span>&#123;</span><br><span class="line">			<span class="comment">// &quot;--headless&quot;,   // do not open the browser (run in background)</span></span><br><span class="line">			<span class="string">&quot;--no-sandbox&quot;</span>, <span class="comment">//  allow non-root to execute chrome</span></span><br><span class="line">			<span class="string">&quot;--disable-deb-shm-usage&quot;</span>,</span><br><span class="line">			<span class="comment">// &quot;--window-size=1400,1500&quot;,</span></span><br><span class="line">			<span class="string">&quot;--start-maximized&quot;</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	caps.AddChrome(chromeCaps)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// connect to the webdriver instance which running locally</span></span><br><span class="line">	wd, err := selenium.NewRemote(caps, <span class="string">&quot;http://127.0.0.1:9515/wd/hub&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;connect to the webDriver faild: %v&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// delay closing Chrome</span></span><br><span class="line">	<span class="keyword">defer</span> wd.Quit()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// connect to the target website</span></span><br><span class="line">	<span class="keyword">if</span> err := wd.Get(<span class="string">&quot;http://10.90.1.100:9000/productionRecordHistory&quot;</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;connect to the reflow server failed: %v&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// select the line</span></span><br><span class="line">	sel_line, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[1]/div/div/div[2]/div[1]/select&quot;</span>)</span><br><span class="line">	line, _ := selenium.Select(sel_line)</span><br><span class="line">	line.SelectByValue(<span class="string">&quot;6&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// select start date</span></span><br><span class="line">	start_date, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[1]/div/div/div[2]/div[2]/table/tbody/tr[2]/td[1]/div/input&quot;</span>)</span><br><span class="line">	start_date.Clear()</span><br><span class="line">	start_date.SendKeys(<span class="string">&quot;11/28/2021 12:00 PM&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// select end date</span></span><br><span class="line">	end_date, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[1]/div/div/div[2]/div[2]/table/tbody/tr[2]/td[2]/div/input&quot;</span>)</span><br><span class="line">	end_date.Clear()</span><br><span class="line">	end_date.SendKeys(<span class="string">&quot;11/30/2021 12:00 AM&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// input serial number</span></span><br><span class="line">	barcode, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[1]/div/div/div[2]/table/tbody/tr[2]/td[3]/input&quot;</span>)</span><br><span class="line">	barcode.SendKeys(<span class="string">&quot;TBCBB2039913&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// click query button</span></span><br><span class="line">	query_button, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[1]/div/div/div[2]/p/button&quot;</span>)</span><br><span class="line">	<span class="comment">// args := []interface&#123;&#125;&#123;query_button&#125;</span></span><br><span class="line">	<span class="comment">// wd.ExecuteScript(&quot;arguments[0].click();&quot;, args)</span></span><br><span class="line">	query_button.SendKeys(selenium.EnterKey)</span><br><span class="line"></span><br><span class="line">	time.Sleep(time.Duration(<span class="number">3</span>) * time.Second)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// parse to get the number of the column</span></span><br><span class="line">	html_parse, _ := wd.PageSource()</span><br><span class="line">	doc := soup.HTMLParse(html_parse)</span><br><span class="line">	table := doc.Find(<span class="string">&quot;div&quot;</span>, <span class="string">&quot;class&quot;</span>, <span class="string">&quot;react-bs-container-body&quot;</span>).FindAll(<span class="string">&quot;tr&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// enter to the result by the order of the columns</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(table); i++ &#123;</span><br><span class="line">		ele := <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[2]/div[2]/table/tbody/tr[&quot;</span> + strconv.Itoa(i+<span class="number">1</span>) + <span class="string">&quot;]/td[1]&quot;</span></span><br><span class="line">		enter_modal, _ := wd.FindElement(selenium.ByXPATH, ele)</span><br><span class="line">		enter_modal.Click()</span><br><span class="line">		pop_up, _ := wd.WindowHandles()</span><br><span class="line">		wd.SwitchWindow(pop_up[<span class="number">0</span>])</span><br><span class="line">		<span class="comment">//fmt.Println(pop_up)</span></span><br><span class="line">		time.Sleep(time.Duration(<span class="number">1</span>) * time.Second)</span><br><span class="line">		scrnshot, _ := wd.Screenshot()</span><br><span class="line">		ioutil.WriteFile(<span class="string">&quot;test&quot;</span>+strconv.Itoa(i+<span class="number">1</span>)+<span class="string">&quot;.png&quot;</span>, scrnshot, <span class="number">0666</span>)</span><br><span class="line">		<span class="comment">// get the modal location and size to crop the image</span></span><br><span class="line">		modal, _ := wd.FindElement(selenium.ByClassName, <span class="string">&quot;modal-body&quot;</span>)</span><br><span class="line">		loc, _ := modal.Location()</span><br><span class="line">		sz, _ := modal.Size()</span><br><span class="line">		<span class="comment">// fmt.Println(loc)</span></span><br><span class="line">		<span class="comment">// fmt.Println(sz)</span></span><br><span class="line">		file, _ := os.Open(<span class="string">&quot;./test&quot;</span> + strconv.Itoa(i+<span class="number">1</span>) + <span class="string">&quot;.png&quot;</span>)</span><br><span class="line">		<span class="keyword">defer</span> file.Close()</span><br><span class="line">		img, _ := png.Decode(file)</span><br><span class="line">		sub_image := img.(<span class="keyword">interface</span> &#123;</span><br><span class="line">			SubImage(r image.Rectangle) image.Image</span><br><span class="line">		&#125;).SubImage(image.Rect(loc.X, loc.Y, loc.X+sz.Width, loc.Y+sz.Height))</span><br><span class="line">		file, _ = os.Create(<span class="string">&quot;./crop&quot;</span> + strconv.Itoa(i+<span class="number">1</span>) + <span class="string">&quot;.png&quot;</span>)</span><br><span class="line">		png.Encode(file, sub_image)</span><br><span class="line"></span><br><span class="line">		time.Sleep(time.Duration(<span class="number">5</span>) * time.Second)</span><br><span class="line"></span><br><span class="line">		ok_button, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div[2]/div/div[2]/div/div/div[3]/div/div[2]/button[4]&quot;</span>)</span><br><span class="line">		<span class="comment">// args = []interface&#123;&#125;&#123;ok_button&#125;</span></span><br><span class="line">		<span class="comment">// wd.ExecuteScript(&quot;arguments[0].click();&quot;, args)</span></span><br><span class="line">		ok_button.SendKeys(selenium.EnterKey)</span><br><span class="line"></span><br><span class="line">		time.Sleep(time.Duration(<span class="number">2</span>) * time.Second)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>中途遇到幾個問題在這紀錄一下，</p>
+<ol>
+<li>button click() 沒反應<br>
+中間操作時，button 元素找到後進行 Click() 點擊，但是沒有反應。在爬文後還是沒找出確切原因，但有兩個方法可以解決：
+<ul>
+<li>直接調用 javascript 的點擊事件</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">query_button, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[1]/div/div/div[2]/p/button&quot;</span>)</span><br><span class="line">args := []<span class="keyword">interface</span>&#123;&#125;&#123;query_button&#125;</span><br><span class="line">wd.ExecuteScript(<span class="string">&quot;arguments[0].click();&quot;</span>, args)</span><br></pre></td></tr></table></figure>
+<pre><code>- 使用 enter 操作
+</code></pre>
+ <figure class="highlight go"><table><tr><td class="code"><pre><span class="line">query_button, _ := wd.FindElement(selenium.ByXPATH, <span class="string">&quot;/html/body/div/div/div/div/section[2]/div[1]/div/div/div[2]/p/button&quot;</span>)</span><br><span class="line">query_button.SendKeys(selenium.EnterKey)</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>解析 HTML 原始碼<br>
+因為要取得回傳表格的 row 數，如果用 selenium package 有點難爬。後來發現大部份的人如果要解析及取得 HTML 原始碼各個標籤的元素資料，都會用 python 的靜態爬取的爬蟲 Beatifulsoup 套件，而 golang 也有大神改寫成 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/anaskhan96/soup">soup</a>。<br>
+目標需要爬取的元素包在 <code>react-bs-container-body</code> class 中，如下圖。爬取整個 html 後，用 Find 找指定 class 後再用 FindAll 篩選 tr 標籤以取得 row 數（len(table)）。<br>
+<img src="https://imgur.com/jF71MfF.png" alt></li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// parse to get the number of the column</span></span><br><span class="line">html_parse, _ := wd.PageSource()</span><br><span class="line">doc := soup.HTMLParse(html_parse)</span><br><span class="line">table := doc.Find(<span class="string">&quot;div&quot;</span>, <span class="string">&quot;class&quot;</span>, <span class="string">&quot;react-bs-container-body&quot;</span>).FindAll(<span class="string">&quot;tr&quot;</span>)</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>
+<p>tebeka/selenium 沒有包 select function<br>
+所幸 issue 中有大神把 SeleniumHQ Java code 改寫成 golang，請參考這個 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/tebeka/selenium/pull/238">pull request</a>。可以無痛參考使用 T_T</p>
+</li>
+<li>
+<p>tebeka/selenium 的 Screenshot 無法指定範圍<br>
+所以只好將就，先把整個畫面截圖後儲存，再另外使用圖片處理的套件 image，將圖片讀取後另外擷取再儲存。 （速度慢但目前無其他方法 Q_Q）</p>
+</li>
+</ol>
+<h3 id="Reference">Reference</h3>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://leileiluoluo.com/posts/golang-selenium.html">https://leileiluoluo.com/posts/golang-selenium.html</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.epoch.tw/2021/05/28/%E4%BD%BF%E7%94%A8-Go-%E6%93%8D%E4%BD%9C-Chrome-%E7%80%8F%E8%A6%BD%E5%99%A8/">https://blog.epoch.tw/2021/05/28/使用-Go-操作-Chrome-瀏覽器/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/shjsfx/article/details/106006255">https://blog.csdn.net/shjsfx/article/details/106006255</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Golang/" rel="tag"># Golang</a>
+              <a href="/tags/Selenium/" rel="tag"># Selenium</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/go-mod-replace-for-fork-repo/" rel="prev" title="[golang]  go mod replace 解决 fork repo 匯入問題">
+                  <i class="fa fa-chevron-left"></i> [golang]  go mod replace 解决 fork repo 匯入問題
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

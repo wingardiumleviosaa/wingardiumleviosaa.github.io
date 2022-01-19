@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Debezium 簡介 Debezium 是一個由 RedHat 開源的基於資料庫變更日誌的實時變更數據捕獲（CDC）工具，構建在 Apache Kafka 之上，是 Apache Kafka Connect 的 Source Connector，可以實時獲取行級別（row-level）資料的更改事件（INSERT、UPDATE 和 DELETE）並同步到 Kafka。目前支援的常見資料庫有 My">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Oracle] Install Oracle 11g XE and Establish CDC by Debezium">
+<meta property="og:url" content="https://ulahsieh.github.io/Oracle-11g-XE-CDC-Debezium/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Debezium 簡介 Debezium 是一個由 RedHat 開源的基於資料庫變更日誌的實時變更數據捕獲（CDC）工具，構建在 Apache Kafka 之上，是 Apache Kafka Connect 的 Source Connector，可以實時獲取行級別（row-level）資料的更改事件（INSERT、UPDATE 和 DELETE）並同步到 Kafka。目前支援的常見資料庫有 My">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/HLKyKzq.png">
+<meta property="og:image" content="https://imgur.com/pDC97QK.png">
+<meta property="og:image" content="https://imgur.com/Ghsl3lu.png">
+<meta property="og:image" content="https://imgur.com/cFw9dsR.png">
+<meta property="og:image" content="https://imgur.com/ScoREMo.png">
+<meta property="og:image" content="https://imgur.com/GrPflZL.png">
+<meta property="og:image" content="https://imgur.com/00Ul63W.png">
+<meta property="og:image" content="https://imgur.com/KArHEsu.png">
+<meta property="article:published_time" content="2022-01-19T03:03:35.000Z">
+<meta property="article:modified_time" content="2022-01-19T03:03:35.000Z">
+<meta property="article:author" content="Ula">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/HLKyKzq.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Oracle-11g-XE-CDC-Debezium/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Oracle-11g-XE-CDC-Debezium/","path":"Oracle-11g-XE-CDC-Debezium/","title":"[Oracle] Install Oracle 11g XE and Establish CDC by Debezium"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Oracle] Install Oracle 11g XE and Establish CDC by Debezium | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Debezium"><span class="nav-number">1.</span> <span class="nav-text">Debezium</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B0%A1%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">簡介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CDC"><span class="nav-number">1.2.</span> <span class="nav-text">CDC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Oracle-11g-Express-Edition"><span class="nav-number">2.</span> <span class="nav-text">安裝 Oracle 11g Express Edition</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-Container"><span class="nav-number">2.1.</span> <span class="nav-text">Create Container</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Connect-to-the-Database"><span class="nav-number">2.2.</span> <span class="nav-text">Connect to the Database</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Oracle-CDC-Logmior-Configuration"><span class="nav-number">3.</span> <span class="nav-text">Oracle CDC (Logmior) Configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%96%8B%E5%95%9F%E6%97%A5%E8%AA%8C%E6%AD%B8%E6%AA%94"><span class="nav-number">3.1.</span> <span class="nav-text">開啟日誌歸檔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-logminer-%E5%B7%A5%E5%85%B7"><span class="nav-number">3.2.</span> <span class="nav-text">安裝 logminer 工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%95%9F%E5%8B%95%E6%9C%80%E5%B0%8F%E9%99%84%E5%8A%A0%E6%97%A5%E8%AA%8C"><span class="nav-number">3.3.</span> <span class="nav-text">啟動最小附加日誌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-logminer-%E7%94%A8%E6%88%B6%E4%B8%A6%E8%B3%A6%E4%BA%88%E6%AC%8A%E9%99%90"><span class="nav-number">3.4.</span> <span class="nav-text">建立 logminer 用戶並賦予權限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E8%A8%AD-Debezium-%E7%92%B0%E5%A2%83"><span class="nav-number">4.</span> <span class="nav-text">架設 Debezium 環境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Zookeeper-%EF%BC%86-Kafka"><span class="nav-number">4.1.</span> <span class="nav-text">安裝 Zookeeper ＆ Kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%96%E5%82%99%E6%96%B0%E7%9A%84-Kafka-Connect-Image"><span class="nav-number">4.2.</span> <span class="nav-text">準備新的 Kafka Connect Image</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Kafka-Connect"><span class="nav-number">4.3.</span> <span class="nav-text">安裝 Kafka Connect</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Oracle-Connector"><span class="nav-number">4.4.</span> <span class="nav-text">配置 Oracle Connector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B-Connector-%E7%8B%80%E6%85%8B"><span class="nav-number">4.5.</span> <span class="nav-text">查看 Connector 狀態</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%88%AA%E6%94%B9%E8%B3%87%E6%96%99%E8%A1%A8%E4%B8%A6%E6%9F%A5%E7%9C%8B-Kafka-Topic-%E6%98%AF%E5%90%A6%E6%9C%89%E6%94%B6%E5%88%B0-log-%E8%B3%87%E6%96%99"><span class="nav-number">4.6.</span> <span class="nav-text">增刪改資料表並查看 Kafka Topic 是否有收到 log 資料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">111</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">111</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Oracle-11g-XE-CDC-Debezium/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Oracle] Install Oracle 11g XE and Establish CDC by Debezium
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-19 11:03:35" itemprop="dateCreated datePublished" datetime="2022-01-19T11:03:35+08:00">2022-01-19</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>3.5k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>3 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Debezium">Debezium</h2>
+<h3 id="簡介">簡介</h3>
+<p>Debezium 是一個由 RedHat 開源的基於資料庫變更日誌的實時變更數據捕獲（CDC）工具，構建在 Apache Kafka 之上，是 Apache Kafka Connect 的 Source Connector，可以實時獲取行級別（row-level）資料的更改事件（INSERT、UPDATE 和 DELETE）並同步到 Kafka。目前支援的常見資料庫有 MySQL(binlog)、Oracle(logminer or xstream)、MongoDB(change streams)、PostgreSQL(logical replication stream mode)、SQL Server(transaction log)…等。本文範例是使用 Oracle 的 logminer 日誌透過 Debezium 獲取指定資料庫的變更事件。</p>
+<span id="more"></span>
+<h3 id="CDC">CDC</h3>
+<p>CDC 全稱是 Change Data Capture 變更數據捕獲，它是一個比較廣義的概念，只要能捕獲變更的資料，都可以稱為 CDC，主要有基於查詢的 CDC 和基於日誌的 CDC。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">基於查詢的 CDC</th>
+<th style="text-align:center">基於日誌的 CDC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">概念</td>
+<td style="text-align:center">每次捕獲變更發起 Select 查詢進行全表掃描，過濾出查詢之間變更的資料</td>
+<td style="text-align:center">讀取資料儲存系統的 log ，例如 Mysql 裡面的 binlog持續監控</td>
+</tr>
+<tr>
+<td style="text-align:center">開源產品</td>
+<td style="text-align:center">Sqoop, Kafka JDBC Source</td>
+<td style="text-align:center">Canal, Maxwell, Debezium</td>
+</tr>
+<tr>
+<td style="text-align:center">執行模式</td>
+<td style="text-align:center">Batch</td>
+<td style="text-align:center">Streaming</td>
+</tr>
+<tr>
+<td style="text-align:center">捕獲所有資料的變化</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">低延遲，不增加資料庫負載</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">不侵入業務（LastUpdated欄位）</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">捕獲刪除事件和舊記錄的狀態</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">捕獲舊記錄的狀態</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">O</td>
+</tr>
+</tbody>
+</table>
+<h2 id="安裝-Oracle-11g-Express-Edition">安裝 Oracle 11g Express Edition</h2>
+<h3 id="Create-Container">Create Container</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run -d -it --name oracle -p 1521:1521 -e ORACLE_ALLOW_REMOTE=true -v oracle:/u01/app/oracle --restart=always wnameless/oracle-xe-11g-r2</span><br></pre></td></tr></table></figure>
+<h3 id="Connect-to-the-Database">Connect to the Database</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker ps</span><br><span class="line">CONTAINER ID   IMAGE                        COMMAND                  CREATED         STATUS         PORTS                                                         NAMES</span><br><span class="line">624e811e8e0b   wnameless/oracle-xe-11g-r2   <span class="string">&quot;/bin/sh -c &#x27;/usr/sb…&quot;</span>   3 minutes ago   Up 3 minutes   22/tcp, 8080/tcp, 0.0.0.0:1521-&gt;1521/tcp, :::1521-&gt;1521/tcp   oracle</span><br><span class="line">$ docker logs -f oracle</span><br><span class="line">Starting Oracle Net Listener.</span><br><span class="line">Starting Oracle Database 11g Express Edition instance.</span><br></pre></td></tr></table></figure>
+<p>使用資料庫工具連線進入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hostname: localhost</span><br><span class="line">port: 1521</span><br><span class="line">sid: xe</span><br><span class="line">username: system</span><br><span class="line">password: oracle</span><br></pre></td></tr></table></figure>
+<p>Password for SYS &amp; SYSTEM</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">oracle</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/HLKyKzq.png" alt><br>
+<img src="https://imgur.com/pDC97QK.png" alt></p>
+<h2 id="Oracle-CDC-Logmior-Configuration">Oracle CDC (Logmior) Configuration</h2>
+<h3 id="開啟日誌歸檔">開啟日誌歸檔</h3>
+<ol>
+<li>進入容器並切換成 oracle 使用者，再透過 sqlplus 以 sys 用戶登入進入資料庫</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it oracle /bin/bash</span><br><span class="line">[root@b2a1bd25aa97 /]# su — oracle</span><br><span class="line">[root@b2a1bd25aa97 /]# sqlplus sys/oracle as sysdba</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>檢查日誌歸檔是否已開啟。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">archive log list;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>若顯示 “Database log mode: No Archive Mode”，說明日誌歸檔未開啟，繼續執行下一步。</li>
+<li>若顯示 “Database log mode: Archive Mode”，說明日誌歸檔已開啟，直接跳到退出數據庫連接。</li>
+</ul>
+<ol start="3">
+<li>執行以下命令配置歸檔日誌參數。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">system</span> <span class="keyword">set</span> db_recovery_file_dest_size <span class="operator">=</span> <span class="number">10</span>G;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">system</span> <span class="keyword">set</span> db_recovery_file_dest <span class="operator">=</span> <span class="string">&#x27;/u01/app/oracle/oradata/recovery_area&#x27;</span> <span class="keyword">scope</span><span class="operator">=</span>spfile;</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li>10G 為日誌文件存儲空間的大小，請根據實際情況設置。</li>
+<li>/u01/app/oracle/oradata/recovery_area 為日誌存儲路徑，須確保路徑提前創建。</li>
+</ul>
+<ol start="4">
+<li>開啟日誌歸檔。</li>
+</ol>
+<div class="info">
+<p>須知：<br>
+開啟日誌歸檔功能需重啟數據庫，重啟期間將導致業務中斷，請謹慎操作。<br>
+歸檔日誌會佔用較多的磁盤空間，若磁盤空間滿了會影響業務，請定期清理過期歸檔日誌。</p>
+</div>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">shutdown immediate;</span><br><span class="line">startup mount;</span><br><span class="line"><span class="keyword">alter</span> database archivelog;</span><br><span class="line"><span class="keyword">alter</span> database <span class="keyword">open</span>;</span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>確認日誌歸檔是否已成功開啟。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">archive log list;</span><br></pre></td></tr></table></figure>
+<p>當顯示 “Database log mode: Archive Mode”，說明日誌歸檔已開啟。</p>
+<ol start="6">
+<li>退出資料庫連接。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">exit;</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/Ghsl3lu.png" alt></p>
+<h3 id="安裝-logminer-工具">安裝 logminer 工具</h3>
+<ol>
+<li>重新連接到資料庫</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">sqlplus sys<span class="operator">/</span>oracle <span class="keyword">as</span> sysdba</span><br><span class="line"># sqlplus sys<span class="operator">/</span>password<span class="variable">@host</span>:port<span class="operator">/</span>SID <span class="keyword">as</span> sysdba</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>檢查 LogMiner 工具是否已安裝<br>
+如果有返回訊息說明 LogMiner 已安裝</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">desc</span> DBMS_LOGMNR</span><br><span class="line"><span class="keyword">desc</span> DBMS_LOGMNR_D</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/cFw9dsR.png" alt></p>
+<p>如果沒有訊息返回則需要另外安裝，請執行以下命令</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># 創建 dbms_logmnr 包，用來分析歸檔日誌</span><br><span class="line">@$ORACLE_HOME<span class="operator">/</span>rdbms<span class="operator">/</span>admin<span class="operator">/</span>dbmslm.sql</span><br><span class="line"># 創建DBMS_LOGMNR_D包，該包用來創建數據字典文件。</span><br><span class="line">@$ORACLE_HOME<span class="operator">/</span>rdbms<span class="operator">/</span>admin<span class="operator">/</span>dbmslmd.sql</span><br></pre></td></tr></table></figure>
+<h3 id="啟動最小附加日誌">啟動最小附加日誌</h3>
+<p>啟用附加最小日誌（supplemental_log_data_min）可以確保 LogMiner（或其他任何基於 LogMiner 的產品）可以支援行連結、簇表、索引組織表等，避免在挖掘時會出現信息遺漏的情況。<br>
+驗證是否有啟用附加日誌：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> supplemental_log_data_min, supplemental_log_data_pk, supplemental_log_data_all <span class="keyword">FROM</span> v$database;</span><br></pre></td></tr></table></figure>
+<p>預設是沒有開啟的(return no/no/no)，在 <strong>資料庫級別</strong> 啟用最小補充日誌記錄，按如下方式配置：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> DATABASE <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA;</span><br><span class="line"><span class="keyword">ALTER</span> DATABASE <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA (<span class="keyword">PRIMARY</span> KEY) COLUMNS;</span><br><span class="line"><span class="keyword">ALTER</span> DATABASE <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA (<span class="keyword">ALL</span>) COLUMNS; </span><br><span class="line"># <span class="keyword">commit</span> the changes</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">SYSTEM</span> ARCHIVE LOG <span class="keyword">CURRENT</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/ScoREMo.png" alt></p>
+<p>如果只是想給某個指定的表，開啟最小日誌記錄，參考下面。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> HR.EMPLOYEES <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA (<span class="keyword">ALL</span>) COLUMNS;</span><br></pre></td></tr></table></figure>
+<h3 id="建立-logminer-用戶並賦予權限">建立 logminer 用戶並賦予權限</h3>
+<ol>
+<li>創建專屬 tablespace</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span>SPACE LOGMINER_TBS DATAFILE <span class="string">&#x27;/u01/app/oracle/oradata/XE/logminer_tbs.dbf&#x27;</span> SIZE <span class="number">25</span>M REUSE AUTOEXTEND <span class="keyword">ON</span> MAXSIZE UNLIMITED;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> logminer IDENTIFIED <span class="keyword">BY</span> logminer <span class="keyword">DEFAULT</span> TABLESPACE logminer_tbs QUOTA UNLIMITED <span class="keyword">ON</span> logminer_tbs;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>創建 logMiner 使用者並配置權限。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">grant</span> <span class="keyword">create</span> session, <span class="keyword">alter</span> session, <span class="keyword">alter</span> <span class="keyword">system</span>, execute_catalog_role, select_catalog_role, <span class="keyword">select</span> <span class="keyword">any</span> transaction, <span class="keyword">select</span> <span class="keyword">any</span> dictionary, <span class="keyword">select</span> <span class="keyword">any</span> <span class="keyword">table</span>, <span class="keyword">create</span> <span class="keyword">table</span>, <span class="keyword">alter</span> <span class="keyword">any</span> <span class="keyword">table</span>, <span class="keyword">create</span> sequence, lock <span class="keyword">any</span> <span class="keyword">table</span>, flashback <span class="keyword">any</span> <span class="keyword">table</span>, <span class="keyword">create</span> <span class="keyword">table</span>space, <span class="keyword">drop</span> tablespace <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">connect</span> <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">trigger</span> <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> SYSTEM.LOGMNR_COL$ <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> SYSTEM.LOGMNR_OBJ$ <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> SYSTEM.LOGMNR_USER$ <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> SYSTEM.LOGMNR_UID$ <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">execute</span> <span class="keyword">on</span> SYS.DBMS_LOGMNR <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">execute</span> <span class="keyword">on</span> SYS.DBMS_LOGMNR_D <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">execute</span> <span class="keyword">on</span> SYS.DBMS_LOGMNR_LOGREP_DICT <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">execute</span> <span class="keyword">on</span> SYS.DBMS_LOGMNR_SESSION <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> V_$DATABASE <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$LOG <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$LOG_HISTORY <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$LOGMNR_LOGS <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$LOGMNR_CONTENTS <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$LOGMNR_PARAMETERS <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$LOGFILE <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$ARCHIVED_LOG <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> V_$ARCHIVE_DEST_STATUS <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">select</span> <span class="keyword">on</span> gv_$logmnr_parameters <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">select</span> <span class="keyword">on</span> gv_$logmnr_logs <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">select</span> <span class="keyword">on</span> gv_$archived_log <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> v_$logmnr_dictionary <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> V_$TRANSACTION <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">EXECUTE</span> <span class="keyword">ON</span> DBMS_LOGMNR <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">EXECUTE</span> <span class="keyword">ON</span> DBMS_LOGMNR_D <span class="keyword">TO</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">on</span> DBMS_LOGMNR_D <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">on</span> DBMS_LOGMNR <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">select</span> <span class="keyword">on</span> dba_objects <span class="keyword">to</span> logminer;</span><br><span class="line"><span class="keyword">GRANT</span> UNLIMITED TABLESPACE <span class="keyword">TO</span> logminer;</span><br></pre></td></tr></table></figure>
+<h2 id="架設-Debezium-環境">架設 Debezium 環境</h2>
+<h3 id="安裝-Zookeeper-＆-Kafka">安裝 Zookeeper ＆ Kafka</h3>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run -d -it --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 debezium/zookeeper:1.5</span><br><span class="line"></span><br><span class="line"><span class="comment"># 為了給外部連線使用，kafka 需設置 advertised_listeners 參數</span></span><br><span class="line">docker run -d -it --name kafka -p 9092:9092 -e ADVERTISED_HOST_NAME=10.13.1.105 -e ADVERTISED_LISTENERS=PLAINTEXT://10.13.1.105:9092 --link zookeeper:zookeeper debezium/kafka:1.5</span><br></pre></td></tr></table></figure>
+<h3 id="準備新的-Kafka-Connect-Image">準備新的 Kafka Connect Image</h3>
+<p>根據官網的提示，如果要連接 oracle 需要自行下載並複製 jdbc driver 到 kafka connect 中。</p>
+<blockquote>
+<p>Due to licensing requirements, the Debezium Oracle connector does not ship with the Oracle JDBC driver or XStream API files. You must download these files directly from Oracle and add them to your environment.<br>
+步驟如下：</p>
+</blockquote>
+<ol>
+<li>下載 oracle instant clinet</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip</span><br><span class="line"><span class="comment"># 解壓縮</span></span><br><span class="line">unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>啟動臨時的 container</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d -it --name connect -p 8083:8083 -e GROUP_ID=1 -e CONFIG_STORAGE_TOPIC=test_connect_configs -e OFFSET_STORAGE_TOPIC=test_connect_offsets -e STATUS_STORAGE_TOPIC=test_connect_statuses --link zookeeper:zookeeper --link kafka:kafka debezium/connect:1.5</span><br></pre></td></tr></table></figure>
+<p>其中，需要傳入如下環境變數：</p>
+<ul>
+<li>GROUP_ID：若需要啟動多個 Debezium 例項組成叢集，那麼它們的 GROUP_ID 必須被設一樣。</li>
+<li>CONFIG_STORAGE_TOPIC：指定用來存 connector 的 config 資訊的 kafka topic。</li>
+<li>STATUS_STORAGE_TOPIC：指定用來儲存 connector 的狀態資訊的 kafka topic。</li>
+<li>OFFSET_STORAGE_TOPIC：只定用來存 connector 監控資料流的 offset 的 kafka topic，若使用的是 Oracle Connector，那麼該 topic 存的就是 Oracle logminer 的 scn。</li>
+</ul>
+<ol start="3">
+<li>製作新的 kafka connect image<br>
+首先複製整個 instant clinet 的資料夾到 container 中</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker cp ./instantclient_18_5/ connect:/kafka/</span><br></pre></td></tr></table></figure>
+<p>進入 container 中，將 instantclinet 下的 jdbc driver 複製到 /kafka/libs 底下 (因為本文範例使用 logminer 監聽 CDC，故僅需將 ojdbc8.jar 複製，xstreams.jar 檔只有在 xstream 模式下才需要使用到)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker exec -it connect /bin/bash</span><br><span class="line">[kafka@88c5e1f0af86 ~]$ ls</span><br><span class="line">LICENSE  bin     config.orig  data           instantclient_18_5  logs</span><br><span class="line">NOTICE   config  connect      external_libs  libs</span><br><span class="line">[kafka@88c5e1f0af86 ~]$ cp instantclient_18_5/ojdbc8.jar libs/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>退出 container，查看 container id 後將狀態 commit 成新的 image</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker ps</span><br><span class="line">CONTAINER ID   IMAGE                        COMMAND                  CREATED        STATUS        PORTS                                                                                                                                                 NAMES</span><br><span class="line">88c5e1f0af86   connect:1.5              &quot;/docker-entrypoint.…&quot;   21 hours ago   Up 21 hours   8778/tcp, 9092/tcp, 0.0.0.0:8083-&gt;8083/tcp, :::8083-&gt;8083/tcp, 9779/tcp                                                                               connect</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker commit 88c5e1f0af86 connect:tmp</span><br></pre></td></tr></table></figure>
+<p>準備一個 Dockerfile</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">FROM connect:tmp</span><br><span class="line">USER root</span><br><span class="line">RUN yum -y install libaio &amp;&amp; yum clean all</span><br><span class="line">USER kafka</span><br></pre></td></tr></table></figure>
+<p>Build 最終的 docker image</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker build -t connect:1.5.1</span><br></pre></td></tr></table></figure>
+<h3 id="安裝-Kafka-Connect">安裝 Kafka Connect</h3>
+<p>從上一步驟包的 kafka connect image 建立正式的 connect container，注意要加上 <code>LD_LIBRARY_PATH</code> 環境變數指向 instantclient 的目錄</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d -it --name connect -p 8083:8083 -e GROUP_ID=1 -e CONFIG_STORAGE_TOPIC=test_connect_configs -e OFFSET_STORAGE_TOPIC=test_connect_offsets -e STATUS_STORAGE_TOPIC=test_connect_statuses -e LD_LIBRARY_PATH=/kafka/instantclient_18_5 --link zookeeper:zookeeper --link kafka:kafka debezium/connect:1.5.1</span><br></pre></td></tr></table></figure>
+<p>查看 kafka connect 的資訊以及 connector 列表</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&quot;Accept:application/json&quot;</span> localhost:8083/</span><br><span class="line">curl -H <span class="string">&quot;Accept:application/json&quot;</span> localhost:8083/connectors/</span><br></pre></td></tr></table></figure>
+<h3 id="配置-Oracle-Connector">配置 Oracle Connector</h3>
+<p>呼叫 kafka connect 的 connector API 以創建 connector</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i -X PUT -H <span class="string">&quot;Accept:application/json&quot;</span> -H <span class="string">&quot;Content-Type:application/json&quot;</span>  localhost:8083/connectors/inventory-connector/config -d <span class="string">&#x27;&#123;&quot;name&quot;: &quot;oracle1&quot;, &quot;connector.class&quot;: &quot;io.debezium.connector.oracle.OracleConnector&quot;, &quot;tasks.max&quot;: &quot;1&quot;,&quot;database.server.name&quot;: &quot;XE&quot;, &quot;database.hostname&quot;: &quot;10.13.1.105&quot;, &quot;database.port&quot;: &quot;1521&quot;, &quot;database.user&quot;: &quot;logminer&quot;, &quot;database.password&quot;: &quot;logminer&quot;, &quot;database.dbname&quot;: &quot;XE&quot;, &quot;database.out.server.name&quot;: &quot;dbzout&quot;, &quot;database.schema&quot;: &quot;HR&quot;, &quot;database.history.kafka.bootstrap.servers&quot;: &quot;kafka:9092&quot;, &quot;database.history.kafka.topic&quot;: &quot;utest&quot;, &quot;database.connection.adapter&quot;: &quot;logminer&quot;, &quot;table.include.list&quot;: &quot;HR.*&quot;, &quot;snapshot.mode&quot;: &quot;initial&quot;, &quot;database.tablename.case.insensitive&quot;: &quot;true&quot;, &quot;decimal.handling.mode&quot;: &quot;string&quot;, &quot;log.mining.strategy&quot;: &quot;online_catalog&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>覺得 curl 不方便，可以換用 postman：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>:<span class="string">&quot;oracle1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;connector.class&quot;</span>:<span class="string">&quot;io.debezium.connector.oracle.OracleConnector&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;tasks.max&quot;</span>:<span class="string">&quot;1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.hostname&quot;</span>:<span class="string">&quot;10.13.1.105&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.port&quot;</span>:<span class="string">&quot;1521&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.user&quot;</span>:<span class="string">&quot;logminer&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.password&quot;</span>:<span class="string">&quot;logminer&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.dbname&quot;</span>:<span class="string">&quot;XE&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.server.name&quot;</span>:<span class="string">&quot;XE&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.history.kafka.bootstrap.servers&quot;</span>:<span class="string">&quot;kafka:9092&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.history.kafka.topic&quot;</span>:<span class="string">&quot;utest&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.connection.adapter&quot;</span>:<span class="string">&quot;logminer&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;table.include.list&quot;</span>:<span class="string">&quot;HR.*&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;log.mining.strategy&quot;</span>:<span class="string">&quot;online_catalog&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/GrPflZL.png" alt></p>
+<p>其中：</p>
+<ul>
+<li>name：註冊到 Kafka Connect 服務的 Connector 名稱。</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://database.server.name">database.server.name</a>：虛擬的資料庫 Server 名稱，可以根據實際需求定義，定義 Kafka topic 時會使用該值。</li>
+<li>table.include.list：監聽的數據表列表，以 <code>,</code> 分割。<code>HR.*</code> 表示監聽 HR 下的所有資料表。</li>
+<li>每個被監控的表在 Kafka 都會對應一個 topic，topic 的命名規範是 <code>&lt;database.server.name&gt;.&lt;schema&gt;.&lt;table&gt;</code></li>
+<li>log.mining.strategy：預設為 redo_log_catalog，會造成 kafka consume 延遲，查官網後發現，如果要頻繁修改 DDL (如表的 schema) 才需要設置。使用 <code>online_catalog</code> 只監聽資料表內的 data 變化不會額外寫表的 DDL 資訊，能加速 logminer！</li>
+</ul>
+<h3 id="查看-Connector-狀態">查看 Connector 狀態</h3>
+<p>下 GET <code>/connectors/&lt;connectorName&gt;/status</code> 的 api</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -H &quot;Accept:application/json&quot; http://127.0.0.1:8083/connectors/oracle1/status</span><br></pre></td></tr></table></figure>
+<p>如果成功會回傳以下回覆</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;oracle1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;connector&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;state&quot;</span>: <span class="string">&quot;RUNNING&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;worker_id&quot;</span>: <span class="string">&quot;172.17.0.5:8083&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;tasks&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;id&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">&quot;state&quot;</span>: <span class="string">&quot;RUNNING&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;worker_id&quot;</span>: <span class="string">&quot;172.17.0.5:8083&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;source&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="增刪改資料表並查看-Kafka-Topic-是否有收到-log-資料">增刪改資料表並查看 Kafka Topic 是否有收到 log 資料</h3>
+<p>使用 kafka clinet 腳本程式列出目前 kafka server 上的所有 topic</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./kafka-topics.sh --list --bootstrap-server 10.13.1.105:9092</span><br><span class="line">XE</span><br><span class="line">XE.HR.COUNTRIES</span><br><span class="line">XE.HR.DEPARTMENTS</span><br><span class="line">XE.HR.EMPLOYEES</span><br><span class="line">XE.HR.JOBS</span><br><span class="line">XE.HR.JOB_HISTORY</span><br><span class="line">XE.HR.LOCATIONS</span><br><span class="line">XE.HR.REGIONS</span><br><span class="line">__consumer_offsets</span><br><span class="line">test_connect_configs</span><br><span class="line">test_connect_offsets</span><br><span class="line">test_connect_statuses</span><br><span class="line">utest</span><br></pre></td></tr></table></figure>
+<p>開啟 kafka consumer 消費 logminer 捕捉 HR.EMPLOYEES 表的變化</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./kafka-console-consumer.sh --bootstrap-server 10.13.1.105:9092 --topic XE.HR.EMPLOYEES --from-beginning</span><br></pre></td></tr></table></figure>
+<p>進入資料庫操作目標資料表 HR.EMPLOYEES，新增一筆員工資料</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">sqlplus sys<span class="operator">/</span>oracle<span class="variable">@127</span><span class="number">.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">1521</span><span class="operator">/</span>xe <span class="keyword">as</span> sysdba</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> HR.EMPLOYEES(EMPLOYEE_ID,FIRST_NAME,LAST_NAME,EMAIL,PHONE_NUMBER,HIRE_DATE,JOB_ID,SALARY,MANAGER_ID,DEPARTMENT_ID) <span class="keyword">values</span>(<span class="number">206</span>,<span class="string">&#x27;Kawhi&#x27;</span>,<span class="string">&#x27;Leonard&#x27;</span>,<span class="string">&#x27;KAWHI&#x27;</span>,<span class="string">&#x27;111.222.3333&#x27;</span>,<span class="number">2022</span><span class="number">-01</span><span class="number">-19</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>,<span class="string">&#x27;SH_CLERK&#x27;</span>,<span class="number">15000</span>,<span class="number">124</span>,<span class="number">50</span>);</span><br></pre></td></tr></table></figure>
+<p>回到 kafka consumer 的 terminal 可以發現可以收到 logminer 變動的資料</p>
+<p><img src="https://imgur.com/00Ul63W.png" alt></p>
+<p><img src="https://imgur.com/KArHEsu.png" alt></p>
+<h2 id="Reference">Reference</h2>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.796t.com/article.php?id=169153">https://www.796t.com/article.php?id=169153</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.itread01.com/content/1549275121.html">https://www.itread01.com/content/1549275121.html</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://debezium.io/documentation/reference/stable/connectors/oracle.html">https://debezium.io/documentation/reference/stable/connectors/oracle.html</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://python.iitter.com/other/229206.html">https://python.iitter.com/other/229206.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/golang-tebeka-selenium/" rel="prev" title="[golang] 使用 tebeka selenium 爬蟲模擬操控網頁">
+                  <i class="fa fa-chevron-left"></i> [golang] 使用 tebeka selenium 爬蟲模擬操控網頁
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

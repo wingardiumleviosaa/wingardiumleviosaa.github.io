@@ -142,18 +142,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">113</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">114</span>
+        <span class="site-state-item-count">117</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -264,7 +264,7 @@
 <figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> golang:<span class="number">1.15</span>.<span class="number">3</span>-alpine3.<span class="number">12</span> AS build</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> /</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> . .</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> CGO_ENABLED=0 go build -o /grabreflow -ldflags=<span class="string">&quot;-s -w&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> selenium/standalone-chrome</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> /</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> ./config /config</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> ./view /view</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> --from=build /grabreflow /grabreflow</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> ./chromedriver /chromedriver</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [ <span class="string">&quot;/grabreflow&quot;</span> ]</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t grabreflow:0.9 -f seDockerfile .</span><br><span class="line">docker run -it -d --name grabreflow -p 4444:4444 -p 8080:8080 --shm-size=<span class="string">&quot;2g&quot;</span> grabreflow:0.9</span><br></pre></td></tr></table></figure>
 <h3 id="Error-Logs">Error Logs</h3>
-<p>錯在 service.go 198 行拿 image 要裁切時是空的</p>
+<p>錯在 service.go 192 行拿 image 要裁切時是空的</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">INFO[01-24T03:40:49.157785Z] &lt;nil&gt;                                        </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2022/01/24 03:40:49 [Recovery] 2022/01/24 - 03:40:49 panic recovered:</span><br><span class="line">GET /api/convergence/grabreflow/TBCBB2039913 HTTP/1.1</span><br><span class="line">Host: 10.13.1.105:8080</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Dnt: 1</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">interface conversion: interface is nil, not interface &#123; SubImage(image.Rectangle) image.Image &#125;</span><br><span class="line">/usr/local/go/src/runtime/iface.go:454 (0x40b57b)</span><br><span class="line">/pkg/service/service.go:192 (0xb678e9)</span><br><span class="line">/go/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168 (0xa6209a)</span><br><span class="line">/go/pkg/mod/github.com/gin-gonic/gin@v1.7.7/recovery.go:99 (0xa77088)</span><br><span class="line">/go/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168 (0xa6209a)</span><br><span class="line">/go/pkg/mod/github.com/gin-gonic/gin@v1.7.7/gin.go:555 (0xa6d29d)</span><br><span class="line">/go/pkg/mod/github.com/gin-gonic/gin@v1.7.7/gin.go:511 (0xa6c9aa)</span><br><span class="line">/usr/local/go/src/net/http/server.go:2843 (0x7bdbc2)</span><br><span class="line">/usr/local/go/src/net/http/server.go:1925 (0x7b92cc)</span><br><span class="line">/usr/local/go/src/runtime/asm_amd64.s:1374 (0x46b3a0)</span><br></pre></td></tr></table></figure>
 <h3 id="service-go">service.go</h3>
 <p>上方的 log 的第一行 log INFO 印出的 nil 訊息就是下方程式中的第八行印的</p>

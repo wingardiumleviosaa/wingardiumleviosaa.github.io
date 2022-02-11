@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="問題描述 nginx ingress 從原本 deprecated 的 stable&#x2F;nginx-ingress helm chart 改為 ingress-nginx&#x2F;ingress-nginx chart 後，發現 ingress resource 的 nginx 網頁 404 not found，查看 ingress nginx controller log 發現有 ingress does">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ingress does not contain a valid IngressClass">
+<meta property="og:url" content="https://ulahsieh.github.io/Ingress-does-not-contain-a-valid-IngressClass/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="問題描述 nginx ingress 從原本 deprecated 的 stable&#x2F;nginx-ingress helm chart 改為 ingress-nginx&#x2F;ingress-nginx chart 後，發現 ingress resource 的 nginx 網頁 404 not found，查看 ingress nginx controller log 發現有 ingress does">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/lPUFtBq.png">
+<meta property="article:published_time" content="2022-02-10T22:20:00.000Z">
+<meta property="article:modified_time" content="2022-02-10T22:20:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="ingress">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/lPUFtBq.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Ingress-does-not-contain-a-valid-IngressClass/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Ingress-does-not-contain-a-valid-IngressClass/","path":"Ingress-does-not-contain-a-valid-IngressClass/","title":"Ingress does not contain a valid IngressClass"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ingress does not contain a valid IngressClass | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%95%8F%E9%A1%8C%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">問題描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F-Ingress-%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">原 Ingress 配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BC%E7%94%9F%E5%8E%9F%E5%9B%A0"><span class="nav-number">3.</span> <span class="nav-text">發生原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">解決方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F"><span class="nav-number">5.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">118</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Ingress-does-not-contain-a-valid-IngressClass/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ingress does not contain a valid IngressClass
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-11 06:20:00" itemprop="dateCreated datePublished" datetime="2022-02-11T06:20:00+08:00">2022-02-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="問題描述">問題描述</h2>
+<p>nginx ingress 從原本 deprecated 的 stable/nginx-ingress helm chart 改為 ingress-nginx/ingress-nginx chart 後，發現 ingress resource 的 nginx 網頁 404 not found，查看 ingress nginx controller log 發現有 <code>ingress does not contain a valid IngressClass</code> 的錯誤。</p>
+<span id="more"></span>
+<p><img src="https://imgur.com/lPUFtBq.png" alt></p>
+<p>完整 log 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@testm terraform]# kubectl logs -f -n ingress-nginx ingress-nginx-controller-5c5bf8c854-7pcf7</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">NGINX Ingress controller</span><br><span class="line">  Release:       v1.1.1</span><br><span class="line">  Build:         a17181e43ec85534a6fea968d95d019c5a4bc8cf</span><br><span class="line">  Repository:    https://github.com/kubernetes/ingress-nginx</span><br><span class="line">  nginx version: nginx/1.19.9</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">W0209 05:43:07.359176       7 client_config.go:615] Neither --kubeconfig nor --master was specified.  Using thesterConfig.  This might not work.</span><br><span class="line">I0209 05:43:07.359883       7 main.go:223] &quot;Creating API client&quot; host=&quot;https://10.96.0.1:443&quot;</span><br><span class="line">I0209 05:43:07.379993       7 main.go:267] &quot;Running in Kubernetes cluster&quot; major=&quot;1&quot; minor=&quot;20&quot; git=&quot;v1.20.15&quot; &quot;clean&quot; commit=&quot;8f1e5bf0b9729a899b8df86249b56e2c74aebc55&quot; platform=&quot;linux/amd64&quot;</span><br><span class="line">I0209 05:43:07.644539       7 main.go:104] &quot;SSL fake certificate created&quot; file=&quot;/etc/ingress-controller/ssl/defake-certificate.pem&quot;</span><br><span class="line">I0209 05:43:07.675915       7 ssl.go:531] &quot;loading tls certificate&quot; path=&quot;/usr/local/certificates/cert&quot; key=&quot;/ual/certificates/key&quot;</span><br><span class="line">I0209 05:43:07.727278       7 nginx.go:255] &quot;Starting NGINX Ingress controller&quot;</span><br><span class="line">I0209 05:43:07.828276       7 event.go:282] Event(v1.ObjectReference&#123;Kind:&quot;ConfigMap&quot;, Namespace:&quot;ingress-nginxe:&quot;ingress-nginx-controller&quot;, UID:&quot;c6943575-18fe-471a-aa44-5f251af7a277&quot;, APIVersion:&quot;v1&quot;, ResourceVersion:&quot;104FieldPath:&quot;&quot;&#125;): type: &#x27;Normal&#x27; reason: &#x27;CREATE&#x27; ConfigMap ingress-nginx/ingress-nginx-controller</span><br><span class="line">I0209 05:43:08.929877       7 nginx.go:297] &quot;Starting NGINX process&quot;</span><br><span class="line">I0209 05:43:08.930002       7 leaderelection.go:248] attempting to acquire leader lease ingress-nginx/ingress-cler-leader...</span><br><span class="line">I0209 05:43:08.930504       7 nginx.go:317] &quot;Starting validation webhook&quot; address=&quot;:8443&quot; certPath=&quot;/usr/local/icates/cert&quot; keyPath=&quot;/usr/local/certificates/key&quot;</span><br><span class="line">I0209 05:43:08.930926       7 controller.go:155] &quot;Configuration changes detected, backend reload required&quot;</span><br><span class="line">I0209 05:43:08.945063       7 leaderelection.go:258] successfully acquired lease ingress-nginx/ingress-controllder</span><br><span class="line">I0209 05:43:08.945130       7 status.go:84] &quot;New leader elected&quot; identity=&quot;ingress-nginx-controller-5c5bf8c854-</span><br><span class="line">I0209 05:43:09.015595       7 controller.go:172] &quot;Backend successfully reloaded&quot;</span><br><span class="line">I0209 05:43:09.015708       7 controller.go:183] &quot;Initial sync, sleeping for 1 second&quot;</span><br><span class="line">I0209 05:43:09.015766       7 event.go:282] Event(v1.ObjectReference&#123;Kind:&quot;Pod&quot;, Namespace:&quot;ingress-nginx&quot;, Namress-nginx-controller-5c5bf8c854-7pcf7&quot;, UID:&quot;f84b09e4-7d7d-40bf-ae66-f2eb72ab7a59&quot;, APIVersion:&quot;v1&quot;, ResourceV:&quot;104846&quot;, FieldPath:&quot;&quot;&#125;): type: &#x27;Normal&#x27; reason: &#x27;RELOAD&#x27; NGINX reload triggered due to a change in configurat</span><br><span class="line">W0209 05:43:26.721706       7 controller.go:988] Error obtaining Endpoints for Service &quot;monitoring/prometheus-or-prometheus&quot;: no object matching key &quot;monitoring/prometheus-operator-prometheus&quot; in local store</span><br><span class="line">W0209 05:43:26.721831       7 controller.go:1083] Service &quot;monitoring/prometheus-operator-grafana&quot; does not havactive Endpoint.</span><br><span class="line">W0209 05:43:26.722981       7 controller.go:988] Error obtaining Endpoints for Service &quot;monitoring/prometheus-or-alertmanager&quot;: no object matching key &quot;monitoring/prometheus-operator-alertmanager&quot; in local store</span><br><span class="line">I0209 05:43:26.781310       7 admission.go:149] processed ingress via admission controller &#123;testedIngressLengthtedIngressTime:0.06s renderingIngressLength:1 renderingIngressTime:0.001s admissionTime:18.0kBs testedConfiguraze:0.061&#125;</span><br><span class="line">I0209 05:43:26.781370       7 main.go:101] &quot;successfully validated configuration, accepting&quot; ingress=&quot;monitorinetheus-ingress&quot;</span><br><span class="line">I0209 05:43:26.784116       7 admission.go:149] processed ingress via admission controller &#123;testedIngressLengthtedIngressTime:0.063s renderingIngressLength:1 renderingIngressTime:0s admissionTime:18.0kBs testedConfiguratio0.063&#125;</span><br><span class="line">I0209 05:43:26.784155       7 main.go:101] &quot;successfully validated configuration, accepting&quot; ingress=&quot;monitorinana-ingress&quot;</span><br><span class="line">I0209 05:43:26.785125       7 admission.go:149] processed ingress via admission controller &#123;testedIngressLengthtedIngressTime:0.063s renderingIngressLength:1 renderingIngressTime:0.002s admissionTime:18.1kBs testedConfigurize:0.065&#125;</span><br><span class="line">I0209 05:43:26.785171       7 main.go:101] &quot;successfully validated configuration, accepting&quot; ingress=&quot;monitorintmanager-ingress&quot;</span><br><span class="line">I0209 05:43:26.785238       7 admission.go:149] processed ingress via admission controller &#123;testedIngressLengthtedIngressTime:0.064s renderingIngressLength:1 renderingIngressTime:0s admissionTime:18.0kBs testedConfiguratio0.064&#125;</span><br><span class="line">I0209 05:43:26.785259       7 main.go:101] &quot;successfully validated configuration, accepting&quot; ingress=&quot;istio-sysali-ingress&quot;</span><br><span class="line">I0209 05:43:26.931088       7 store.go:420] &quot;Ignoring ingress because of error while validating ingress class&quot; s=&quot;monitoring/grafana-ingress&quot; error=&quot;ingress does not contain a valid IngressClass&quot;</span><br><span class="line">I0209 05:43:26.931132       7 store.go:420] &quot;Ignoring ingress because of error while validating ingress class&quot; s=&quot;monitoring/prometheus-ingress&quot; error=&quot;ingress does not contain a valid IngressClass&quot;</span><br><span class="line">I0209 05:43:26.931149       7 store.go:420] &quot;Ignoring ingress because of error while validating ingress class&quot; s=&quot;monitoring/alertmanager-ingress&quot; error=&quot;ingress does not contain a valid IngressClass&quot;</span><br><span class="line">I0209 05:43:26.945691       7 store.go:420] &quot;Ignoring ingress because of error while validating ingress class&quot; s=&quot;istio-system/kiali-ingress&quot; error=&quot;ingress does not contain a valid IngressClass&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="原-Ingress-配置">原 Ingress 配置</h2>
+<p>以 <code>grafana-ing.tf</code> 為範例 (使用 terraform 自動部署工具安裝)</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">resource <span class="string">&quot;kubernetes_ingress&quot;</span> <span class="string">&quot;grafana_ingress&quot;</span> &#123;</span><br><span class="line">  count = var.package.prometheus == true ? <span class="number">1</span> : <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  metadata &#123;</span><br><span class="line">    name =      <span class="string">&quot;grafana-ingress&quot;</span></span><br><span class="line">    namespace = <span class="string">&quot;monitoring&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  spec &#123;</span><br><span class="line">    rule &#123;</span><br><span class="line">      host = <span class="string">&quot;$&#123;var.prometheus-options.host_grafana&#125;.$&#123;var.domain&#125;&quot;</span></span><br><span class="line">      http &#123;</span><br><span class="line">        path &#123;</span><br><span class="line">          backend &#123;</span><br><span class="line">            service_name = <span class="string">&quot;prometheus-operator-grafana&quot;</span></span><br><span class="line">            service_port = <span class="number">80</span></span><br><span class="line">          &#125;</span><br><span class="line">          path = <span class="string">&quot;/&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  depends_on = [</span><br><span class="line">    helm_release.ingress-nginx,</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="發生原因">發生原因</h2>
+<p>原因是在 ingress v1.0.0 版之後，ingress 需要加上 ingress class，請參考 github 的 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/kubernetes/ingress-nginx/pull/7341">#7341</a> pull request，如果沒有，controller 會丟 <code>Ignoring ingress because of error while validating ingress class&quot; ingress=&quot;k8sNamespace/ingressResourceName&quot; error=&quot;ingress does not contain a valid IngressClass&quot;</code> 的錯誤。</p>
+<div class="info">
+<p>An Ingress Class is basically a category which specify who needs to serve and manage the Ingress, this is necessary since in a cluster you can have more than one Ingress controller, each one with its rules and configurations.</p>
+</div>
+<h2 id="解決方法">解決方法</h2>
+<p>在 ingress resource 中的 metadata 欄位加上 <code>annotations: kubernetes.io/ingress.class: &quot;nginx&quot;</code> 即可。</p>
+<figure class="highlight r"><table><tr><td class="code"><pre><span class="line">resource <span class="string">&quot;kubernetes_ingress&quot;</span> <span class="string">&quot;grafana_ingress&quot;</span> &#123;</span><br><span class="line">  count = var.package.prometheus == true ? <span class="number">1</span> : <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  metadata &#123;</span><br><span class="line">    name =      <span class="string">&quot;grafana-ingress&quot;</span></span><br><span class="line">    namespace = <span class="string">&quot;monitoring&quot;</span></span><br><span class="line">    annotations = &#123;</span><br><span class="line">      <span class="string">&quot;kubernetes.io/ingress.class&quot;</span> = <span class="string">&quot;nginx&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  spec &#123;</span><br><span class="line">    rule &#123;</span><br><span class="line">      host = <span class="string">&quot;$&#123;var.prometheus-options.host_grafana&#125;.$&#123;var.domain&#125;&quot;</span></span><br><span class="line">      http &#123;</span><br><span class="line">        path &#123;</span><br><span class="line">          backend &#123;</span><br><span class="line">            service_name = <span class="string">&quot;prometheus-operator-grafana&quot;</span></span><br><span class="line">            service_port = <span class="number">80</span></span><br><span class="line">          &#125;</span><br><span class="line">          path = <span class="string">&quot;/&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  depends_on = [</span><br><span class="line">    helm_release.ingress-nginx,</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="注意">注意</h2>
+<p>上述方法僅適用於 kubernetes 1.22 版以前。k8s 1.22 版以後請使用 <code>ingressClassName</code> 於 spec 區塊下。請參考<a target="_blank" rel="external nofollow noopener noreferrer" href="https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/">官網</a>說明。</p>
+<h2 id="Reference">Reference</h2>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://forum.linuxfoundation.org/discussion/859965/exercise-7-nginx-update-requires-change-to-yaml">https://forum.linuxfoundation.org/discussion/859965/exercise-7-nginx-update-requires-change-to-yaml</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress">https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://stackoverflow.com/questions/65979766/ingress-with-nginx-controller-not-working-address-missing">https://stackoverflow.com/questions/65979766/ingress-with-nginx-controller-not-working-address-missing</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/ingress/" rel="tag"># ingress</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Hexo-Add-Search-Function-NexT8/" rel="prev" title="[Hexo] Add Search Function under NexT8 Theme">
+                  <i class="fa fa-chevron-left"></i> [Hexo] Add Search Function under NexT8 Theme
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

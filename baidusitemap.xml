@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/KVM-Install-Rocky-Linux/</loc>
+    <lastmod>2022-02-23</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/shrink-kvm-image-%E7%98%A6%E8%BA%AB/</loc>
+    <lastmod>2022-02-22</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/LAMP-Apache-MariaDB-PHP-on-Linux/</loc>
+    <lastmod>2022-02-22</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/VirtualBox-VM-EFAIL-0x80004005/</loc>
+    <lastmod>2022-02-21</lastmod>
+  </url>
+  <url>
     <loc>https://ulahsieh.github.io/Ingress-does-not-contain-a-valid-IngressClass/</loc>
     <lastmod>2022-02-10</lastmod>
   </url>

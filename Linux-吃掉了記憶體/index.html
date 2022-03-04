@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="前言 在觀察用於儲存 k8s 的 nfs server 時，發現記憶體的 cache&#x2F;buffer 值非常高，但細看 top 卻無任何應用程式佔用記憶體空間。查了一下網路，發現是 linux 系統本身的機制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 吃掉了記憶體 ?!">
+<meta property="og:url" content="https://ulahsieh.github.io/Linux-%E5%90%83%E6%8E%89%E4%BA%86%E8%A8%98%E6%86%B6%E9%AB%94/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="前言 在觀察用於儲存 k8s 的 nfs server 時，發現記憶體的 cache&#x2F;buffer 值非常高，但細看 top 卻無任何應用程式佔用記憶體空間。查了一下網路，發現是 linux 系統本身的機制。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/jSqUSOV.png">
+<meta property="article:published_time" content="2022-03-03T11:21:00.000Z">
+<meta property="article:modified_time" content="2022-03-03T11:21:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/jSqUSOV.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/Linux-%E5%90%83%E6%8E%89%E4%BA%86%E8%A8%98%E6%86%B6%E9%AB%94/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Linux-%E5%90%83%E6%8E%89%E4%BA%86%E8%A8%98%E6%86%B6%E9%AB%94/","path":"Linux-吃掉了記憶體/","title":"Linux 吃掉了記憶體 ?!"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux 吃掉了記憶體 ?! | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#free-%E5%91%BD%E4%BB%A4%E7%9A%84%E8%A8%98%E6%86%B6%E9%AB%94%E7%A9%BA%E9%96%93%E8%A7%A3%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">free 命令的記憶體空間解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#buffer-cache"><span class="nav-number">4.</span> <span class="nav-text">buffer &amp; cache</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#buffer-cache-%E7%B7%A9%E8%A1%9D"><span class="nav-number">4.1.</span> <span class="nav-text">buffer cache 緩衝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#page-cache-%E5%BF%AB%E5%8F%96"><span class="nav-number">4.2.</span> <span class="nav-text">page cache 快取</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%B8%85%E9%99%A4-cache"><span class="nav-number">5.</span> <span class="nav-text">如何清除 cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Linux-%E5%90%83%E6%8E%89%E4%BA%86%E8%A8%98%E6%86%B6%E9%AB%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux 吃掉了記憶體 ?!
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-03 19:21:00" itemprop="dateCreated datePublished" datetime="2022-03-03T19:21:00+08:00">2022-03-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="前言">前言</h3>
+<p>在觀察用於儲存 k8s 的 nfs server 時，發現記憶體的 cache/buffer 值非常高，但細看 top 卻無任何應用程式佔用記憶體空間。查了一下網路，發現是 linux 系統本身的機制。</p>
+<span id="more"></span>
+<h3 id="原因">原因</h3>
+<p>Linux 會借用未使用的記憶體來做磁碟快取，可以讓應用載入更快並且執行更加流暢，提高 IO 性能。如果有其他應用要用到記憶體時，系統會從磁碟快取中拿走一塊被借用的記憶體，不會用到 swap。</p>
+<h3 id="free-命令的記憶體空間解析">free 命令的記憶體空間解析</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@nfs ~]<span class="comment"># free -h</span></span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:           188G        6.4G        1.0G        138M        181G        181G</span><br><span class="line">Swap:          4.0G          0B        4.0G</span><br><span class="line">[root@nfs ~]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>total 記憶體總數</li>
+<li>used 已經使用的記憶體</li>
+<li>free 空閒的記憶體數</li>
+<li>shared 多個進程共享的記憶體總額</li>
+<li>buffer 作為 buffer cache 的緩存</li>
+<li>cache 作為 page cache 的緩存</li>
+<li>available = free + buff/cache</li>
+</ul>
+<p><img src="https://imgur.com/jSqUSOV.png" alt><br>
+上表中 something 代表的正是 free 命令中 <code>buffers/cached</code> 使用的記憶體。由於這個記憶體實際上是從作業系統的角度使用的，所以如果用戶想要使用它，那麼它可以被用戶的應用快速地回收和使用。</p>
+<h3 id="buffer-cache">buffer &amp; cache</h3>
+<h4 id="buffer-cache-緩衝">buffer cache 緩衝</h4>
+<p>Buffer cache 也叫塊緩衝，是對物理磁盤上的一個磁盤塊進行的緩衝，其大小爲通常爲 1k。它是爲了緩衝寫操作然後一次性將很多改動寫入硬盤，避免頻繁寫硬盤，提高寫入效率。</p>
+<h4 id="page-cache-快取">page cache 快取</h4>
+<p>page cache 頁緩衝/文件緩衝，由若干個磁盤塊組成(也即由若干個bufferCache組成，物理上不一定連續)，通常為 4K、在 64 位系統上爲 8k。它是爲了給讀操作提供緩衝，避免頻繁讀硬盤，提高讀取效率。</p>
+<p>簡單說來，buffer cache 用來緩存磁盤數據、優化磁盤的 I/O；page cache 用來緩存文件數據、優化文件系統的 I/O。在有文件系統的情況下，對文件操作，那麼數據會緩存到 page cache，如果直接採用 dd 等工具對磁盤進行讀寫，那麼數據會緩存到 buffer cache。</p>
+<h3 id="如何清除-cache">如何清除 cache</h3>
+<p><strong>一般來說使用者是不需要去管這些 cache 何時會被清除的</strong>，所以 Linux 也沒有專門的指令來做這件事，不過依然有提供一個 proc file system 介面 <code>/proc/sys/vm/drop_caches</code>，可以強制 kernel 清理快取。drop_caches 的值可以是 0-3 之間的數字，代表不同涵義：</p>
+<p>0：不釋放(系統默認值)；不釋放内存，由操作系統自動管理<br>
+1：釋放 pagecache.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># sync &amp;&amp; echo 1 &gt; /proc/sys/vm/drop_caches</span><br></pre></td></tr></table></figure>
+<p>2：釋放 dentries(目錄緩存) 和 inodes (文件元數據)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># sync &amp;&amp; echo 2 &gt; /proc/sys/vm/drop_caches</span><br></pre></td></tr></table></figure>
+<p>3：釋放所有緩存 pagecache, dentries and inodes.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># sync &amp;&amp; echo 3 &gt; /proc/sys/vm/drop_caches</span><br></pre></td></tr></table></figure>
+<p>基本上執行這些指令沒有什麼好處，所以除非你很明確知道你想幹嘛（例如為了避免 cache 影響實驗結果），否則建議不要隨便手動清除快取記憶體。另外，也<strong>建議在做這個動作前先執行 <code>sync</code> 讓檔案寫入操作先完成，否則可能會造成意想不到的結果。</strong></p>
+<h3 id="Reference">Reference</h3>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.linuxatemyram.com/">https://www.linuxatemyram.com/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://medium.com/hungys-blog/clear-linux-memory-cache-manually-90bec95ea003">https://medium.com/hungys-blog/clear-linux-memory-cache-manually-90bec95ea003</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/KVM-Install-Rocky-Linux/" rel="prev" title="[KVM] Install Rocky Linux">
+                  <i class="fa fa-chevron-left"></i> [KVM] Install Rocky Linux
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

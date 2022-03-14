@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="kubernetes 1.22 版之後，就不再支持 Docker 作為 container runtime 以及管理容器及鏡像的工具了。可以使用 containerd 取代 docker 的 container runtime；以及 crictl 作為 CRI(Container Runtime Interface)，另外 podman 也可以用來管理容器和鏡像。本篇記錄基於 containerd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安裝 Kubernetes 1.23 (containerd as cri)">
+<meta property="og:url" content="https://ulahsieh.github.io/%E5%AE%89%E8%A3%9D-Kubernetes-1-23/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="kubernetes 1.22 版之後，就不再支持 Docker 作為 container runtime 以及管理容器及鏡像的工具了。可以使用 containerd 取代 docker 的 container runtime；以及 crictl 作為 CRI(Container Runtime Interface)，另外 podman 也可以用來管理容器和鏡像。本篇記錄基於 containerd">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/BqaYQks.png">
+<meta property="og:image" content="https://imgur.com/HJ9AMbi.png">
+<meta property="og:image" content="https://imgur.com/BS6vsBx.png">
+<meta property="og:image" content="https://imgur.com/na2gxVz.png">
+<meta property="og:image" content="https://imgur.com/q7eRhL4.png">
+<meta property="og:image" content="https://imgur.com/bQmARMt.png">
+<meta property="og:image" content="https://imgur.com/kW9kScR.png">
+<meta property="og:image" content="https://imgur.com/AN29VqM.png">
+<meta property="og:image" content="https://imgur.com/d9Is0x1.png">
+<meta property="og:image" content="https://imgur.com/nIV8pGu.png">
+<meta property="og:image" content="https://imgur.com/Q6AICJ9.png">
+<meta property="article:published_time" content="2022-03-13T06:56:00.000Z">
+<meta property="article:modified_time" content="2022-03-13T06:56:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/BqaYQks.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/%E5%AE%89%E8%A3%9D-Kubernetes-1-23/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/%E5%AE%89%E8%A3%9D-Kubernetes-1-23/","path":"安裝-Kubernetes-1-23/","title":"安裝 Kubernetes 1.23 (containerd as cri)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>安裝 Kubernetes 1.23 (containerd as cri) | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%B5%B1%E7%92%B0%E5%A2%83%E9%85%8D%E7%BD%AE-%E6%89%80%E6%9C%89%E7%AF%80%E9%BB%9E"><span class="nav-number">1.</span> <span class="nav-text">系統環境配置 (所有節點)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%B3%BB%E7%B5%B1%E8%B3%87%E6%BA%90%E9%9C%80%E6%B1%82"><span class="nav-number">1.1.</span> <span class="nav-text">最小系統資源需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-etc-hosts"><span class="nav-number">1.2.</span> <span class="nav-text">配置 &#x2F;etc&#x2F;hosts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E8%BB%9F%E9%AB%94%E5%A5%97%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">更新軟體套件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%B5%B1%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.</span> <span class="nav-text">系統配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E7%94%A8%E9%98%B2%E7%81%AB%E7%89%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">停用防火牆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%9C%E9%96%89-SELINUX"><span class="nav-number">1.4.2.</span> <span class="nav-text">關閉 SELINUX</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%9C%E9%96%89-swap"><span class="nav-number">1.4.3.</span> <span class="nav-text">關閉 swap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-kernel-module-%E8%87%AA%E5%8B%95%E5%8A%A0%E8%BC%89"><span class="nav-number">1.4.4.</span> <span class="nav-text">配置 kernel module 自動加載</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AA%BF%E6%95%B4-kernel-%E5%8F%83%E6%95%B8"><span class="nav-number">1.4.5.</span> <span class="nav-text">調整 kernel 參數</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%96%8B%E5%95%9F-ipvs-module"><span class="nav-number">1.4.6.</span> <span class="nav-text">開啟 ipvs module</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-containerd-crictl-%E6%89%80%E6%9C%89%E7%AF%80%E9%BB%9E"><span class="nav-number">2.</span> <span class="nav-text">安裝 containerd &amp; crictl (所有節點)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-containerd"><span class="nav-number">2.1.</span> <span class="nav-text">安裝 containerd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-crictl"><span class="nav-number">2.2.</span> <span class="nav-text">安裝 crictl</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-kubernetes-%E5%A5%97%E4%BB%B6-%E6%89%80%E6%9C%89%E7%AF%80%E9%BB%9E"><span class="nav-number">3.</span> <span class="nav-text">安裝 kubernetes 套件 (所有節點)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E5%A2%9E-kubernetes-repo"><span class="nav-number">3.1.</span> <span class="nav-text">新增 kubernetes repo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%91%BD%E4%BB%A4%E5%8F%83%E6%95%B8%E8%87%AA%E5%8B%95%E8%A3%9C%E5%85%A8%E5%8A%9F%E8%83%BD"><span class="nav-number">3.2.</span> <span class="nav-text">配置命令參數自動補全功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%95%9F%E5%8B%95kubelet-%E6%9C%8D%E5%8B%99"><span class="nav-number">3.3.</span> <span class="nav-text">啟動kubelet 服務</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%AF%80%E9%BB%9E"><span class="nav-number">4.</span> <span class="nav-text">配置節點</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#kubeadm-%E9%83%A8%E7%BD%B2-master-%E7%AF%80%E9%BB%9E"><span class="nav-number">4.1.</span> <span class="nav-text">kubeadm 部署 master 節點</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%96%E5%82%99%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.1.</span> <span class="nav-text">準備配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%A2%E9%9B%86%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">4.1.2.</span> <span class="nav-text">叢集初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-calico"><span class="nav-number">4.1.3.</span> <span class="nav-text">安裝 calico</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E5%B7%A5%E4%BD%9C%E7%AF%80%E9%BB%9E"><span class="nav-number">4.2.</span> <span class="nav-text">加入工作節點</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">121</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/%E5%AE%89%E8%A3%9D-Kubernetes-1-23/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安裝 Kubernetes 1.23 (containerd as cri)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-13 14:56:00" itemprop="dateCreated datePublished" datetime="2022-03-13T14:56:00+08:00">2022-03-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>kubernetes 1.22 版之後，就不再支持 Docker 作為 container runtime 以及管理容器及鏡像的工具了。可以使用 <code>containerd</code> 取代 docker 的 container runtime；以及 <code>crictl</code> 作為 CRI(Container Runtime Interface)，另外 podman 也可以用來管理容器和鏡像。本篇記錄基於 containerd &amp; crictl 使用 kubeadm 部屬 Kubernetes 集群的過程。</p>
+<span id="more"></span>
+<h2 id="系統環境配置-所有節點">系統環境配置 (所有節點)</h2>
+<h3 id="最小系統資源需求">最小系統資源需求</h3>
+<ul>
+<li>每台機器 4 GiB 以上 RAM</li>
+<li>master control plane 節點至少需要有兩個以上的 vCPU</li>
+<li>集群中所有機器之間的完整網絡連接 (can be private or public)</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Server Type</th>
+<th style="text-align:center">Hostname</th>
+<th style="text-align:center">Spec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">master</td>
+<td style="text-align:center"><a target="_blank" rel="external nofollow noopener noreferrer" href="http://node.ulatest.com">node.ulatest.com</a></td>
+<td style="text-align:center">4 vCPU, 8G RAM</td>
+</tr>
+<tr>
+<td style="text-align:center">worker</td>
+<td style="text-align:center"><a target="_blank" rel="external nofollow noopener noreferrer" href="http://rockyw.ulatest.com">rockyw.ulatest.com</a></td>
+<td style="text-align:center">8 vCPU, 16G RAM</td>
+</tr>
+<tr>
+<td style="text-align:center">worker</td>
+<td style="text-align:center"><a target="_blank" rel="external nofollow noopener noreferrer" href="http://rockyw2.ulatest.com">rockyw2.ulatest.com</a></td>
+<td style="text-align:center">8 vCPU, 16G RAM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="配置-etc-hosts">配置 /etc/hosts</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /etc/hosts</span><br><span class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line"></span><br><span class="line">10.1.5.130  nexdata nexdata.ulatest.com</span><br><span class="line">10.1.5.146  node node.ulatest.com</span><br><span class="line">10.1.5.147  rockyw rockyw.ulatest.com</span><br><span class="line">10.1.5.148  rockyw2 rockyw2.ulatest.com</span><br><span class="line"></span><br><span class="line">10.1.5.130  nfs nfs.ulatest.com</span><br></pre></td></tr></table></figure>
+<h3 id="更新軟體套件">更新軟體套件</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum update -y</span><br></pre></td></tr></table></figure>
+<h3 id="系統配置">系統配置</h3>
+<h4 id="停用防火牆">停用防火牆</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+<h4 id="關閉-SELINUX">關閉 SELINUX</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s/SELINUX=enforcing/SELINUX=disabled/g&#x27;</span> /etc/selinux/config</span><br><span class="line">cat /etc/selinux/config</span><br><span class="line"><span class="comment"># This file controls the state of SELinux on the system.</span></span><br><span class="line"><span class="comment"># SELINUX= can take one of these three values:</span></span><br><span class="line"><span class="comment">#     enforcing - SELinux security policy is enforced.</span></span><br><span class="line"><span class="comment">#     permissive - SELinux prints warnings instead of enforcing.</span></span><br><span class="line"><span class="comment">#     disabled - No SELinux policy is loaded.</span></span><br><span class="line">SELINUX=disabled</span><br><span class="line"><span class="comment"># SELINUXTYPE= can take one of these three values:</span></span><br><span class="line"><span class="comment">#     targeted - Targeted processes are protected,</span></span><br><span class="line"><span class="comment">#     minimum - Modification of targeted policy. Only selected processes are protected.</span></span><br><span class="line"><span class="comment">#     mls - Multi Level Security protection.</span></span><br><span class="line">SELINUXTYPE=targeted</span><br></pre></td></tr></table></figure>
+<h4 id="關閉-swap">關閉 swap</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Turn off swap</span></span><br><span class="line">swapoff -a</span><br><span class="line"><span class="comment"># comment out the line of swap&#x27;s mount point</span></span><br><span class="line">sed -i <span class="string">&#x27;/ swap / s/^\(.*\)$/#\1/g&#x27;</span> /etc/fstab</span><br></pre></td></tr></table></figure>
+<h4 id="配置-kernel-module-自動加載">配置 kernel module 自動加載</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &lt;&lt; <span class="string">EOF &gt; /etc/modules-load.d/containerd.conf</span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 執行以下命令使配置生效</span></span><br><span class="line">modprobe overlay</span><br><span class="line">modprobe br_netfilter</span><br></pre></td></tr></table></figure>
+<h4 id="調整-kernel-參數">調整 kernel 參數</h4>
+<p>Kubernetes 的核心是依靠 netfilter kernel module 來設定低級別的集群 IP 負載均衡，需要兩個關鍵的 module：IP轉發和橋接。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &lt;&lt; <span class="string">EOF &gt; /etc/sysctl.d/kubernetes.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward = 1</span></span><br><span class="line"><span class="string">vm.swappiness = 0</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 執行以下命令使配置生效</span></span><br><span class="line">sysctl -p /etc/sysctl.d/kubernetes.conf</span><br></pre></td></tr></table></figure>
+<p>以上操作含意如下：</p>
+<ul>
+<li>開啟 iptables 對 bridge 的數據進行處理</li>
+<li>開啟數據包轉發功能（實現 vxlan）</li>
+<li>禁止使用 swap 空間，只有當系統 OOM 時才允許使用它</li>
+</ul>
+<h4 id="開啟-ipvs-module">開啟 ipvs module</h4>
+<p>Kube-Proxy 是 Kubernetes 用來控制 Service 轉發過程的一個元件，預設會使用 iptables 作為 Kubernetes Service 的底層實現方式，而此模式最主要的問題是在服務多的時候產生太多的 iptables 規則，大規模情況下有明顯的性能問題。可以透過參數變化的方式要求 Kube-Proxy 使用 ipvs。開啟 ipvs 的前提條件是加載以下的 kernal module：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &lt;&lt; <span class="string">EOF &gt; /etc/sysconfig/modules/ipvs.modules</span></span><br><span class="line"><span class="string">#!/bin/bash</span></span><br><span class="line"><span class="string">modprobe -- ip_vs</span></span><br><span class="line"><span class="string">modprobe -- ip_vs_rr</span></span><br><span class="line"><span class="string">modprobe -- ip_vs_wrr</span></span><br><span class="line"><span class="string">modprobe -- ip_vs_sh</span></span><br><span class="line"><span class="string">modprobe -- nf_conntrack</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack</span><br></pre></td></tr></table></figure>
+<p>上面腳本創建了的 <code>/etc/sysconfig/modules/ipvs.modules</code> 文件，保證在節點重啟後能自動加載所需模塊。使用 <code>lsmod | grep -e ip_vs -e nf_conntrack</code> 命令查看是否已經正確加載所需的內核模塊。<br>
+<img src="https://imgur.com/BqaYQks.png" alt><br>
+接下來還需要確保各個節點上已經安裝了 ipset 軟件包，以及管理工具 ipvsadm 便於查看 ipvs 的代理規則。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y ipset ipvsadm</span><br></pre></td></tr></table></figure>
+<p>如果以上前提條件如果不滿足，則即使 kube-proxy 的配置開啟了 ipvs 模式，也會退回到 iptables 模式。</p>
+<h2 id="安裝-containerd-crictl-所有節點">安裝 containerd &amp; crictl (所有節點)</h2>
+<h3 id="安裝-containerd">安裝 containerd</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y yum-utils</span><br><span class="line"><span class="comment"># 使用 docker.ce 作為 containerd 的 repo</span></span><br><span class="line">yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">yum install -y containerd.io</span><br><span class="line">systemctl <span class="built_in">enable</span> containerd</span><br></pre></td></tr></table></figure>
+<p>生成 containerd 的配置文件:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /etc/containerd</span><br><span class="line">containerd config default &gt; /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<p>根據 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/">Kubernetes 文檔 Container runtimes</a> 中的內容，對於使用 systemd 作為 init system 的 Linux 發行版，使用 systemd 作為容器的 cgroup driver 可以確保服務器節點在資源緊張的情況更加穩定，因此這裡配置各個節點上 containerd 的 cgroup driver 為 systemd。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s|\(\s\+\)\[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options\]|\1\[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options\]\n\1  SystemdCgroup = true|g&#x27;</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<p>修改完畢後 config 內容會如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc]</span><br><span class="line">  ...</span><br><span class="line">  [plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</span><br><span class="line">    SystemdCgroup = true</span><br></pre></td></tr></table></figure>
+<p>重啟 containerd 已應用 config</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart containerd</span><br></pre></td></tr></table></figure>
+<h3 id="安裝-crictl">安裝 crictl</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y wget tar</span><br><span class="line">wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.23.0/crictl-v1.23.0-linux-amd64.tar.gz</span><br><span class="line">tar zxvf crictl-v1.23.0-linux-amd64.tar.gz -C /usr/<span class="built_in">local</span>/bin</span><br></pre></td></tr></table></figure>
+<p>設定 container runtime interface 為 containerd</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &lt;&lt; <span class="string">EOF &gt; /etc/crictl.yaml</span></span><br><span class="line"><span class="string">runtime-endpoint: unix:///run/containerd/containerd.sock</span></span><br><span class="line"><span class="string">image-endpoint: unix:///run/containerd/containerd.sock</span></span><br><span class="line"><span class="string">timeout: 10</span></span><br><span class="line"><span class="string">debug: false</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>測試</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crictl images</span><br><span class="line">IMAGE               TAG                 IMAGE ID            SIZE</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/HJ9AMbi.png" alt><br>
+如果上方 CRI 沒有指定的話，會出現以下錯誤<br>
+<img src="https://imgur.com/BS6vsBx.png" alt></p>
+<h2 id="安裝-kubernetes-套件-所有節點">安裝 kubernetes 套件 (所有節點)</h2>
+<h3 id="新增-kubernetes-repo">新增 kubernetes repo</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat &lt;&lt; <span class="string">EOF &gt; /etc/yum.repos.d/kubernetes.repo</span></span><br><span class="line"><span class="string">[kubernetes]</span></span><br><span class="line"><span class="string">name=Kubernetes</span></span><br><span class="line"><span class="string">baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64</span></span><br><span class="line"><span class="string">enabled=1</span></span><br><span class="line"><span class="string">gpgcheck=1</span></span><br><span class="line"><span class="string">repo_gpgcheck=1</span></span><br><span class="line"><span class="string">gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>在更新 yum 源後，使用 yum makecache 生成緩存，將套件包訊息提前在本地 cache 一份，用來提高搜索安裝套件的速度。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum makecache -y </span><br></pre></td></tr></table></figure>
+<p>通過 yum list 命令可以查看當前源的穩定版本，目前的穩定版本是 1.23.4-0。安裝 kubeadm 便會將 kubelet、kubectl 等依賴一併安裝。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum list kubeadm</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/na2gxVz.png" alt></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum install -y kubeadm-1.23.4-0</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/q7eRhL4.png" alt></p>
+<h3 id="配置命令參數自動補全功能">配置命令參數自動補全功能</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum install -y bash-completion</span><br><span class="line">echo &#x27;source &lt;(kubectl completion bash)&#x27; &gt;&gt; $HOME/.bashrc</span><br><span class="line">echo &#x27;source &lt;(kubeadm completion bash)&#x27; &gt;&gt; $HOME/.bashrc</span><br><span class="line">source $HOME/.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="啟動kubelet-服務">啟動kubelet 服務</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl enable kubelet</span><br><span class="line">systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+<h2 id="配置節點">配置節點</h2>
+<h3 id="kubeadm-部署-master-節點">kubeadm 部署 master 節點</h3>
+<h4 id="準備配置文件">準備配置文件</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubeadm config print init-defaults &gt; kubeadm-init.yaml</span><br><span class="line">vim kubeadm.yaml</span><br></pre></td></tr></table></figure>
+<p>更改以下配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">bootstrapTokens:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">groups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">system:bootstrappers:kubeadm:default-node-token</span></span><br><span class="line">  <span class="attr">token:</span> <span class="string">abcdef.0123456789abcdef</span></span><br><span class="line">  <span class="attr">ttl:</span> <span class="string">24h0m0s</span></span><br><span class="line">  <span class="attr">usages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">signing</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">authentication</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">InitConfiguration</span></span><br><span class="line"><span class="attr">localAPIEndpoint:</span></span><br><span class="line">  <span class="attr">advertiseAddress:</span> <span class="number">10.1</span><span class="number">.5</span><span class="number">.146</span> <span class="comment"># 改為 master node IP</span></span><br><span class="line">  <span class="attr">bindPort:</span> <span class="number">6443</span></span><br><span class="line"><span class="attr">nodeRegistration:</span></span><br><span class="line">  <span class="attr">criSocket:</span> <span class="string">unix:///run/containerd/containerd.sock</span> <span class="comment"># 改為 containerd Unix socket 地址</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">rockym</span> <span class="comment"># 指定節點名稱</span></span><br><span class="line">  <span class="attr">taints:</span> <span class="literal">null</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiServer:</span></span><br><span class="line">  <span class="attr">timeoutForControlPlane:</span> <span class="string">4m0s</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">certificatesDir:</span> <span class="string">/etc/kubernetes/pki</span></span><br><span class="line"><span class="attr">clusterName:</span> <span class="string">kubernetes</span></span><br><span class="line"><span class="attr">controllerManager:</span> &#123;&#125;</span><br><span class="line"><span class="attr">dns:</span> &#123;&#125;</span><br><span class="line"><span class="attr">etcd:</span></span><br><span class="line">  <span class="attr">local:</span></span><br><span class="line">    <span class="attr">dataDir:</span> <span class="string">/var/lib/etcd</span></span><br><span class="line"><span class="attr">imageRepository:</span> <span class="string">k8s.gcr.io</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterConfiguration</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="number">1.23</span><span class="number">.0</span></span><br><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">dnsDomain:</span> <span class="string">cluster.local</span></span><br><span class="line">  <span class="attr">serviceSubnet:</span> <span class="number">10.96</span><span class="number">.0</span><span class="number">.0</span><span class="string">/12</span></span><br><span class="line">  <span class="attr">podSubnet:</span> <span class="number">10.244</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span> <span class="comment"># 指定 pod 子網 cidr，在設定 calico 時會用到</span></span><br><span class="line"><span class="attr">scheduler:</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="叢集初始化">叢集初始化</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubeadm init --config=kubeadm-init.yaml</span><br></pre></td></tr></table></figure>
+<p>完成後按照提示將 /etc/kubernetes/admin.conf 複製到 $HOME/.kube/config</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+<p>並複製下面那一串加入指令以便其他 node 加入 (兩個小時過期)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubeadm join 10.1.5.146:6443 --token abcdef.0123456789abcdef \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:fc56685aedecf323023637a6e02cc1584cfc88bfeb0690dc0e2a1feca278f008</span><br></pre></td></tr></table></figure>
+<p>或是之後使用 kubeadm token create --print-join-command 建立新的。<br>
+<img src="https://imgur.com/bQmARMt.png" alt><br>
+以上就完成 master 節點的部屬，可以使用 kubectl command 確認。<br>
+<img src="https://imgur.com/kW9kScR.png" alt><br>
+因目前網路尚未設置，所以 coredns 狀態為 Pending 是正常的。</p>
+<h4 id="安裝-calico">安裝 calico</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -s https://docs.projectcalico.org/manifests/calico.yaml |  kubectl apply -f -</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/AN29VqM.png" alt><br>
+安裝完畢後就可以發現節點已經部屬完成了。<br>
+<img src="https://imgur.com/d9Is0x1.png" alt></p>
+<h3 id="加入工作節點">加入工作節點</h3>
+<p>在各工作節點上直接輸入上方的 join command</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubeadm join 10.1.5.146:6443 --token abcdef.0123456789abcdef \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:fc56685aedecf323023637a6e02cc1584cfc88bfeb0690dc0e2a1feca278f008</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/nIV8pGu.png" alt><br>
+就可大功告成了~<br>
+<img src="https://imgur.com/Q6AICJ9.png" alt></p>
+<h2 id="Reference">Reference</h2>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://fuckcloudnative.io/posts/ipvs-how-kubernetes-services-direct-traffic-to-pods/">kube-proxy</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://kubernetes.io/zh/docs/concepts/services-networking/service/#proxy-mode-ipvs">https://kubernetes.io/zh/docs/concepts/services-networking/service/#proxy-mode-ipvs</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd">https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Kubernetes-Dashboard-Install/" rel="prev" title="安裝 Kubernetes Dashboard - 單集群可視化管理">
+                  <i class="fa fa-chevron-left"></i> 安裝 Kubernetes Dashboard - 單集群可視化管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="以下紀錄如何隔離 kafka operator 與建立的 kafka cluster 的命名空間，預計是可以在一座 kubernetes cluster 上只需安裝一個 kafka operator 來建立多個 kafka cluster。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安裝監聽於所有 namespace 的 strimzi kafka operator，可在不同 namespace 下安裝不同座 Kafka cluster">
+<meta property="og:url" content="https://ulahsieh.github.io/install-strimzi-kafka-operator-to-watch-all-namespace/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="以下紀錄如何隔離 kafka operator 與建立的 kafka cluster 的命名空間，預計是可以在一座 kubernetes cluster 上只需安裝一個 kafka operator 來建立多個 kafka cluster。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-03-21T14:33:25.000Z">
+<meta property="article:modified_time" content="2022-03-21T14:33:25.000Z">
+<meta property="article:author" content="Ula">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/install-strimzi-kafka-operator-to-watch-all-namespace/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/install-strimzi-kafka-operator-to-watch-all-namespace/","path":"install-strimzi-kafka-operator-to-watch-all-namespace/","title":"安裝監聽於所有 namespace 的 strimzi kafka operator，可在不同 namespace 下安裝不同座 Kafka cluster"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>安裝監聽於所有 namespace 的 strimzi kafka operator，可在不同 namespace 下安裝不同座 Kafka cluster | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-operator"><span class="nav-number">1.</span> <span class="nav-text">安裝 operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-kafka-cluster"><span class="nav-number">2.</span> <span class="nav-text">安裝 kafka cluster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">129</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">122</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/install-strimzi-kafka-operator-to-watch-all-namespace/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安裝監聽於所有 namespace 的 strimzi kafka operator，可在不同 namespace 下安裝不同座 Kafka cluster
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-21 22:33:25" itemprop="dateCreated datePublished" datetime="2022-03-21T22:33:25+08:00">2022-03-21</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>515</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>以下紀錄如何隔離 kafka operator 與建立的 kafka cluster 的命名空間，預計是可以在一座 kubernetes cluster 上只需安裝一個 kafka operator 來建立多個 kafka cluster。</p>
+<span id="more"></span>
+<h3 id="安裝-operator">安裝 operator</h3>
+<p>下載 CRD 資源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.28.0/strimzi-0.28.0.tar.gz -P /tmp &amp;&amp; tar zxvf /tmp/strimzi-0.28.0.tar.gz -C /tmp</span><br></pre></td></tr></table></figure>
+<p>修改 <code>strimzi-0.28.0/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml</code> 檔案中的 <code>STRIMZI_NAMESPACE</code> 的值，改為監聽所有 <code>&quot;*&quot;</code> namespace。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /tmp/strimzi-0.28.0/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="comment"># ...</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="comment"># ...</span></span><br><span class="line">      <span class="attr">serviceAccountName:</span> <span class="string">strimzi-cluster-operator</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">strimzi-cluster-operator</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">strimzi/operator:0.16.2</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">STRIMZI_NAMESPACE</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;*&quot;</span></span><br><span class="line">        <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>以上可以用下面一行 command 解決</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -z <span class="string">&#x27;s/              valueFrom:\n                fieldRef:\n                  fieldPath: metadata.namespace/              value: \&quot;*\&quot;/&#x27;</span> -i /tmp/strimzi-0.28.0/install/cluster-operator/060-Deployment-strimzi-cluster-operator.yaml</span><br></pre></td></tr></table></figure>
+<p>建立 ClusterRoleBindings，使可授權 Cluster Operator 存取 cluster-wide 的所有 namespaces</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create clusterrolebinding strimzi-cluster-operator-namespaced --clusterrole=strimzi-cluster-operator-namespaced --serviceaccount system-kafka-operator:strimzi-cluster-operator</span><br><span class="line">kubectl create clusterrolebinding strimzi-cluster-operator-entity-operator-delegation --clusterrole=strimzi-entity-operator --serviceaccount system-kafka-operator:strimzi-cluster-operator</span><br><span class="line">kubectl create clusterrolebinding strimzi-cluster-operator-topic-operator-delegation --clusterrole=strimzi-topic-operator --serviceaccount system-kafka-operator:strimzi-cluster-operator</span><br></pre></td></tr></table></figure>
+<p>正式佈署 operator</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubectl apply -f /tmp/strimzi-0.28.0/install/cluster-operator -n system-kafka-operator</span><br></pre></td></tr></table></figure>
+<p>查看資源</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@node ~]# kubectl get all -n system-kafka-operator</span><br><span class="line">NAME                                            READY   STATUS    RESTARTS   AGE</span><br><span class="line">pod/strimzi-cluster-operator-7548bd689f-xlr9j   1/1     Running   0          29m</span><br><span class="line"></span><br><span class="line">NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/strimzi-cluster-operator   1/1     1            1           29m</span><br><span class="line"></span><br><span class="line">NAME                                                  DESIRED   CURRENT   READY   AGE</span><br><span class="line">replicaset.apps/strimzi-cluster-operator-7548bd689f   1         1         1       29m</span><br></pre></td></tr></table></figure>
+<h3 id="安裝-kafka-cluster">安裝 kafka cluster</h3>
+<p>準備 kafka.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kafka.strimzi.io/v1beta2</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Kafka</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-cluster</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kafka</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">kafka:</span></span><br><span class="line">    <span class="attr">version:</span> <span class="number">3.1</span><span class="number">.0</span></span><br><span class="line">    <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">listeners:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">plain</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">9092</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">internal</span></span><br><span class="line">        <span class="attr">tls:</span> <span class="literal">false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tls</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">9093</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">internal</span></span><br><span class="line">        <span class="attr">tls:</span> <span class="literal">true</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">external</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">9094</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">loadbalancer</span></span><br><span class="line">        <span class="attr">tls:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">default.replication.factor:</span> <span class="number">3</span></span><br><span class="line">      <span class="attr">num.partitions:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">offsets.topic.replication.factor:</span> <span class="number">3</span></span><br><span class="line">      <span class="attr">transaction.state.log.replication.factor:</span> <span class="number">3</span></span><br><span class="line">      <span class="attr">transaction.state.log.min.isr:</span> <span class="number">2</span></span><br><span class="line">      <span class="attr">log.message.format.version:</span> <span class="string">&quot;3.1&quot;</span></span><br><span class="line">    <span class="attr">storage:</span></span><br><span class="line">      <span class="attr">class:</span> <span class="string">nfs</span></span><br><span class="line">      <span class="attr">type:</span> <span class="string">jbod</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="number">0</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">persistent-claim</span></span><br><span class="line">        <span class="attr">size:</span> <span class="string">10Gi</span></span><br><span class="line">        <span class="attr">deleteClaim:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">zookeeper:</span></span><br><span class="line">    <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">    <span class="attr">storage:</span></span><br><span class="line">      <span class="attr">class:</span> <span class="string">nfs</span></span><br></pre></td></tr></table></figure>
+<p>佈署 cluster</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubectl apply -f kafka.yaml</span><br></pre></td></tr></table></figure>
+<p>查看資源</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@node terraform]# kubectl get all -n kafka</span><br><span class="line">NAME                         READY   STATUS    RESTARTS   AGE</span><br><span class="line">pod/my-cluster-kafka-0       1/1     Running   0          25s</span><br><span class="line">pod/my-cluster-kafka-1       1/1     Running   0          25s</span><br><span class="line">pod/my-cluster-kafka-2       1/1     Running   0          25s</span><br><span class="line">pod/my-cluster-zookeeper-0   1/1     Running   0          52s</span><br><span class="line">pod/my-cluster-zookeeper-1   1/1     Running   0          52s</span><br><span class="line">pod/my-cluster-zookeeper-2   1/1     Running   0          52s</span><br><span class="line"></span><br><span class="line">NAME                                          TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                               AGE</span><br><span class="line">service/my-cluster-kafka-0                    LoadBalancer   10.109.143.19    10.1.5.151    9094:32608/TCP                        27s</span><br><span class="line">service/my-cluster-kafka-1                    LoadBalancer   10.96.7.88       10.1.5.154    9094:32057/TCP                        27s</span><br><span class="line">service/my-cluster-kafka-2                    LoadBalancer   10.99.44.55      10.1.5.152    9094:31265/TCP                        27s</span><br><span class="line">service/my-cluster-kafka-bootstrap            ClusterIP      10.105.207.155   &lt;none&gt;        9091/TCP,9092/TCP,9093/TCP            27s</span><br><span class="line">service/my-cluster-kafka-brokers              ClusterIP      None             &lt;none&gt;        9090/TCP,9091/TCP,9092/TCP,9093/TCP   27s</span><br><span class="line">service/my-cluster-kafka-external-bootstrap   LoadBalancer   10.96.136.137    10.1.5.153    9094:30262/TCP                        27s</span><br><span class="line">service/my-cluster-zookeeper-client           ClusterIP      10.107.192.225   &lt;none&gt;        2181/TCP                              53s</span><br><span class="line">service/my-cluster-zookeeper-nodes            ClusterIP      None             &lt;none&gt;        2181/TCP,2888/TCP,3888/TCP            53s</span><br><span class="line"></span><br><span class="line">NAME                                    READY   AGE</span><br><span class="line">statefulset.apps/my-cluster-kafka       3/3     25s</span><br><span class="line">statefulset.apps/my-cluster-zookeeper   3/3     52s</span><br></pre></td></tr></table></figure>
+<h3 id="Reference">Reference</h3>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://strimzi.io/docs/0.16.2/full.html#deploying-cluster-operator-to-watch-whole-cluster-deploying-co">https://strimzi.io/docs/0.16.2/full.html#deploying-cluster-operator-to-watch-whole-cluster-deploying-co</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/helm-install-Metrics-Server/" rel="prev" title="使用 helm 安裝 Metrics Server">
+                  <i class="fa fa-chevron-left"></i> 使用 helm 安裝 Metrics Server
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

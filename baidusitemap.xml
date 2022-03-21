@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/install-strimzi-kafka-operator-to-watch-all-namespace/</loc>
+    <lastmod>2022-03-21</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/helm-install-Metrics-Server/</loc>
+    <lastmod>2022-03-21</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/Containerd-crictl-configure-private-image-registry/</loc>
+    <lastmod>2022-03-16</lastmod>
+  </url>
+  <url>
     <loc>https://ulahsieh.github.io/Mongodb-OOM-crash/</loc>
     <lastmod>2022-03-14</lastmod>
   </url>

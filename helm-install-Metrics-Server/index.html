@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Metrics Server 通過 kubelet（cAdvisor）獲取監控數據，主要作用是為 kube-scheduler、HPA(Horizontal Pod Autoscaler)等 k8s 核心組件，以及 kubectl top 命令和 Dashboard 等 UI 組件提供數據來源，可以用來看 node 或 pod 的資源 (CPU &amp; Memory) 消耗。須注意的是，Met">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 helm 安裝 Metrics Server">
+<meta property="og:url" content="https://ulahsieh.github.io/helm-install-Metrics-Server/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="Metrics Server 通過 kubelet（cAdvisor）獲取監控數據，主要作用是為 kube-scheduler、HPA(Horizontal Pod Autoscaler)等 k8s 核心組件，以及 kubectl top 命令和 Dashboard 等 UI 組件提供數據來源，可以用來看 node 或 pod 的資源 (CPU &amp; Memory) 消耗。須注意的是，Met">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/1NaduDA.png">
+<meta property="article:published_time" content="2022-03-21T13:28:00.000Z">
+<meta property="article:modified_time" content="2022-03-21T13:28:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="metrics-server">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/1NaduDA.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/helm-install-Metrics-Server/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/helm-install-Metrics-Server/","path":"helm-install-Metrics-Server/","title":"使用 helm 安裝 Metrics Server"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>使用 helm 安裝 Metrics Server | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D"><span class="nav-number">1.</span> <span class="nav-text">安裝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%A3%E7%B7%9A%E5%A4%B1%E6%95%97%E5%95%8F%E9%A1%8C"><span class="nav-number">2.</span> <span class="nav-text">連線失敗問題</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%A3%E7%B7%9A%E5%A4%B1%E6%95%97%E5%95%8F%E9%A1%8C%E4%BF%AE%E6%AD%A3"><span class="nav-number">3.</span> <span class="nav-text">連線失敗問題修正</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%AC%E8%A9%A6"><span class="nav-number">4.</span> <span class="nav-text">測試</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">129</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">122</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/helm-install-Metrics-Server/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用 helm 安裝 Metrics Server
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-21 21:28:00" itemprop="dateCreated datePublished" datetime="2022-03-21T21:28:00+08:00">2022-03-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>453</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Metrics Server 通過 kubelet（cAdvisor）獲取監控數據，主要作用是為 kube-scheduler、HPA(Horizontal Pod Autoscaler)等 k8s 核心組件，以及 kubectl top 命令和 Dashboard 等 UI 組件提供數據來源，可以用來看 node 或 pod 的資源 (CPU &amp; Memory) 消耗。須注意的是，Metric Server 是 in memory 的 monitor，只可以查詢當前的度量數據，並不保存歷史數據。</p>
+<span id="more"></span>
+<h3 id="安裝">安裝</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/</span><br><span class="line">helm upgrade --install metrics-server metrics-server/metrics-server --namespace kube-system</span><br><span class="line">Release <span class="string">&quot;metrics-server&quot;</span> does not exist. Installing it now.</span><br><span class="line">NAME: metrics-server</span><br><span class="line">LAST DEPLOYED: Mon Mar 21 16:32:14 2022</span><br><span class="line">NAMESPACE: kube-system</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">***********************************************************************</span><br><span class="line">* Metrics Server                                                      *</span><br><span class="line">***********************************************************************</span><br><span class="line">  Chart version: 3.8.2</span><br><span class="line">  App version:   0.6.1</span><br><span class="line">  Image tag:     k8s.gcr.io/metrics-server/metrics-server:v0.6.1</span><br><span class="line">***********************************************************************</span><br></pre></td></tr></table></figure>
+<h3 id="連線失敗問題">連線失敗問題</h3>
+<p>可以發現使用預設值安裝完後 deployment 一直無法 ready，查看 deployment 資訊</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubectl describe deployments.apps -n kube-system metrics-server</span></span><br><span class="line"><span class="attr">Name:</span>                   <span class="string">metrics-server</span></span><br><span class="line"><span class="attr">Namespace:</span>              <span class="string">kube-system</span></span><br><span class="line"><span class="attr">CreationTimestamp:</span>      <span class="string">Mon,</span> <span class="number">21</span> <span class="string">Mar</span> <span class="number">2022 16:32:17</span> <span class="string">+0800</span></span><br><span class="line"><span class="attr">Labels:</span>                 <span class="string">app.kubernetes.io/instance=metrics-server</span></span><br><span class="line">                        <span class="string">app.kubernetes.io/managed-by=Helm</span></span><br><span class="line">                        <span class="string">app.kubernetes.io/name=metrics-server</span></span><br><span class="line">                        <span class="string">app.kubernetes.io/version=0.6.1</span></span><br><span class="line">                        <span class="string">helm.sh/chart=metrics-server-3.8.2</span></span><br><span class="line"><span class="attr">Annotations:            deployment.kubernetes.io/revision:</span> <span class="number">1</span></span><br><span class="line">                        <span class="attr">meta.helm.sh/release-name:</span> <span class="string">metrics-server</span></span><br><span class="line">                        <span class="attr">meta.helm.sh/release-namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">Selector:</span>               <span class="string">app.kubernetes.io/instance=metrics-server,app.kubernetes.io/name=metrics-server</span></span><br><span class="line"><span class="attr">Replicas:</span>               <span class="number">1</span> <span class="string">desired</span> <span class="string">|</span> <span class="number">1</span> <span class="string">updated</span> <span class="string">|</span> <span class="number">1</span> <span class="string">total</span> <span class="string">|</span> <span class="number">0</span> <span class="string">available</span> <span class="string">|</span> <span class="number">1</span> <span class="string">unavailable</span></span><br><span class="line"><span class="attr">StrategyType:</span>           <span class="string">RollingUpdate</span></span><br><span class="line"><span class="attr">MinReadySeconds:</span>        <span class="number">0</span></span><br><span class="line"><span class="attr">RollingUpdateStrategy:</span>  <span class="number">25</span><span class="string">%</span> <span class="string">max</span> <span class="string">unavailable,</span> <span class="number">25</span><span class="string">%</span> <span class="string">max</span> <span class="string">surge</span></span><br><span class="line"><span class="attr">Pod Template:</span></span><br><span class="line">  <span class="attr">Labels:</span>           <span class="string">app.kubernetes.io/instance=metrics-server</span></span><br><span class="line">                    <span class="string">app.kubernetes.io/name=metrics-server</span></span><br><span class="line">  <span class="attr">Service Account:</span>  <span class="string">metrics-server</span></span><br><span class="line">  <span class="attr">Containers:</span></span><br><span class="line">   <span class="attr">metrics-server:</span></span><br><span class="line">    <span class="attr">Image:</span>      <span class="string">k8s.gcr.io/metrics-server/metrics-server:v0.6.1</span></span><br><span class="line">    <span class="attr">Port:</span>       <span class="number">4443</span><span class="string">/TCP</span></span><br><span class="line">    <span class="attr">Host Port:</span>  <span class="number">0</span><span class="string">/TCP</span></span><br><span class="line">    <span class="attr">Args:</span></span><br><span class="line">      <span class="string">--secure-port=4443</span></span><br><span class="line">      <span class="string">--cert-dir=/tmp</span></span><br><span class="line">      <span class="string">--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname</span></span><br><span class="line">      <span class="string">--kubelet-use-node-status-port</span></span><br><span class="line">      <span class="string">--metric-resolution=15s</span></span><br><span class="line">    <span class="attr">Liveness:</span>     <span class="string">http-get</span> <span class="string">https://:https/livez</span> <span class="string">delay=0s</span> <span class="string">timeout=1s</span> <span class="string">period=10s</span> <span class="comment">#success=1 #failure=3</span></span><br><span class="line">    <span class="attr">Readiness:</span>    <span class="string">http-get</span> <span class="string">https://:https/readyz</span> <span class="string">delay=20s</span> <span class="string">timeout=1s</span> <span class="string">period=10s</span> <span class="comment">#success=1 #failure=3</span></span><br><span class="line">    <span class="attr">Environment:</span>  <span class="string">&lt;none&gt;</span></span><br><span class="line">    <span class="attr">Mounts:</span></span><br><span class="line">      <span class="string">/tmp</span> <span class="string">from</span> <span class="string">tmp</span> <span class="string">(rw)</span></span><br><span class="line">  <span class="attr">Volumes:</span></span><br><span class="line">   <span class="attr">tmp:</span></span><br><span class="line">    <span class="attr">Type:</span>               <span class="string">EmptyDir</span> <span class="string">(a</span> <span class="string">temporary</span> <span class="string">directory</span> <span class="string">that</span> <span class="string">shares</span> <span class="string">a</span> <span class="string">pod&#x27;s</span> <span class="string">lifetime)</span></span><br><span class="line">    <span class="attr">Medium:</span></span><br><span class="line">    <span class="attr">SizeLimit:</span>          <span class="string">&lt;unset&gt;</span></span><br><span class="line">  <span class="attr">Priority Class Name:</span>  <span class="string">system-cluster-critical</span></span><br><span class="line"><span class="attr">Conditions:</span></span><br><span class="line">  <span class="string">Type</span>           <span class="string">Status</span>  <span class="string">Reason</span></span><br><span class="line">  <span class="string">----</span>           <span class="string">------</span>  <span class="string">------</span></span><br><span class="line">  <span class="string">Available</span>      <span class="literal">False</span>   <span class="string">MinimumReplicasUnavailable</span></span><br><span class="line">  <span class="string">Progressing</span>    <span class="literal">True</span>    <span class="string">ReplicaSetUpdated</span></span><br><span class="line"><span class="attr">OldReplicaSets:</span>  <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="attr">NewReplicaSet:</span>   <span class="string">metrics-server-7d76b744cd</span> <span class="string">(1/1</span> <span class="string">replicas</span> <span class="string">created)</span></span><br><span class="line"><span class="attr">Events:</span></span><br><span class="line">  <span class="string">Type</span>    <span class="string">Reason</span>             <span class="string">Age</span>    <span class="string">From</span>                   <span class="string">Message</span></span><br><span class="line">  <span class="string">----</span>    <span class="string">------</span>             <span class="string">----</span>   <span class="string">----</span>                   <span class="string">-------</span></span><br><span class="line">  <span class="string">Normal</span>  <span class="string">ScalingReplicaSet</span>  <span class="string">3m50s</span>  <span class="string">deployment-controller</span>  <span class="string">Scaled</span> <span class="string">up</span> <span class="string">replica</span> <span class="string">set</span> <span class="string">metrics-server-7d76b744cd</span> <span class="string">to</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>查看 Pod log</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubectl logs -f -n kube-system metrics-server-7d76b744cd-fv9ns</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/1NaduDA.png" alt></p>
+<h3 id="連線失敗問題修正">連線失敗問題修正</h3>
+<p>加上 <code>--kubelet-insecure-tls</code> 啟動參數</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubectl patch -n kube-system deployment metrics-server --type=json -p &#x27;[&#123;&quot;op&quot;:&quot;add&quot;,&quot;path&quot;:&quot;/spec/template/spec/containers/0/args/-&quot;,&quot;value&quot;:&quot;--kubelet-insecure-tls&quot;&#125;]&#x27;</span><br></pre></td></tr></table></figure>
+<h3 id="測試">測試</h3>
+<p>查看節點資源消耗</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@node ~]# kubectl top nodes</span><br><span class="line">NAME      CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%</span><br><span class="line">node      312m         7%     2769Mi          36%</span><br><span class="line">rockyw    234m         2%     3335Mi          21%</span><br><span class="line">rockyw2   199m         2%     2727Mi          17%</span><br></pre></td></tr></table></figure>
+<h3 id="Reference">Reference</h3>
+<p>在找資料的時候發現以下兩篇針對 metric server 的介紹，值得拜讀。</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://levelup.gitconnected.com/kubernetes-monitoring-101-core-pipeline-services-pipeline-a34cd4cc9627">Kubernetes Monitoring 101 — Core pipeline &amp; Services Pipeline</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.xtplayer.cn/kubernetes/k8s-automatic-elastic-expansion/r">Kubernetes 自動彈性伸縮</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/metrics-server/" rel="tag"># metrics-server</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Containerd-crictl-configure-private-image-registry/" rel="prev" title="Containerd (crictl) 配置私有鏡像倉庫">
+                  <i class="fa fa-chevron-left"></i> Containerd (crictl) 配置私有鏡像倉庫
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/install-strimzi-kafka-operator-to-watch-all-namespace/" rel="next" title="安裝監聽於所有 namespace 的 strimzi kafka operator，可在不同 namespace 下安裝不同座 Kafka cluster">
+                  安裝監聽於所有 namespace 的 strimzi kafka operator，可在不同 namespace 下安裝不同座 Kafka cluster <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

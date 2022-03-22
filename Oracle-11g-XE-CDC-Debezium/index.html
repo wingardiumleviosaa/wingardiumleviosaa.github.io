@@ -40,8 +40,8 @@
 <meta property="article:modified_time" content="2022-01-19T03:03:00.000Z">
 <meta property="article:author" content="Ula">
 <meta property="article:tag" content="Debezium">
-<meta property="article:tag" content="CDC">
 <meta property="article:tag" content="Oracle">
+<meta property="article:tag" content="CDC">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://imgur.com/HLKyKzq.png">
 
@@ -171,7 +171,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">129</span>
+          <span class="site-state-item-count">132</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -416,7 +416,7 @@
 <p>預設是沒有開啟的(return no/no/no)，在 <strong>資料庫級別</strong> 啟用最小補充日誌記錄，按如下方式配置：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> DATABASE <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA;</span><br><span class="line"><span class="keyword">ALTER</span> DATABASE <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA (<span class="keyword">PRIMARY</span> KEY) COLUMNS;</span><br><span class="line"><span class="keyword">ALTER</span> DATABASE <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA (<span class="keyword">ALL</span>) COLUMNS; </span><br><span class="line"># <span class="keyword">commit</span> the changes</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">SYSTEM</span> ARCHIVE LOG <span class="keyword">CURRENT</span>;</span><br></pre></td></tr></table></figure>
 <p><img src="https://imgur.com/ScoREMo.png" alt></p>
-<p>如果只是想給某個指定的表，開啟最小日誌記錄，參考下面。</p>
+<p>如果只是想給某個指定的表，開啟附加日誌記錄，參考下面。</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> HR.EMPLOYEES <span class="keyword">ADD</span> SUPPLEMENTAL LOG DATA (<span class="keyword">ALL</span>) COLUMNS;</span><br></pre></td></tr></table></figure>
 <h3 id="建立-logminer-用戶並賦予權限">建立 logminer 用戶並賦予權限</h3>
 <ol>
@@ -467,12 +467,12 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker build -t connect:1.5.1</span><br></pre></td></tr></table></figure>
 <h3 id="安裝-Kafka-Connect">安裝 Kafka Connect</h3>
 <p>從上一步驟包的 kafka connect image 建立正式的 connect container，注意要加上 <code>LD_LIBRARY_PATH</code> 環境變數指向 instantclient 的目錄</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d -it --name connect -p 8083:8083 -e GROUP_ID=1 -e CONFIG_STORAGE_TOPIC=test_connect_configs -e OFFSET_STORAGE_TOPIC=test_connect_offsets -e STATUS_STORAGE_TOPIC=test_connect_statuses -e LD_LIBRARY_PATH=/kafka/instantclient_18_5 --link zookeeper:zookeeper --link kafka:kafka debezium/connect:1.5.1</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d -it --name connect -p 8083:8083 -e GROUP_ID=1 -e CONFIG_STORAGE_TOPIC=test_connect_configs -e OFFSET_STORAGE_TOPIC=test_connect_offsets -e STATUS_STORAGE_TOPIC=test_connect_statuses -e LD_LIBRARY_PATH=/kafka/instantclient_18_5 --link zookeeper:zookeeper --link kafka:kafka connect:1.5.1</span><br></pre></td></tr></table></figure>
 <p>查看 kafka connect 的資訊以及 connector 列表</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&quot;Accept:application/json&quot;</span> localhost:8083/</span><br><span class="line">curl -H <span class="string">&quot;Accept:application/json&quot;</span> localhost:8083/connectors/</span><br></pre></td></tr></table></figure>
 <h3 id="配置-Oracle-Connector">配置 Oracle Connector</h3>
 <p>呼叫 kafka connect 的 connector API 以創建 connector</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i -X PUT -H <span class="string">&quot;Accept:application/json&quot;</span> -H <span class="string">&quot;Content-Type:application/json&quot;</span>  localhost:8083/connectors/inventory-connector/config -d <span class="string">&#x27;&#123;&quot;name&quot;: &quot;oracle1&quot;, &quot;connector.class&quot;: &quot;io.debezium.connector.oracle.OracleConnector&quot;, &quot;tasks.max&quot;: &quot;1&quot;,&quot;database.server.name&quot;: &quot;XE&quot;, &quot;database.hostname&quot;: &quot;10.13.1.105&quot;, &quot;database.port&quot;: &quot;1521&quot;, &quot;database.user&quot;: &quot;logminer&quot;, &quot;database.password&quot;: &quot;logminer&quot;, &quot;database.dbname&quot;: &quot;XE&quot;, &quot;database.out.server.name&quot;: &quot;dbzout&quot;, &quot;database.schema&quot;: &quot;HR&quot;, &quot;database.history.kafka.bootstrap.servers&quot;: &quot;kafka:9092&quot;, &quot;database.history.kafka.topic&quot;: &quot;utest&quot;, &quot;database.connection.adapter&quot;: &quot;logminer&quot;, &quot;table.include.list&quot;: &quot;HR.*&quot;, &quot;snapshot.mode&quot;: &quot;initial&quot;, &quot;database.tablename.case.insensitive&quot;: &quot;true&quot;, &quot;decimal.handling.mode&quot;: &quot;string&quot;, &quot;log.mining.strategy&quot;: &quot;online_catalog&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i -X PUT -H <span class="string">&quot;Accept:application/json&quot;</span> -H <span class="string">&quot;Content-Type:application/json&quot;</span>  localhost:8083/connectors/oracle1/config -d <span class="string">&#x27;&#123;&quot;name&quot;: &quot;oracle1&quot;, &quot;connector.class&quot;: &quot;io.debezium.connector.oracle.OracleConnector&quot;, &quot;tasks.max&quot;: &quot;1&quot;,&quot;database.server.name&quot;: &quot;XE&quot;, &quot;database.hostname&quot;: &quot;10.13.1.105&quot;, &quot;database.port&quot;: &quot;1521&quot;, &quot;database.user&quot;: &quot;logminer&quot;, &quot;database.password&quot;: &quot;logminer&quot;, &quot;database.dbname&quot;: &quot;XE&quot;, &quot;database.out.server.name&quot;: &quot;dbzout&quot;, &quot;database.schema&quot;: &quot;HR&quot;, &quot;database.history.kafka.bootstrap.servers&quot;: &quot;kafka:9092&quot;, &quot;database.history.kafka.topic&quot;: &quot;utest&quot;, &quot;database.connection.adapter&quot;: &quot;logminer&quot;, &quot;table.include.list&quot;: &quot;HR.*&quot;, &quot;snapshot.mode&quot;: &quot;initial&quot;, &quot;database.tablename.case.insensitive&quot;: &quot;true&quot;, &quot;decimal.handling.mode&quot;: &quot;string&quot;, &quot;log.mining.strategy&quot;: &quot;online_catalog&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>覺得 curl 不方便，可以換用 postman：</p>
 <figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>:<span class="string">&quot;oracle1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;connector.class&quot;</span>:<span class="string">&quot;io.debezium.connector.oracle.OracleConnector&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;tasks.max&quot;</span>:<span class="string">&quot;1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.hostname&quot;</span>:<span class="string">&quot;10.13.1.105&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.port&quot;</span>:<span class="string">&quot;1521&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.user&quot;</span>:<span class="string">&quot;logminer&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.password&quot;</span>:<span class="string">&quot;logminer&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.dbname&quot;</span>:<span class="string">&quot;XE&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.server.name&quot;</span>:<span class="string">&quot;XE&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.history.kafka.bootstrap.servers&quot;</span>:<span class="string">&quot;kafka:9092&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.history.kafka.topic&quot;</span>:<span class="string">&quot;utest&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;database.connection.adapter&quot;</span>:<span class="string">&quot;logminer&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;table.include.list&quot;</span>:<span class="string">&quot;HR.*&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;log.mining.strategy&quot;</span>:<span class="string">&quot;online_catalog&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="https://imgur.com/GrPflZL.png" alt></p>
@@ -516,8 +516,8 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Debezium/" rel="tag"># Debezium</a>
-              <a href="/tags/CDC/" rel="tag"># CDC</a>
               <a href="/tags/Oracle/" rel="tag"># Oracle</a>
+              <a href="/tags/CDC/" rel="tag"># CDC</a>
           </div>
 
         

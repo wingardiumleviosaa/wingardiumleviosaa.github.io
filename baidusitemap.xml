@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/Terraform-upgrade-to-1.1.7/</loc>
+    <lastmod>2022-03-22</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/Kubernetes-namespace-delete-terminating-status/</loc>
+    <lastmod>2022-03-22</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/Debezium-1.5-snapshot-mode-schema-only-not-work/</loc>
+    <lastmod>2022-03-22</lastmod>
+  </url>
+  <url>
     <loc>https://ulahsieh.github.io/install-strimzi-kafka-operator-to-watch-all-namespace/</loc>
     <lastmod>2022-03-21</lastmod>
   </url>

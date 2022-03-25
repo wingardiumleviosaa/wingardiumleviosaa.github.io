@@ -172,13 +172,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">132</span>
+          <span class="site-state-item-count">133</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">37</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -265,7 +265,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Symbols count in article: </span>
-      <span>2.3k</span>
+      <span>2.5k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -354,7 +354,14 @@
 <p>生成 containerd 的配置文件:</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /etc/containerd</span><br><span class="line">containerd config default &gt; /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
 <p>根據 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/">Kubernetes 文檔 Container runtimes</a> 中的內容，對於使用 systemd 作為 init system 的 Linux 發行版，使用 systemd 作為容器的 cgroup driver 可以確保服務器節點在資源緊張的情況更加穩定，因此這裡配置各個節點上 containerd 的 cgroup driver 為 systemd。</p>
+<ul>
+<li>如果檔案中<code>[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</code> 區塊下，沒有 <code>SystemdCgroup</code> 的選項，下：</li>
+</ul>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s|\(\s\+\)\[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options\]|\1\[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options\]\n\1  SystemdCgroup = true|g&#x27;</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果檔案中<code>[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</code> 區塊下，有 <code>SystemdCgroup = false</code> 的選項，下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s/            SystemdCgroup = false/            SystemdCgroup = true/&#x27;</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
 <p>修改完畢後 config 內容會如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc]</span><br><span class="line">  ...</span><br><span class="line">  [plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</span><br><span class="line">    SystemdCgroup = true</span><br></pre></td></tr></table></figure>
 <p>重啟 containerd 已應用 config</p>

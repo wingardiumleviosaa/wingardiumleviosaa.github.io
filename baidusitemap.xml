@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/setup-liveness-probe-to-restart-pod-when-showup-err-log/</loc>
+    <lastmod>2022-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/curl-Kubernetes-API-server-within-Pod/</loc>
+    <lastmod>2022-03-31</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/Your-branch-and-origin-master-have-diverged/</loc>
+    <lastmod>2022-03-29</lastmod>
+  </url>
+  <url>
     <loc>https://ulahsieh.github.io/istio-404-not-found/</loc>
     <lastmod>2022-03-24</lastmod>
   </url>

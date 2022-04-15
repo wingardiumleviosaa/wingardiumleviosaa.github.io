@@ -164,7 +164,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">136</span>
+          <span class="site-state-item-count">141</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -175,7 +175,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">122</span>
+        <span class="site-state-item-count">126</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -312,7 +312,7 @@ command 應該就會長成以下，如果 curl 回到的 output 會 grep 到 err
 <img src="https://imgur.com/YAgQZeI.png" alt><br>
 那麼當發生連線異常時(ORA-12518)，就可以當作是重啟的條件。<br>
 <img src="https://imgur.com/s8QhlJT.png" alt></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">livenessProbe:</span></span><br><span class="line">  <span class="attr">exec:</span></span><br><span class="line">    <span class="attr">command:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">bash</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;ss -an | grep -q &#x27;EST.*:443 *$&#x27;&quot;</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">120</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">60</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">livenessProbe:</span></span><br><span class="line">  <span class="attr">exec:</span></span><br><span class="line">    <span class="attr">command:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">bash</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;ss -an | grep -q &#x27;EST.*:1521 *$&#x27;&quot;</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="number">120</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">60</span></span><br></pre></td></tr></table></figure>
 <h3 id="Reference">Reference</h3>
 <ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://jimmysong.io/kubernetes-handbook/guide/configure-pod-service-account.html">https://jimmysong.io/kubernetes-handbook/guide/configure-pod-service-account.html</a></li>
@@ -340,6 +340,9 @@ command 應該就會長成以下，如果 curl 回到的 output 會 grep 到 err
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/Install-Harbor-using-docker-compose-with-https/" rel="next" title="使用 docker-compose 建立 Harbor 私有倉庫 (w/ https)">
+                  使用 docker-compose 建立 Harbor 私有倉庫 (w/ https) <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

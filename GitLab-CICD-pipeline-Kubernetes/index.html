@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="前言 在還沒接觸 CI&#x2F;CD 時，一直有『這東西一定很難』的預設立場，直到開始撰寫第一個 .gitlab-ci.yml 時，心理認知的困難度仍沒消失。不過慶幸的是，網路上的教學真的很多，GitLab 社群也超給力的有著豐富的文檔跟範例。GitLab CI&#x2F;CD 整體架構 (gitlab server、runner、excutor、pipeline、stage、job) 其實很單純，所以在實做時，可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes">
+<meta property="og:url" content="https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="前言 在還沒接觸 CI&#x2F;CD 時，一直有『這東西一定很難』的預設立場，直到開始撰寫第一個 .gitlab-ci.yml 時，心理認知的困難度仍沒消失。不過慶幸的是，網路上的教學真的很多，GitLab 社群也超給力的有著豐富的文檔跟範例。GitLab CI&#x2F;CD 整體架構 (gitlab server、runner、excutor、pipeline、stage、job) 其實很單純，所以在實做時，可">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/gPoZtZm.png">
+<meta property="og:image" content="https://imgur.com/DfE2rzH.png">
+<meta property="og:image" content="https://imgur.com/9zCxj1K.png">
+<meta property="og:image" content="https://imgur.com/rjxu0Fl.png">
+<meta property="og:image" content="https://imgur.com/lJzTfk9.png">
+<meta property="og:image" content="https://imgur.com/L4cd5Pu.png">
+<meta property="og:image" content="https://imgur.com/fTBS3Ju.png">
+<meta property="og:image" content="https://imgur.com/ItXsMzH.png">
+<meta property="og:image" content="https://imgur.com/wn5Vd3P.png">
+<meta property="article:published_time" content="2022-04-15T10:18:00.000Z">
+<meta property="article:modified_time" content="2022-04-15T10:18:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="GitLab">
+<meta property="article:tag" content="DevOps">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/gPoZtZm.png">
+
+
+<link rel="canonical" href="https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/","path":"GitLab-CICD-pipeline-Kubernetes/","title":"創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A2%BA%E8%AA%8D-CI-CD-%E9%9C%80%E6%B1%82"><span class="nav-number">2.</span> <span class="nav-text">確認 CI&#x2F;CD 需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gitlab-ci-yml"><span class="nav-number">3.</span> <span class="nav-text">.gitlab-ci.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-gitlab-ci-yml"><span class="nav-number">4.</span> <span class="nav-text">配置 .gitlab-ci.yml</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%88%E5%AF%A6%E5%81%9A-build-%E9%9A%8E%E6%AE%B5"><span class="nav-number">4.1.</span> <span class="nav-text">先實做 build 階段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E8%B7%91%E7%9A%84%E9%81%8E%E7%A8%8B%E4%B8%AD%E9%81%87%E5%88%B0%E4%BB%A5%E4%B8%8B%E5%95%8F%E9%A1%8C"><span class="nav-number">4.2.</span> <span class="nav-text">在跑的過程中遇到以下問題</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ERROR-Job-failed-system-failure-prepare-environment-setting-up-credentials-secrets-is-forbidden-User-%E2%80%9Csystem-serviceaccount-gitlab-runner-default%E2%80%9D-cannot-create-resource-%E2%80%9Csecrets%E2%80%9D-in-API-group-%E2%80%9C%E2%80%9D-in-the-namespace-%E2%80%9Cgitlab-runner%E2%80%9D"><span class="nav-number">4.2.1.</span> <span class="nav-text">ERROR: Job failed (system failure): prepare environment: setting up credentials: secrets is forbidden: User “system:serviceaccount:gitlab-runner:default” cannot create resource “secrets” in API group “” in the namespace “gitlab-runner”.</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ERROR-Job-failed-command-terminated-with-exit-code-1-Error-response-from-daemon-Get-%E2%80%9Chttps-10-1-5-142-4433-v2-%E2%80%9D-x509-certificate-signed-by-unknown-authority"><span class="nav-number">4.2.2.</span> <span class="nav-text">ERROR: Job failed: command terminated with exit code 1 (Error response from daemon: Get “https:&#x2F;&#x2F;10.1.5.142:4433&#x2F;v2&#x2F;”: x509: certificate signed by unknown authority)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ERROR-Job-failed-command-terminated-with-exit-code-1-error-obtaining-VCS-status-exec-%E2%80%9Cgit%E2%80%9D-executable-file-not-found-in-PATH"><span class="nav-number">4.2.3.</span> <span class="nav-text">ERROR: Job failed: command terminated with exit code 1 (error obtaining VCS status: exec: “git”: executable file not found in $PATH)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%8C%E5%AF%A6%E5%81%9A-deploy-%E9%9A%8E%E6%AE%B5"><span class="nav-number">4.3.</span> <span class="nav-text">後實做 deploy 階段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kubernetes-yaml-%E9%85%8D%E7%BD%AE"><span class="nav-number">4.4.</span> <span class="nav-text">kubernetes.yaml 配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E8%B7%91%E7%9A%84%E9%81%8E%E7%A8%8B%E4%B8%AD%E9%81%87%E5%88%B0%E4%BB%A5%E4%B8%8B%E5%95%8F%E9%A1%8C-2"><span class="nav-number">4.5.</span> <span class="nav-text">在跑的過程中遇到以下問題</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Error-from-server-Forbidden-error-when-retrieving-current-configuration-of-%E2%80%A6-services-%E2%80%9Cxxx%E2%80%9D-is-forbidden-User-%E2%80%9Csystem-serviceaccount-gitlab-runner-default%E2%80%9D-cannot-get-resource-%E2%80%9Cservices%E2%80%9D-in-API-group-%E2%80%9C%E2%80%9D-in-the-namespace-%E2%80%9Cxxx%E2%80%9D"><span class="nav-number">4.5.1.</span> <span class="nav-text">Error from server (Forbidden): error when retrieving current configuration of: … services “xxx” is forbidden: User “system:serviceaccount:gitlab-runner:default” cannot get resource “services” in API group “” in the namespace “xxx”</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%8A%9F"><span class="nav-number">5.</span> <span class="nav-text">成功</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-15 18:18:00" itemprop="dateCreated datePublished" datetime="2022-04-15T18:18:00+08:00">2022-04-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.5k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="前言">前言</h3>
+<p>在還沒接觸 CI/CD 時，一直有『這東西一定很難』的預設立場，直到開始撰寫第一個 .gitlab-ci.yml 時，心理認知的困難度仍沒消失。不過慶幸的是，網路上的教學真的很多，GitLab 社群也超給力的有著豐富的文檔跟範例。GitLab CI/CD 整體架構 (gitlab server、runner、excutor、pipeline、stage、job) 其實很單純，所以在實做時，可以把自動化需求切分，先從第一段 build 開始做，做成功後，再進階到 test 及 deploy。把困難的任務分段做，感覺就不那麼難以親近了！</p>
+<span id="more"></span>
+<h3 id="確認-CI-CD-需求">確認 CI/CD 需求</h3>
+<p><a href="https://ulahsieh.github.io/Install-GitLab-Runner-on-k8s-using-helm/">前面文章</a>已經建好了一個 runner，現在要實做 CI/CD pipeline。在開始之前要先確定開發者想透過 CICD 完成哪部分的自動化？以本次實做為例，我想要達成：</p>
+<ol>
+<li>code 推上 GitLab 後，不須測試，因為在推上 repo 前，皆已在本地端測試完畢。</li>
+<li>自動依據專案中的 Dockerfile 檔案 build 成 image，並上傳到 registry，如 DockerHub 或私有倉庫</li>
+<li>自動依據專案中的 kubernetes.yaml 檔部屬到 kubernetes cluster 中</li>
+</ol>
+<h3 id="gitlab-ci-yml">.gitlab-ci.yml</h3>
+<p>GitLab CI/CD 透過放置在專案根目錄底下的 <code>.gitlab-ci.yml</code> 檔案來驅動，官網提供了許多 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.gitlab.com/ee/ci/examples/#cicd-templates">Template</a> 給初學者參考。<br>
+定義 pipeline 中會有哪些 stages (預計要有的構建階段)，依序設置。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br></pre></td></tr></table></figure>
+<p>接著在 Stage 中設置一個到多個 Job，來描述該階段所需完成的工作。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">&lt;jobName&gt;:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">&lt;stageName&gt;</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&lt;branchName&gt;</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;My first job&quot;</span></span><br></pre></td></tr></table></figure>
+<p>其中</p>
+<ul>
+<li>stage：指定該 Job 屬於哪一個 Stage</li>
+<li>only：指定在哪個 Branch 觸發時才會執行</li>
+<li>script：需要執行的指令</li>
+</ul>
+<h3 id="配置-gitlab-ci-yml">配置 .gitlab-ci.yml</h3>
+<p>確定需求後就可以開始寫 .gitlab-ci.yml 檔。</p>
+<h4 id="先實做-build-階段">先實做 build 階段</h4>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line"></span><br><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">IMAGE_NAME:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">CI_IMAGE:</span> <span class="string">$CI_REGISTRY/test/$IMAGE_NAME:$&#123;CI_COMMIT_SHORT_SHA&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build-image:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="string">kubernetes</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker</span></span><br><span class="line">  <span class="attr">variables:</span></span><br><span class="line">    <span class="attr">DOCKER_DRIVER:</span> <span class="string">overlay2</span></span><br><span class="line">  <span class="attr">services:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker:dind</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">login</span> <span class="string">-u</span> <span class="string">$CI_REGISTRY_USER</span> <span class="string">-p</span> <span class="string">$CI_REGISTRY_PASSWORD</span> <span class="string">$CI_REGISTRY</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">$CI_IMAGE</span> <span class="string">.</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">$CI_IMAGE</span></span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li>$CI_REGISTRY、$CI_REGISTRY_USER、$CI_REGISTRY_PASSWORD 變數紀錄在 gitlab &gt; Admin Area &gt; CI/CD &gt; Variables 中<br>
+<img src="https://imgur.com/gPoZtZm.png" alt></li>
+<li>${CI_COMMIT_SHORT_SHA} 為 GitLab 預設的環境變數，表示 Git Repo 目前所在的 Commit Hash Code 的前 8 字元。</li>
+<li>DOCKER_DRIVER：指定運行的 docker driver，使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.docker.com/storage/storagedriver/overlayfs-driver/">overlayfs</a> 以增進 performance。但 docker 預設的 Storage Driver 就是 overlay2，所以這邊可以省略。</li>
+</ul>
+<h4 id="在跑的過程中遇到以下問題">在跑的過程中遇到以下問題</h4>
+<h5 id="ERROR-Job-failed-system-failure-prepare-environment-setting-up-credentials-secrets-is-forbidden-User-“system-serviceaccount-gitlab-runner-default”-cannot-create-resource-“secrets”-in-API-group-“”-in-the-namespace-“gitlab-runner”">ERROR: Job failed (system failure): prepare environment: setting up credentials: secrets is forbidden: User “system:serviceaccount:gitlab-runner:default” cannot create resource “secrets” in API group “” in the namespace “gitlab-runner”.</h5>
+<p><img src="https://imgur.com/DfE2rzH.png" alt><br>
+原因是因為使用 helm chart 建立 Runner 時，在指定的 values.yaml 設定檔中，應該把 rbac: create: 的值設為 true，在建立時便會自動幫該 namespace 設定對應 service account。</p>
+<h5 id="ERROR-Job-failed-command-terminated-with-exit-code-1-Error-response-from-daemon-Get-“https-10-1-5-142-4433-v2-”-x509-certificate-signed-by-unknown-authority">ERROR: Job failed: command terminated with exit code 1 (Error response from daemon: Get “<a target="_blank" rel="external nofollow noopener noreferrer" href="https://10.1.5.142:4433/v2/">https://10.1.5.142:4433/v2/</a>”: x509: certificate signed by unknown authority)</h5>
+<p><img src="https://imgur.com/9zCxj1K.png" alt><br>
+原因是因為在 pod 所在的 worker node 的 docker 沒有設置對應的 registry 的證書資訊。在 worker node 中的 <code>/etc/docker/cert.d/</code> 中，建立針對該倉庫 URL 的資料夾 (如 10.1.5.142:4433)，並將倉庫的證書、金鑰、ca 證書放置其中。<br>
+<img src="https://imgur.com/rjxu0Fl.png" alt></p>
+<h5 id="ERROR-Job-failed-command-terminated-with-exit-code-1-error-obtaining-VCS-status-exec-“git”-executable-file-not-found-in-PATH">ERROR: Job failed: command terminated with exit code 1 (error obtaining VCS status: exec: “git”: executable file not found in $PATH)</h5>
+<p><img src="https://imgur.com/lJzTfk9.png" alt></p>
+<div class="info">
+<p>其實執行到這步驟，設定的 Git Lab CI 檔已經可以正常運作了！這個錯誤訊息已經是 docker build image 階段的錯誤了，意即 Dockerfile 沒寫好，不過順便還是在這篇文章記錄一下。</p>
+</div>
+<p>在 go build 的過程中如果有 import 從 git repo 上的第三方程式包的話，則需要在 go build 環境中有 <code>git</code>。只要在 Dockerfile 中加上 <code>RUN apk add --no-cache git</code> 即可解決。</p>
+<h4 id="後實做-deploy-階段">後實做 deploy 階段</h4>
+<p>補齊 deploy stage</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">IMAGE_NAME:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">CI_IMAGE:</span> <span class="string">$CI_REGISTRY/test/$IMAGE_NAME:$&#123;CI_COMMIT_SHORT_SHA&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">build-image:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="string">kubernetes</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">docker</span></span><br><span class="line">  <span class="attr">variables:</span></span><br><span class="line">    <span class="attr">DOCKER_DRIVER:</span> <span class="string">overlay2</span></span><br><span class="line">  <span class="attr">services:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker:dind</span></span><br><span class="line">  <span class="attr">before_script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">login</span> <span class="string">-u</span> <span class="string">$CI_REGISTRY_USER</span> <span class="string">-p</span> <span class="string">$CI_REGISTRY_PASSWORD</span> <span class="string">$CI_REGISTRY</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">$CI_IMAGE</span> <span class="string">.</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">$CI_IMAGE</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy-to-k8s:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">tags:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="string">kubernetes</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">bitnami/kubectl:1.20.15</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">kubectl</span> <span class="string">version</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sed</span> <span class="string">-i</span> <span class="string">&quot;s/&lt;VERSION&gt;/$&#123;CI_COMMIT_SHORT_SHA&#125;/g&quot;</span> <span class="string">kubernetes.yaml</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">kubectl</span> <span class="string">create</span> <span class="string">ns</span> <span class="string">findkpsn</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">kubernetes.yaml</span></span><br></pre></td></tr></table></figure>
+<h4 id="kubernetes-yaml-配置">kubernetes.yaml 配置</h4>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">findkpsn</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">findkpsn</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">8080</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8080</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">findkpsn</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">findkpsn</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">findkpsn</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">findkpsn</span></span><br><span class="line">        <span class="attr">image:</span> <span class="number">10.1</span><span class="number">.5</span><span class="number">.142</span><span class="string">:4433/test/findkpsn:&lt;VERSION&gt;</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br></pre></td></tr></table></figure>
+<h4 id="在跑的過程中遇到以下問題-2">在跑的過程中遇到以下問題</h4>
+<h5 id="Error-from-server-Forbidden-error-when-retrieving-current-configuration-of-…-services-“xxx”-is-forbidden-User-“system-serviceaccount-gitlab-runner-default”-cannot-get-resource-“services”-in-API-group-“”-in-the-namespace-“xxx”">Error from server (Forbidden): error when retrieving current configuration of: … services “xxx” is forbidden: User “system:serviceaccount:gitlab-runner:default” cannot get resource “services” in API group “” in the namespace “xxx”</h5>
+<p>遇到前面 helm 創建 gitlab runner 時的服務帳戶沒有創建 service 資源的功能。直接使用下面 command 賦予 cluster-admin 的權限給該角色。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kubectl create clusterrolebinding default --clusterrole=cluster-admin --group=system:serviceaccounts --namespace=gitlab-runner</span><br><span class="line">	clusterrolebinding.rbac.authorization.k8s.io/default created</span><br></pre></td></tr></table></figure>
+<p>或是在創建 runner 時將 rule 設為全部，並開啟 <code>clusterWideAcess</code> 的權限</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">rbac:</span></span><br><span class="line">  <span class="attr">create:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">apiGroups:</span> [<span class="string">&quot;&quot;</span>]</span><br><span class="line">      <span class="attr">resources:</span> [<span class="string">&quot;*&quot;</span>]</span><br><span class="line">      <span class="attr">verbs:</span> [<span class="string">&quot;*&quot;</span>]</span><br><span class="line">  <span class="attr">clusterWideAccess:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="成功">成功</h3>
+<p><img src="https://imgur.com/L4cd5Pu.png" alt><br>
+<img src="https://imgur.com/fTBS3Ju.png" alt><br>
+<img src="https://imgur.com/ItXsMzH.png" alt><br>
+順便觀察 Runner 在工作的過程會有很多 pod 被建立，隨著構建工作結束後 Runner 會自動刪除這些 pod。<br>
+<img src="https://imgur.com/wn5Vd3P.png" alt></p>
+<h3 id="Reference">Reference</h3>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.gitlab.com/runner/install/kubernetes.html">https://docs.gitlab.com/runner/install/kubernetes.html</a></li>
+<li>感謝 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://marsping.gitlab.io/GitLabCICD/section1.html">https://marsping.gitlab.io/GitLabCICD/section1.html</a> 給的勇氣，研發就是不停踩坑再爬起來的過程 XDD</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GitLab/" rel="tag"># GitLab</a>
+              <a href="/tags/DevOps/" rel="tag"># DevOps</a>
+              <a href="/tags/CI-CD/" rel="tag"># CI/CD</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/kubelet-pullImageBackoff/" rel="prev" title="[Kubernetes] 已登入 harbor 但 kubelet 仍會 ImagePullBackOff">
+                  <i class="fa fa-chevron-left"></i> [Kubernetes] 已登入 harbor 但 kubelet 仍會 ImagePullBackOff
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

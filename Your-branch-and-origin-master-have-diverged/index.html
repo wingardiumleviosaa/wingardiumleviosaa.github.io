@@ -162,7 +162,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">136</span>
+          <span class="site-state-item-count">141</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -173,7 +173,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">122</span>
+        <span class="site-state-item-count">126</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -255,7 +255,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Symbols count in article: </span>
-      <span>1.4k</span>
+      <span>1.5k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -299,7 +299,7 @@ git pull 會幫我們做 merge，若沒有發生版本衝突，就會直接 Fast
 </ol>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git fetch origin</span><br></pre></td></tr></table></figure>
 <ol start="2">
-<li>!!! 待補充確認 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.one-tab.com/page/vZUylthIQ6WDhkCngxUKiA">https://www.one-tab.com/page/vZUylthIQ6WDhkCngxUKiA</a></li>
+<li>git rebase，重新修改特定分支的「基礎版本」，把另外一個分支(remote master)的變更，當成我這個分支(local master)的基礎。</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull --rebase origin/master</span><br><span class="line"><span class="comment"># 同等於 git rebase remotes/github/master</span></span><br></pre></td></tr></table></figure>
 <ol start="3">
@@ -324,7 +324,7 @@ git pull 會幫我們做 merge，若沒有發生版本衝突，就會直接 Fast
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">log</span> --oneline origin/master</span><br><span class="line">  733e302 (HEAD -&gt; master, origin/master) v1.2 rebase from v1 and modified the sql <span class="built_in">command</span></span><br><span class="line">  2714cef add changelog</span><br><span class="line">  4a19b17 ula modified reverse rule</span><br><span class="line">  92d48af frank origin <span class="string">&#x27;reverstapi&#x27;</span> version</span><br><span class="line">git <span class="built_in">log</span> --oneline master</span><br><span class="line">  733e302 (HEAD -&gt; master, origin/master) v1.2 rebase from v1 and modified the sql <span class="built_in">command</span></span><br><span class="line">  2714cef add changelog</span><br><span class="line">  4a19b17 ula modified reverse rule</span><br><span class="line">  92d48af frank origin <span class="string">&#x27;reverstapi&#x27;</span> version</span><br></pre></td></tr></table></figure>
 <h3 id="補充-revert">補充(revert)</h3>
 <p>git revert 命令意思是撤銷某次提交。它會產生一個新的提交，雖然程式碼回退了，但是版本依然是向前的，所以，當你用 revert 回退之後，其他開法者 pull 遠端倉庫之後，他們的程式碼也自動的回退了。通常比較適用於已經 push 出去的 Commit，或是不允許使用 Reset 修改歷史紀錄的指令的場合。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 撤銷最近一次提交</span><br><span class="line">git revert HEAD</span><br><span class="line"># 撤銷最近 2 次提交，注意：數字從 0 開始</span><br><span class="line">git revert HEAD~1</span><br><span class="line"># 撤銷指定的提交</span><br><span class="line">git revert &lt;commitID&gt;</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 撤銷最近一次提交</span><br><span class="line">git revert HEAD</span><br><span class="line"># 撤銷最近 2 次提交，注意：數字從 0 開始</span><br><span class="line">git revert HEAD~1</span><br><span class="line"># 撤銷指定的提交</span><br><span class="line">git revert &lt;commitID&gt;</span><br><span class="line"></span><br><span class="line"># 更新遠端</span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
 <h3 id="Reference">Reference</h3>
 <ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.nvda.org.tw/discussion/ui=100204tm=1973254239">https://www.nvda.org.tw/discussion/ui=100204tm=1973254239</a></li>

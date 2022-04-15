@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/</loc>
+    <lastmod>2022-04-15</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/kubelet-pullImageBackoff/</loc>
+    <lastmod>2022-04-14</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/Install-GitLab-Runner-on-k8s-using-helm/</loc>
+    <lastmod>2022-04-10</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/GitLab-CICD-Introduction/</loc>
+    <lastmod>2022-04-10</lastmod>
+  </url>
+  <url>
+    <loc>https://ulahsieh.github.io/Install-Harbor-using-docker-compose-with-https/</loc>
+    <lastmod>2022-04-10</lastmod>
+  </url>
+  <url>
     <loc>https://ulahsieh.github.io/setup-liveness-probe-to-restart-pod-when-showup-err-log/</loc>
     <lastmod>2022-03-31</lastmod>
   </url>

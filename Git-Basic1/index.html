@@ -20,11 +20,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="前言 在沒有版本控制系統前，如果有一個常常在修改的檔案，又想保留每個版本狀態時，我們常會在編輯檔案前複製一個備份，時間久了就會變得非常不便且難以維護，有可能造成命名混亂，也很難比較各版本間的差異，尤其是在多人協作的狀況下時還可能會發生衝突。  版本控制概念－用一般資料夾闡述 如果是以資料夾去做版控的概念會是如下    1. 需要新版本：開一個新的資料夾   2. 不想加入版控：不要加入資料夾">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Git] Basic Git (1) - Intro &amp; Init, add, commit, status... ">
-<meta property="og:url" content="https://ulahsieh.github.io/Git-Basic1/">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Git-Basic1/">
 <meta property="og:site_name" content="Wingardium Leviosa">
 <meta property="og:description" content="前言 在沒有版本控制系統前，如果有一個常常在修改的檔案，又想保留每個版本狀態時，我們常會在編輯檔案前複製一個備份，時間久了就會變得非常不便且難以維護，有可能造成命名混亂，也很難比較各版本間的差異，尤其是在多人協作的狀況下時還可能會發生衝突。  版本控制概念－用一般資料夾闡述 如果是以資料夾去做版控的概念會是如下    1. 需要新版本：開一個新的資料夾   2. 不想加入版控：不要加入資料夾">
 <meta property="og:locale" content="en_US">
@@ -50,11 +50,11 @@
 <meta name="twitter:image" content="https://imgur.com/d3kVM31.png">
 
 
-<link rel="canonical" href="https://ulahsieh.github.io/Git-Basic1/">
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Git-Basic1/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Git-Basic1/","path":"Git-Basic1/","title":"[Git] Basic Git (1) - Intro & Init, add, commit, status... "}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Git-Basic1/","path":"Git-Basic1/","title":"[Git] Basic Git (1) - Intro & Init, add, commit, status... "}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>[Git] Basic Git (1) - Intro & Init, add, commit, status...  | Wingardium Leviosa</title>
@@ -175,13 +175,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -225,7 +225,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Git-Basic1/">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Git-Basic1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -257,7 +257,11 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+          <a href="/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/DevOps/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
         </span>
     </span>
 

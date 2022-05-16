@@ -20,11 +20,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="branch 概念 一般在線性開發時會是以下這樣：  當在開發新功能時，發現當下開發的版本有舊有的 bug，此時如果一邊開發一邊改 bug 可能會導致產出的東西有衝突。 而如果引入分支 branch，讓開發新功能以及 debug 兩邊各自獨立完成，而後再進行合併，就可以把工作乾淨地切割開來。目的是為了保持主枝幹的穩定，因為在開發新功能的時候不可能隨時保持穩定狀態，所以在確定穩定前都不會影響到主幹。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Git] Basic Git (2) - Branch &amp; GitHub">
-<meta property="og:url" content="https://ulahsieh.github.io/Git-Basic2/">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Git-Basic2/">
 <meta property="og:site_name" content="Wingardium Leviosa">
 <meta property="og:description" content="branch 概念 一般在線性開發時會是以下這樣：  當在開發新功能時，發現當下開發的版本有舊有的 bug，此時如果一邊開發一邊改 bug 可能會導致產出的東西有衝突。 而如果引入分支 branch，讓開發新功能以及 debug 兩邊各自獨立完成，而後再進行合併，就可以把工作乾淨地切割開來。目的是為了保持主枝幹的穩定，因為在開發新功能的時候不可能隨時保持穩定狀態，所以在確定穩定前都不會影響到主幹。">
 <meta property="og:locale" content="en_US">
@@ -64,11 +64,11 @@
 <meta name="twitter:image" content="https://imgur.com/yxIhSIN.png">
 
 
-<link rel="canonical" href="https://ulahsieh.github.io/Git-Basic2/">
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Git-Basic2/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Git-Basic2/","path":"Git-Basic2/","title":"[Git] Basic Git (2) - Branch & GitHub"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Git-Basic2/","path":"Git-Basic2/","title":"[Git] Basic Git (2) - Branch & GitHub"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>[Git] Basic Git (2) - Branch & GitHub | Wingardium Leviosa</title>
@@ -189,13 +189,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -239,7 +239,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Git-Basic2/">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Git-Basic2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -271,7 +271,11 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+          <a href="/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/DevOps/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
         </span>
     </span>
 

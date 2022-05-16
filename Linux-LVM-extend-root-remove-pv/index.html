@@ -20,11 +20,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="前言 結果上次因為 LVM 分的根目錄空間不夠，仗著硬碟多就直接不管空間過剩的 &#x2F;home，直接找一顆 sdc 掛在相同的根目錄 lv 中。後來系統打算拿一些硬碟做 RAID5，才發現我的系統碟(根目錄)用的是 sda 跟 sdc，跳過了 sdb，強迫症驅使下決定把 sdc 的 pv 移除!!">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Linux] LVM- 擴大根目錄 &amp; 移除 pv 碟">
-<meta property="og:url" content="https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv/">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Linux-LVM-extend-root-remove-pv/">
 <meta property="og:site_name" content="Wingardium Leviosa">
 <meta property="og:description" content="前言 結果上次因為 LVM 分的根目錄空間不夠，仗著硬碟多就直接不管空間過剩的 &#x2F;home，直接找一顆 sdc 掛在相同的根目錄 lv 中。後來系統打算拿一些硬碟做 RAID5，才發現我的系統碟(根目錄)用的是 sda 跟 sdc，跳過了 sdb，強迫症驅使下決定把 sdc 的 pv 移除!!">
 <meta property="og:locale" content="en_US">
@@ -40,11 +40,11 @@
 <meta name="twitter:image" content="https://imgur.com/TTuTYmD.png">
 
 
-<link rel="canonical" href="https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv/">
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Linux-LVM-extend-root-remove-pv/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv/","path":"Linux-LVM-extend-root-remove-pv/","title":"[Linux] LVM- 擴大根目錄 & 移除 pv 碟"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Linux-LVM-extend-root-remove-pv/","path":"Linux-LVM-extend-root-remove-pv/","title":"[Linux] LVM- 擴大根目錄 & 移除 pv 碟"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>[Linux] LVM- 擴大根目錄 & 移除 pv 碟 | Wingardium Leviosa</title>
@@ -165,13 +165,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -215,7 +215,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Linux-LVM-extend-root-remove-pv/">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Linux-LVM-extend-root-remove-pv/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">

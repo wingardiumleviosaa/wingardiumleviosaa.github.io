@@ -20,11 +20,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="前言 在還沒接觸 CI&#x2F;CD 時，一直有『這東西一定很難』的預設立場，直到開始撰寫第一個 .gitlab-ci.yml 時，心理認知的困難度仍沒消失。不過慶幸的是，網路上的教學真的很多，GitLab 社群也超給力的有著豐富的文檔跟範例。GitLab CI&#x2F;CD 整體架構 (gitlab server、runner、excutor、pipeline、stage、job) 其實很單純，所以在實做時，可">
 <meta property="og:type" content="article">
 <meta property="og:title" content="創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes">
-<meta property="og:url" content="https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/GitLab-CICD-pipeline-Kubernetes/">
 <meta property="og:site_name" content="Wingardium Leviosa">
 <meta property="og:description" content="前言 在還沒接觸 CI&#x2F;CD 時，一直有『這東西一定很難』的預設立場，直到開始撰寫第一個 .gitlab-ci.yml 時，心理認知的困難度仍沒消失。不過慶幸的是，網路上的教學真的很多，GitLab 社群也超給力的有著豐富的文檔跟範例。GitLab CI&#x2F;CD 整體架構 (gitlab server、runner、excutor、pipeline、stage、job) 其實很單純，所以在實做時，可">
 <meta property="og:locale" content="en_US">
@@ -41,17 +41,17 @@
 <meta property="article:modified_time" content="2022-04-15T10:18:00.000Z">
 <meta property="article:author" content="Ula">
 <meta property="article:tag" content="GitLab">
-<meta property="article:tag" content="DevOps">
 <meta property="article:tag" content="CI&#x2F;CD">
+<meta property="article:tag" content="DevOps">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://imgur.com/gPoZtZm.png">
 
 
-<link rel="canonical" href="https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/">
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/GitLab-CICD-pipeline-Kubernetes/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/","path":"GitLab-CICD-pipeline-Kubernetes/","title":"創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/GitLab-CICD-pipeline-Kubernetes/","path":"GitLab-CICD-pipeline-Kubernetes/","title":"創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>創建 GitLab CICD pipeline 完成自動部屬到 Kubernetes | Wingardium Leviosa</title>
@@ -172,13 +172,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -222,7 +222,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/GitLab-CICD-pipeline-Kubernetes/">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/GitLab-CICD-pipeline-Kubernetes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -254,7 +254,11 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+          <a href="/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/DevOps/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
         </span>
     </span>
 
@@ -287,7 +291,7 @@
 <p>在還沒接觸 CI/CD 時，一直有『這東西一定很難』的預設立場，直到開始撰寫第一個 .gitlab-ci.yml 時，心理認知的困難度仍沒消失。不過慶幸的是，網路上的教學真的很多，GitLab 社群也超給力的有著豐富的文檔跟範例。GitLab CI/CD 整體架構 (gitlab server、runner、excutor、pipeline、stage、job) 其實很單純，所以在實做時，可以把自動化需求切分，先從第一段 build 開始做，做成功後，再進階到 test 及 deploy。把困難的任務分段做，感覺就不那麼難以親近了！</p>
 <span id="more"></span>
 <h3 id="確認-CI-CD-需求">確認 CI/CD 需求</h3>
-<p><a href="https://ulahsieh.github.io/Install-GitLab-Runner-on-k8s-using-helm/">前面文章</a>已經建好了一個 runner，現在要實做 CI/CD pipeline。在開始之前要先確定開發者想透過 CICD 完成哪部分的自動化？以本次實做為例，我想要達成：</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://ulahsieh.github.io/Install-GitLab-Runner-on-k8s-using-helm/">前面文章</a>已經建好了一個 runner，現在要實做 CI/CD pipeline。在開始之前要先確定開發者想透過 CICD 完成哪部分的自動化？以本次實做為例，我想要達成：</p>
 <ol>
 <li>code 推上 GitLab 後，不須測試，因為在推上 repo 前，皆已在本地端測試完畢。</li>
 <li>自動依據專案中的 Dockerfile 檔案 build 成 image，並上傳到 registry，如 DockerHub 或私有倉庫</li>
@@ -362,8 +366,8 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/GitLab/" rel="tag"># GitLab</a>
-              <a href="/tags/DevOps/" rel="tag"># DevOps</a>
               <a href="/tags/CI-CD/" rel="tag"># CI/CD</a>
+              <a href="/tags/DevOps/" rel="tag"># DevOps</a>
           </div>
 
         

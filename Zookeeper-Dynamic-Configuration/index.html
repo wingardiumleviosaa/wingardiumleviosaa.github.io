@@ -20,11 +20,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="Zookeeper 在 3.5.0 版發行後，支持動態新增節點，不需將整個集群重啟。這篇文章主要紀錄 dymamic configuration 如何實作。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Zookeeper] Dynamic Configuration">
-<meta property="og:url" content="https://ulahsieh.github.io/Zookeeper-Dynamic-Configuration/">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Zookeeper-Dynamic-Configuration/">
 <meta property="og:site_name" content="Wingardium Leviosa">
 <meta property="og:description" content="Zookeeper 在 3.5.0 版發行後，支持動態新增節點，不需將整個集群重啟。這篇文章主要紀錄 dymamic configuration 如何實作。">
 <meta property="og:locale" content="en_US">
@@ -43,11 +43,11 @@
 <meta name="twitter:image" content="https://imgur.com/ThMerfx.png">
 
 
-<link rel="canonical" href="https://ulahsieh.github.io/Zookeeper-Dynamic-Configuration/">
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Zookeeper-Dynamic-Configuration/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Zookeeper-Dynamic-Configuration/","path":"Zookeeper-Dynamic-Configuration/","title":"[Zookeeper] Dynamic Configuration"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Zookeeper-Dynamic-Configuration/","path":"Zookeeper-Dynamic-Configuration/","title":"[Zookeeper] Dynamic Configuration"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>[Zookeeper] Dynamic Configuration | Wingardium Leviosa</title>
@@ -168,13 +168,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -218,7 +218,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Zookeeper-Dynamic-Configuration/">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Zookeeper-Dynamic-Configuration/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -286,7 +286,7 @@
         <p>Zookeeper 在 3.5.0 版發行後，支持動態新增節點，不需將整個集群重啟。這篇文章主要紀錄 dymamic configuration 如何實作。</p>
 <span id="more"></span>
 <h3 id="環境準備">環境準備</h3>
-<p>準備三台 VM，<a href="https://ulahsieh.github.io/Build-Zookeeper-Cluster.html">安裝 Zookeeper</a></p>
+<p>準備三台 VM，<a target="_blank" rel="external nofollow noopener noreferrer" href="https://ulahsieh.github.io/Build-Zookeeper-Cluster.html">安裝 Zookeeper</a></p>
 <ul>
 <li>10.1.5.31</li>
 <li>10.1.5.32</li>
@@ -336,7 +336,7 @@
 <h3 id="安全性">安全性</h3>
 <p>在 3.5.3 版之前，任何可以連接到 ZooKeeper 集群的 client 都可以通過 reconfig 來更改 ZooKeeper 集群的狀態，進而使惡意客戶端有機可趁。因此 3.5.3 開始引入了對 reconfig 或 API 訪問的控制。<br>
 動態配置存儲在特殊的 znode，ZooDefs.CONFIG_NODE = /zookeeper/config 中。默認情況下，此節點對所有用戶都是 <code>read-only</code> 的，但超級使用者和 CONFIG_NODE 配置為<code>寫</code>訪問權限的 user 除外。<br>
-關於如何修改 ACL 權限，請參考上一篇文章 － <a href="https://ulahsieh.github.io/Zookeeper-ACL.html">Zookeeper ACL</a></p>
+關於如何修改 ACL 權限，請參考上一篇文章 － <a target="_blank" rel="external nofollow noopener noreferrer" href="https://ulahsieh.github.io/Zookeeper-ACL.html">Zookeeper ACL</a></p>
 <div class="warning">
 <p>另外也可以使用 <code>skipACL</code> 來禁用 ACL 檢查，ZooKeeper 支持在　zoo.cfg 中的 <code>skipACL</code> 參數設置為 <code>yes</code> 時完全跳過 ACL。在這種情況下，任何未經身份驗證的用戶都可以使用 reconfig API。不安全，建議不要使用。</p>
 </div>

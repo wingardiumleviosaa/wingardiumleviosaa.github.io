@@ -20,11 +20,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"ulahsieh.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="手上有 Terraform 0.14 版跑的腳本，最近發現 Terraform 已經升級到 1.1.7 了，便打算在升級的環境下，跑 0.14 版跑成功的腳本，看看是否有誤，紀錄一下遇到的問題以及解法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Terraform 從 0.14 升級到 1.1.7 問題排查">
-<meta property="og:url" content="https://ulahsieh.github.io/Terraform-upgrade-to-1.1.7/">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Terraform-upgrade-to-1.1.7/">
 <meta property="og:site_name" content="Wingardium Leviosa">
 <meta property="og:description" content="手上有 Terraform 0.14 版跑的腳本，最近發現 Terraform 已經升級到 1.1.7 了，便打算在升級的環境下，跑 0.14 版跑成功的腳本，看看是否有誤，紀錄一下遇到的問題以及解法。">
 <meta property="og:locale" content="en_US">
@@ -40,11 +40,11 @@
 <meta name="twitter:image" content="https://imgur.com/c2TMsrQ.png">
 
 
-<link rel="canonical" href="https://ulahsieh.github.io/Terraform-upgrade-to-1.1.7/">
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Terraform-upgrade-to-1.1.7/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ulahsieh.github.io/Terraform-upgrade-to-1.1.7/","path":"Terraform-upgrade-to-1.1.7/","title":"Terraform 從 0.14 升級到 1.1.7 問題排查"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Terraform-upgrade-to-1.1.7/","path":"Terraform-upgrade-to-1.1.7/","title":"Terraform 從 0.14 升級到 1.1.7 問題排查"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>Terraform 從 0.14 升級到 1.1.7 問題排查 | Wingardium Leviosa</title>
@@ -165,13 +165,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -215,7 +215,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ulahsieh.github.io/Terraform-upgrade-to-1.1.7/">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Terraform-upgrade-to-1.1.7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -247,11 +247,11 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+          <a href="/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
         </span>
           , 
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Kubernetes/Terraform/" itemprop="url" rel="index"><span itemprop="name">Terraform</span></a>
+          <a href="/categories/DevOps/Terraform/" itemprop="url" rel="index"><span itemprop="name">Terraform</span></a>
         </span>
     </span>
 

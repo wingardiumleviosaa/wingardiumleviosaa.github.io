@@ -21,12 +21,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Hello! :-)">
+<meta name="description" content="Hello! I am Ula. :-) Here&#39;s my travelogue - [ula&#39;s note](https:&#x2F;&#x2F;ulanotes.netlify.app&#x2F;).">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Wingardium Leviosa">
 <meta property="og:url" content="https://wingardiumleviosaa.github.io/page/10/">
 <meta property="og:site_name" content="Wingardium Leviosa">
-<meta property="og:description" content="Hello! :-)">
+<meta property="og:description" content="Hello! I am Ula. :-) Here&#39;s my travelogue - [ula&#39;s note](https:&#x2F;&#x2F;ulanotes.netlify.app&#x2F;).">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="Ula">
 <meta name="twitter:card" content="summary">
@@ -150,13 +150,13 @@
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
   <p class="site-author-name" itemprop="name">Ula</p>
-  <div class="site-description" itemprop="description">Hello! :-)</div>
+  <div class="site-description" itemprop="description">Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).</div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-count">148</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -205,12 +205,208 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang>
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Kubernetes_basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/Kubernetes_basic/" class="post-title-link" itemprop="url">[Kubernetes] 架構, 節點及組件介紹</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-09-07 21:13:00" itemprop="dateCreated datePublished" datetime="2020-09-07T21:13:00+08:00">2020-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="簡介">簡介</h2>
+<p>官方定義:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/Kubernetes_basic/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang>
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Kafka-SSL-Encryption/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/Kafka-SSL-Encryption/" class="post-title-link" itemprop="url">[Kafka] server - client & client - server SSL 加密</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-09-04 12:00:00" itemprop="dateCreated datePublished" datetime="2020-09-04T12:00:00+08:00">2020-09-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Big-Data/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Kafka 目前支持 SSL、SASL/Kerberos、SASL/PLAIN 三種認證機制，這篇文章將紀錄如何在 Kafka broker 與 clinet 端建立 TLS/SSL 連線。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/Kafka-SSL-Encryption/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang>
     <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Zookeeper-Encryption3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -310,7 +506,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -413,7 +609,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -512,7 +708,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -612,7 +808,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -711,7 +907,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -810,7 +1006,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -909,7 +1105,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -973,210 +1169,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/Zookeeper-Dynamic-Configuration/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang>
-    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Zookeeper-ACL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wingardium Leviosa">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/Zookeeper-ACL/" class="post-title-link" itemprop="url">[Zookeeper] ACL</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-08-12 20:45:00" itemprop="dateCreated datePublished" datetime="2020-08-12T20:45:00+08:00">2020-08-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Big-Data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Big-Data/Zookeeper/" itemprop="url" rel="index"><span itemprop="name">Zookeeper</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Symbols count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Symbols count in article: </span>
-      <span>2.2k</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>2 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="ACL-Access-Control-List">ACL(Access Control List)</h2>
-<p>Zookeeper 對 znode 操作採用 ACL 進行了存取權限控制，類似於UNIX/Linux的文件權限機制。使用 <code>scheme:id:perm</code> 來標識，主要涵蓋 3 個方面：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/Zookeeper-ACL/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang>
-    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Hadoop-introduction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ula">
-      <meta itemprop="description" content="Hello! :-)">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wingardium Leviosa">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/Hadoop-introduction/" class="post-title-link" itemprop="url">[Hadoop] HDFS、MapReduce、Yarn 介紹</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2020-08-12 14:32:00" itemprop="dateCreated datePublished" datetime="2020-08-12T14:32:00+08:00">2020-08-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Big-Data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Big-Data/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Symbols count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Symbols count in article: </span>
-      <span>2.1k</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>2 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Hadoop 是一個能夠儲存並管理大量資料的分散式大數據處理平臺，其包含三大模組：</p>
-<ul>
-<li>HDFS</li>
-<li>MapReduce</li>
-<li>Yarn</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/Hadoop-introduction/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>

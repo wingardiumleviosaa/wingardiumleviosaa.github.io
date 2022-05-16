@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="上次紀錄了如何在 Ubuntu 透過 Virtualbox 使用 Vagrant，本篇文章記錄如何在 CentOS 透過 KVM 使用 Vagrant 自動化建立 VM。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Install KVM (libvert) by Vagrant on CentOS">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Install-KVM-libvertd-by-Vagrant-on-CentOS/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="上次紀錄了如何在 Ubuntu 透過 Virtualbox 使用 Vagrant，本篇文章記錄如何在 CentOS 透過 KVM 使用 Vagrant 自動化建立 VM。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/3vGJKRr.png">
+<meta property="article:published_time" content="2022-05-16T09:49:00.000Z">
+<meta property="article:modified_time" content="2022-05-16T09:49:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Vagrant">
+<meta property="article:tag" content="KVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/3vGJKRr.png">
+
+
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Install-KVM-libvertd-by-Vagrant-on-CentOS/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Install-KVM-libvertd-by-Vagrant-on-CentOS/","path":"Install-KVM-libvertd-by-Vagrant-on-CentOS/","title":"Install KVM (libvert) by Vagrant on CentOS"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Install KVM (libvert) by Vagrant on CentOS | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Prerequisite"><span class="nav-number">1.</span> <span class="nav-text">Prerequisite</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Plugin"><span class="nav-number">2.</span> <span class="nav-text">安裝 Plugin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E7%BE%A9-Vagrantfile"><span class="nav-number">3.</span> <span class="nav-text">定義 Vagrantfile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%95%9F%E5%8B%95"><span class="nav-number">4.</span> <span class="nav-text">啟動</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Call-to-virStoragePoolDefineXML-failed-operation-failed-Storage-source-conflict-with-pool-%E2%80%98images%E2%80%99"><span class="nav-number">5.</span> <span class="nav-text">Call to virStoragePoolDefineXML failed: operation failed: Storage source conflict with pool: ‘images’</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Call-to-virDomainCreateWithFlags-failed-Unable-to-get-index-for-interface-eth0-No-such-device"><span class="nav-number">6.</span> <span class="nav-text">Call to virDomainCreateWithFlags failed: Unable to get index for interface eth0: No such device</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Install-KVM-libvertd-by-Vagrant-on-CentOS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Install KVM (libvert) by Vagrant on CentOS
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-05-16 17:49:00" itemprop="dateCreated datePublished" datetime="2022-05-16T17:49:00+08:00">2022-05-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/DevOps/Vagrant/" itemprop="url" rel="index"><span itemprop="name">Vagrant</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>上次紀錄了如何在 Ubuntu 透過 Virtualbox 使用 Vagrant，本篇文章記錄如何在 CentOS 透過 KVM 使用 Vagrant 自動化建立 VM。</p>
+<span id="more"></span>
+<h3 id="Prerequisite">Prerequisite</h3>
+<ul>
+<li>安裝 KVM，請參考之前<a href="https://wingardiumleviosaa.github.io/KVM-virt-install-CentOS/">文章記錄</a></li>
+<li>安裝 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.vagrantup.com/downloads">Vagrant</a></li>
+</ul>
+<h3 id="安裝-Plugin">安裝 Plugin</h3>
+<ul>
+<li>vagrant-libvirt<br>
+用於支持 libvirt<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum install -y libvirt-devel</span><br><span class="line">vagrant plugin install vagrant-libvirt</span><br></pre></td></tr></table></figure>
+需要安裝好 libvirt-devel 才能安裝 vagrant-libvirt 插件，否則提示以下錯誤<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">libvirt library not found in default locations (RuntimeError)</span><br></pre></td></tr></table></figure>
+</li>
+<li>vagrant-mutate<br>
+用於將官方的 Vagrant guest box 轉換成 KVM 格式<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vagrant plugin install vagrant-mutate</span><br></pre></td></tr></table></figure>
+在 Vagrant 官方鏡像中，也有部分發行版直接提供了 libvirt 版本</li>
+</ul>
+<h3 id="定義-Vagrantfile">定義 Vagrantfile</h3>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">ENV[<span class="string">&quot;LC_ALL&quot;</span>] = <span class="string">&quot;en_US.UTF-8&quot;</span></span><br><span class="line"></span><br><span class="line">MASTER=<span class="number">3</span></span><br><span class="line">WORKER=<span class="number">2</span></span><br><span class="line"></span><br><span class="line">Vagrant.configure(<span class="string">&quot;2&quot;</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$script_ansible</span> = <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="string">    yum install -y net-tools git centos-release-ansible-29</span></span><br><span class="line"><span class="string">    yum install -y ansible</span></span><br><span class="line"><span class="string">    localectl set-locale LANG=en_US.UTF-8</span></span><br><span class="line"><span class="string">    source /etc/locale.conf</span></span><br><span class="line"><span class="string">    mkdir -p /root/.ssh</span></span><br><span class="line"><span class="string">    cp /home/vagrant/.ssh/authorized_keys /root/.ssh/</span></span><br><span class="line"><span class="string">    cp /home/vagrant/.ssh/id_rsa /root/.ssh/</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$script</span> = <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="string">    yum install -y net-tools</span></span><br><span class="line"><span class="string">    localectl set-locale LANG=zh_TW.UTF-8</span></span><br><span class="line"><span class="string">    source /etc/locale.conf</span></span><br><span class="line"><span class="string">    mkdir -p /root/.ssh</span></span><br><span class="line"><span class="string">    cp /home/vagrant/.ssh/authorized_keys /root/.ssh/</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">  config.ssh.insert_key = <span class="literal">false</span></span><br><span class="line">  config.vm.provider <span class="string">&quot;libvirt&quot;</span> <span class="keyword">do</span> <span class="params">|v|</span></span><br><span class="line">    v.memory = <span class="number">8192</span></span><br><span class="line">    v.cpus = <span class="number">4</span></span><br><span class="line">    v.storage_pool_name = <span class="string">&quot;images&quot;</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  (<span class="number">1</span>..MASTER).each <span class="keyword">do</span> <span class="params">|i|</span></span><br><span class="line">    config.vm.define <span class="string">&quot;master<span class="subst">#&#123;i&#125;</span>&quot;</span> <span class="keyword">do</span> <span class="params">|node|</span></span><br><span class="line">      node.vm.box = <span class="string">&quot;generic/centos7&quot;</span></span><br><span class="line">      node.vm.hostname = <span class="string">&quot;master<span class="subst">#&#123;i&#125;</span>&quot;</span></span><br><span class="line">      <span class="comment"># node.vm.network :private_network, ip: &quot;192.168.56.2#&#123;i&#125;&quot;, :netmask =&gt; &quot;255.255.255.0&quot;</span></span><br><span class="line">      node.vm.network <span class="string">&quot;public_network&quot;</span></span><br><span class="line">           <span class="symbol">:dev=&gt;<span class="string">&quot;br0&quot;</span></span></span><br><span class="line">      node.vm.synced_folder <span class="string">&quot;/root/k8sInstaller&quot;</span>, <span class="string">&quot;/etc/ansible/roles/k8sInstaller&quot;</span></span><br><span class="line">      node.vm.provision <span class="string">&quot;file&quot;</span>, <span class="symbol">source:</span> <span class="string">&quot;~/.vagrant.d/insecure_private_key&quot;</span>, <span class="symbol">destination:</span> <span class="string">&quot;~/.ssh/id_rsa&quot;</span></span><br><span class="line">      node.vm.provision <span class="symbol">:shell</span>, <span class="symbol">:inline</span> =&gt; <span class="variable">$script_ansible</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">(<span class="number">1</span>..WORKER).each <span class="keyword">do</span> <span class="params">|i|</span></span><br><span class="line">    config.vm.define <span class="string">&quot;worker<span class="subst">#&#123;i&#125;</span>&quot;</span> <span class="keyword">do</span> <span class="params">|node|</span></span><br><span class="line">      node.vm.box = <span class="string">&quot;generic/centos7&quot;</span></span><br><span class="line">      node.vm.hostname = <span class="string">&quot;worker<span class="subst">#&#123;i&#125;</span>&quot;</span></span><br><span class="line">      <span class="comment"># node.vm.network :private_network, ip: &quot;192.168.56.3#&#123;i&#125;&quot;, :netmask =&gt; &quot;255.255.255.0&quot;</span></span><br><span class="line">      node.vm.network <span class="string">&quot;public_network&quot;</span></span><br><span class="line">           <span class="symbol">:dev=&gt;<span class="string">&quot;br0&quot;</span></span></span><br><span class="line">      node.vm.provision <span class="symbol">:shell</span>, <span class="symbol">:inline</span> =&gt; <span class="variable">$script</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>更多 provider 設定可參考 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/vagrant-libvirt/vagrant-libvirt#vagrant-libvirt-provider">vagrant-libvert</a> 文檔。</p>
+<h3 id="啟動">啟動</h3>
+<p>執行 vagrant up 指令需要額外指定 provider 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vgrant up --provider=libvirt</span><br></pre></td></tr></table></figure>
+<p>或者在執行前設定 VAGRANT_DEFAULT_PROVIDER 環境變數：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export VAGRANT_DEFAULT_PROVIDER=libvirt</span><br></pre></td></tr></table></figure>
+<p>成功的話，可以看到虛擬機列表有五台用 vagrant 啟動的機器<br>
+<img src="https://imgur.com/3vGJKRr.png" alt></p>
+<h3 id="Call-to-virStoragePoolDefineXML-failed-operation-failed-Storage-source-conflict-with-pool-‘images’">Call to virStoragePoolDefineXML failed: operation failed: Storage source conflict with pool: ‘images’</h3>
+<p>CentOS 7 部署 kvm 使用 SELinux 增強模式，不能使用非默認的目錄來創建 VM 鏡像。Vagrant 會嘗試使用一個名為 default 的存儲池，如果不存在就會嘗試在 /var/lib/libvirt/images 上創建 defualt 存儲池。返回失敗的原因是已經在此為址創建了 images 儲存池。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">virsh pool-list --all</span><br><span class="line">Name                 State      Autostart</span><br><span class="line">-------------------------------------------</span><br><span class="line"> images               active     yes</span><br></pre></td></tr></table></figure>
+<p>直接定義 Vagrant 的存儲池使用images，在 Libvirt 配置中，有關 Porvider Options 中可以使用 storage_pool_name 設置 Libvirt 存儲池名字，也就是 box image 和 instance snapshoot 存儲位置。<br>
+在 Vagrantfile 中添加配置</p>
+<figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">&quot;2&quot;</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  ...</span><br><span class="line">  config.vm.provider <span class="symbol">:libvirt</span> <span class="keyword">do</span> <span class="params">|vm|</span></span><br><span class="line">    vm.storage_pool_name = <span class="string">&quot;images&quot;</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  ...</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>然後再次執行命令 <code>vagrant up --provider libvirt</code> 就可以成功安裝。</p>
+<h3 id="Call-to-virDomainCreateWithFlags-failed-Unable-to-get-index-for-interface-eth0-No-such-device">Call to virDomainCreateWithFlags failed: Unable to get index for interface eth0: No such device</h3>
+<p>如果網路使用 public network，Vagrant 預設使用來當 bridge 的網卡是 eth0，而發生該錯誤訊息代表本地機器中找不到 eth0 網卡，請在設定檔中加上 dev 指定網卡名稱。</p>
+<figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">Vagrant.configure(<span class="string">&quot;2&quot;</span>) <span class="keyword">do</span> <span class="params">|config|</span></span><br><span class="line">  ...</span><br><span class="line">  config.vm.network <span class="string">&quot;public_network&quot;</span></span><br><span class="line">        <span class="symbol">:dev</span> =&gt; <span class="string">&quot;br0&quot;</span></span><br><span class="line">  ...</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>其他參數可以參考 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/vagrant-libvirt/vagrant-libvirt#public-network-options">public network options</a></p>
+<h3 id="Reference">Reference</h3>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://huataihuang.gitbooks.io/cloud-atlas/content/virtual/vagrant/vagrant_libvirt_kvm.html">https://huataihuang.gitbooks.io/cloud-atlas/content/virtual/vagrant/vagrant_libvirt_kvm.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vagrant/" rel="tag"># Vagrant</a>
+              <a href="/tags/KVM/" rel="tag"># KVM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Apache-Redirect-http-to-https/" rel="prev" title="Apache Redirect http to https">
+                  <i class="fa fa-chevron-left"></i> Apache Redirect http to https
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Using-Router-As-Switch/" rel="next" title="把 Router 當 Switch 用">
+                  把 Router 當 Switch 用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

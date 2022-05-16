@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://wingardiumleviosaa.github.io/Using-Router-As-Switch/</loc>
+    <lastmod>2022-05-16</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Install-KVM-libvertd-by-Vagrant-on-CentOS/</loc>
+    <lastmod>2022-05-16</lastmod>
+  </url>
+  <url>
     <loc>https://wingardiumleviosaa.github.io/Apache-Redirect-http-to-https/</loc>
     <lastmod>2022-05-15</lastmod>
   </url>

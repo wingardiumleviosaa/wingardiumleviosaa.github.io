@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://wingardiumleviosaa.github.io/Using-Router-As-Switch/</loc>
+    
+    <lastmod>2022-05-16</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Install-KVM-libvertd-by-Vagrant-on-CentOS/</loc>
+    
+    <lastmod>2022-05-16</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://wingardiumleviosaa.github.io/Apache-Redirect-http-to-https/</loc>
     
     <lastmod>2022-05-15</lastmod>
@@ -1089,14 +1103,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Network/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/php/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/php/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/Network/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1145,6 +1159,13 @@
   </url>
   
   <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/Docker/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://wingardiumleviosaa.github.io/tags/CentOS/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -1166,13 +1187,6 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Docker/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://wingardiumleviosaa.github.io/tags/datapipeline/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -1181,13 +1195,6 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/tags/data-pipeline/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Docker-Compose/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1208,7 +1215,7 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/DOM/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/Docker-Compose/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1230,6 +1237,13 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/tags/Git/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/DOM/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1327,14 +1341,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/method/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/Golang/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Golang/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/method/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1348,13 +1362,6 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/HTML/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://wingardiumleviosaa.github.io/tags/SEO/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -1362,7 +1369,7 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Hexo/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/HTML/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1397,14 +1404,7 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/docker/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/docker-compose/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/Hexo/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1432,7 +1432,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Harbor/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/docker/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/docker-compose/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1446,21 +1453,28 @@
   </url>
   
   <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/Harbor/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/Vagrant/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/KVM/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://wingardiumleviosaa.github.io/tags/JRE/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/javascript/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/debugging/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1475,6 +1489,20 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/tags/JVM/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/javascript/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/debugging/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1509,13 +1537,6 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/KVM/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://wingardiumleviosaa.github.io/tags/Rocky/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -1530,14 +1551,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/MetalLB/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/page-cache/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/page-cache/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/MetalLB/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1600,13 +1621,6 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Node-RED/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://wingardiumleviosaa.github.io/tags/MySQL-Cluster/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -1615,6 +1629,13 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/tags/NDB-Clster/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/Node-RED/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1670,14 +1691,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/SSL/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/CDC/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/CDC/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/SSL/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1761,7 +1782,7 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/Vagrant/</loc>
+    <loc>https://wingardiumleviosaa.github.io/tags/VirtualBox/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1783,13 +1804,6 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/tags/jest/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/VirtualBox/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1838,20 +1852,6 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/leetcode/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/tags/NiFi/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://wingardiumleviosaa.github.io/tags/nginx/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -1874,6 +1874,20 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/tags/https/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/leetcode/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/tags/NiFi/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1987,14 +2001,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/OS/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/OS/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2029,14 +2043,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/Hexo/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/Big-Data/Hadoop/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/Big-Data/Hadoop/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/Hexo/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2064,6 +2078,20 @@
   </url>
   
   <url>
+    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/Vagrant/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/Docker/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://wingardiumleviosaa.github.io/categories/Programming/Javascript/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -2078,7 +2106,7 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/Docker/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/Database/Oracle/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2093,13 +2121,6 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/categories/Big-Data/Kafka/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/Database/Oracle/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2127,14 +2148,14 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/Programming/Node-RED/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/Database/MySQL/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/Database/MySQL/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/Programming/Node-RED/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2155,6 +2176,13 @@
   </url>
   
   <url>
+    <loc>https://wingardiumleviosaa.github.io/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/TCP-IP/</loc>
+    <lastmod>2022-05-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://wingardiumleviosaa.github.io/categories/Frontend/SSL/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
@@ -2163,13 +2191,6 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/categories/Programming/Python/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/%E7%A8%8B%E5%BC%8F%E5%88%9D%E5%BF%83%E8%80%85/TCP-IP/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2197,7 +2218,7 @@
   </url>
   
   <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/Vagrant/</loc>
+    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/VirtualBox/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -2212,13 +2233,6 @@
   
   <url>
     <loc>https://wingardiumleviosaa.github.io/categories/SQA/</loc>
-    <lastmod>2022-05-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wingardiumleviosaa.github.io/categories/DevOps/VirtualBox/</loc>
     <lastmod>2022-05-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

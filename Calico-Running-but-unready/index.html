@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="環境說明  Kubernetes 1.20.10 Calico 3.23">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Calico Running but Unready (Ready 0&#x2F;1)">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Calico-Running-but-unready/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="環境說明  Kubernetes 1.20.10 Calico 3.23">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/gfqwGhG.png">
+<meta property="og:image" content="https://imgur.com/RhKQ9ei.png">
+<meta property="og:image" content="https://imgur.com/IHq4Sx8.png">
+<meta property="article:published_time" content="2022-05-19T00:53:00.000Z">
+<meta property="article:modified_time" content="2022-05-19T00:53:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Calico">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/gfqwGhG.png">
+
+
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Calico-Running-but-unready/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Calico-Running-but-unready/","path":"Calico-Running-but-unready/","title":"Calico Running but Unready (Ready 0/1)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Calico Running but Unready (Ready 0/1) | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%92%B0%E5%A2%83%E8%AA%AA%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">環境說明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%8C%AF%E8%AA%A4%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">錯誤描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0%E5%8F%8A%E8%A7%A3%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">原因及解法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">153</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Calico-Running-but-unready/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Calico Running but Unready (Ready 0/1)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-05-19 08:53:00" itemprop="dateCreated datePublished" datetime="2022-05-19T08:53:00+08:00">2022-05-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>518</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="環境說明">環境說明</h3>
+<ul>
+<li>Kubernetes 1.20.10</li>
+<li>Calico 3.23</li>
+</ul>
+<span id="more"></span>
+<h3 id="錯誤描述">錯誤描述</h3>
+<p>部署 calico 網絡後狀態雖為 Running，但 container 都無法成功運作，calico-controller 以及放在每個節點的 calico-node 皆無法初始化，如下圖<br>
+<img src="https://imgur.com/gfqwGhG.png" alt></p>
+<ul>
+<li>calico-kube-controllers 日誌</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2022-05-17 01:11:09.503 [FATAL][1] main.go 120: Failed to initialize Calico datastore error=Get <span class="string">&quot;https://10.254.0.1:443/apis/crd.projectcalico.org/v1/clusterinformations/default&quot;</span>: context deadline exceeded</span><br><span class="line">2022-05-17 01:11:09.962 [INFO][1] main.go 94: Loaded configuration from environment config=&amp;config.Config&#123;LogLevel:<span class="string">&quot;info&quot;</span>, WorkloadEndpointWorkers:1, ProfileWorkers:1, PolicyWorkers:1, NodeWorkers:1, Kubeconfig:<span class="string">&quot;&quot;</span>, DatastoreType:<span class="string">&quot;kubernetes&quot;</span>&#125;</span><br><span class="line">W0822 01:11:09.963646 1 client_config.go:615] Neither --kubeconfig nor --master was specified. Using the inClusterConfig. This might not work.</span><br><span class="line">2022-05-17 01:11:09.964 [INFO][1] main.go 115: Ensuring Calico datastore is initialized</span><br></pre></td></tr></table></figure>
+<ul>
+<li>calico-node 日誌</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2022-05-17 01:11:14.102 [WARNING][69] felix/health.go 211: Reporter is not ready. name=<span class="string">&quot;async_calc_graph&quot;</span></span><br><span class="line">2022-05-17 01:11:14.102 [WARNING][69] felix/health.go 211: Reporter is not ready. name=<span class="string">&quot;int_dataplane&quot;</span></span><br><span class="line">2022-05-17 01:11:14.103 [WARNING][69] felix/health.go 173: Health: not ready</span><br><span class="line">2022-05-17 01:11:14.540 [INFO][69] felix/watchercache.go 180: Full resync is required ListRoot=<span class="string">&quot;/calico/resources/v3/projectcalico.org/kubernetesendpointslices&quot;</span></span><br><span class="line">2022-05-17 01:11:14.544 [INFO][69] felix/watchercache.go 193: Failed to perform list of current data during resync ListRoot=<span class="string">&quot;/calico/resources/v3/projectcalico.org/kubernetesendpointslices&quot;</span> error=resource does not exist: KubernetesEndpointSlice with error: the server could not find the requested resource</span><br></pre></td></tr></table></figure>
+<h3 id="原因及解法">原因及解法</h3>
+<p>原因是因為安裝的 Calico 版本不相容於 Kubernetes，依據 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://projectcalico.docs.tigera.io/archive/v3.23/getting-started/kubernetes/requirements">Calico 官網</a> 的描述，3.23 版最低支援的 k8s 版本為 1.21，故發生該錯誤。<br>
+解決方法是將 Calico 重新部署為 3.21 版，以相容於 k8s 1.20 的環境</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s https://docs.projectcalico.org/manifests/calico.yaml |  kubectl delete -f -</span><br><span class="line">  configmap <span class="string">&quot;calico-config&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;bgpconfigurations.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;bgppeers.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;blockaffinities.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;caliconodestatuses.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;clusterinformations.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;felixconfigurations.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;globalnetworkpolicies.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;globalnetworksets.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;hostendpoints.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;ipamblocks.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;ipamconfigs.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;ipamhandles.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;ippools.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;ipreservations.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;kubecontrollersconfigurations.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;networkpolicies.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io <span class="string">&quot;networksets.crd.projectcalico.org&quot;</span> deleted</span><br><span class="line">  clusterrole.rbac.authorization.k8s.io <span class="string">&quot;calico-kube-controllers&quot;</span> deleted</span><br><span class="line">  clusterrolebinding.rbac.authorization.k8s.io <span class="string">&quot;calico-kube-controllers&quot;</span> deleted</span><br><span class="line">  clusterrole.rbac.authorization.k8s.io <span class="string">&quot;calico-node&quot;</span> deleted</span><br><span class="line">  clusterrolebinding.rbac.authorization.k8s.io <span class="string">&quot;calico-node&quot;</span> deleted</span><br><span class="line">  daemonset.apps <span class="string">&quot;calico-node&quot;</span> deleted</span><br><span class="line">  serviceaccount <span class="string">&quot;calico-node&quot;</span> deleted</span><br><span class="line">  deployment.apps <span class="string">&quot;calico-kube-controllers&quot;</span> deleted</span><br><span class="line">  serviceaccount <span class="string">&quot;calico-kube-controllers&quot;</span> deleted</span><br><span class="line">  error: unable to recognize <span class="string">&quot;STDIN&quot;</span>: no matches <span class="keyword">for</span> kind <span class="string">&quot;PodDisruptionBudget&quot;</span> <span class="keyword">in</span> version <span class="string">&quot;policy/v1&quot;</span></span><br></pre></td></tr></table></figure>
+<p>重新部署</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -s https://docs.projectcalico.org/v3.21/manifests/calico.yaml | kubectl apply -f -</span><br><span class="line">  configmap/calico-config created</span><br><span class="line">  Warning: apiextensions.k8s.io/v1beta1 CustomResourceDefinition is deprecated in v1.16+, unavailable in v1.22+; use apiextensions.k8s.io/v1 CustomResourceDefinition</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/ipamhandles.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/ipamconfigs.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/bgppeers.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/bgpconfigurations.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/ippools.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/hostendpoints.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/clusterinformations.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/globalnetworkpolicies.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/globalnetworksets.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.projectcalico.org created</span><br><span class="line">  customresourcedefinition.apiextensions.k8s.io/networksets.crd.projectcalico.org created</span><br><span class="line">  clusterrole.rbac.authorization.k8s.io/calico-kube-controllers created</span><br><span class="line">  clusterrolebinding.rbac.authorization.k8s.io/calico-kube-controllers created</span><br><span class="line">  clusterrole.rbac.authorization.k8s.io/calico-node created</span><br><span class="line">  clusterrolebinding.rbac.authorization.k8s.io/calico-node created</span><br><span class="line">  daemonset.apps/calico-node created</span><br><span class="line">  serviceaccount/calico-node created</span><br><span class="line">  deployment.apps/calico-kube-controllers created</span><br><span class="line">  serviceaccount/calico-kube-controllers created</span><br></pre></td></tr></table></figure>
+<p>部署依照環境配置大概需要等幾分鐘不等，過程中可能會造成其他 Pod 被重啟，觀察下來是正常的情況</p>
+<p><img src="https://imgur.com/RhKQ9ei.png" alt></p>
+<p>全部完成後就可以看到 pod 皆正常運作了</p>
+<p><img src="https://imgur.com/IHq4Sx8.png" alt></p>
+<h3 id="Reference">Reference</h3>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://projectcalico.docs.tigera.io/archive/v3.21/getting-started/kubernetes/requirements">https://projectcalico.docs.tigera.io/archive/v3.21/getting-started/kubernetes/requirements</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/opsnull/follow-me-install-kubernetes-cluster/issues/633">https://github.com/opsnull/follow-me-install-kubernetes-cluster/issues/633</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+              <a href="/tags/Calico/" rel="tag"># Calico</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Using-Router-As-Switch/" rel="prev" title="把 Router 當 Switch 用">
+                  <i class="fa fa-chevron-left"></i> 把 Router 當 Switch 用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/terraform-helm-release-set-array/" rel="next" title="[Terraform] helm_release Pass Array/List to Set's Value">
+                  [Terraform] helm_release Pass Array/List to Set's Value <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

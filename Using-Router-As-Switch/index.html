@@ -29,6 +29,7 @@
 <meta property="og:description" content="在公司架環境時，剛好遇到要讓幾台電腦都要直接連公司網段的情況，可是手上只有一台 router，如果把現有的 IP 網路線插在 WAN port 上，那麼插在 LAN port 的機器都會是虛擬網段，不符所需。後來 google 發現只要照下面二個步驟就可以讓 router 變身成 switch：">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://imgur.com/9tIpqnX.png">
+<meta property="og:image" content="https://imgur.com/R2T6Rzc.png">
 <meta property="article:published_time" content="2022-05-16T09:53:01.000Z">
 <meta property="article:modified_time" content="2022-05-16T09:53:01.000Z">
 <meta property="article:author" content="Ula">
@@ -134,7 +135,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -147,6 +148,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hub%E3%80%81Switch%E3%80%81Router-%E5%85%B1%E5%90%8C%E9%BB%9E%E5%9C%A8%E6%96%BC"><span class="nav-number">1.</span> <span class="nav-text">Hub、Switch、Router 共同點在於</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hub"><span class="nav-number">2.</span> <span class="nav-text">Hub</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#L2-Switch"><span class="nav-number">3.</span> <span class="nav-text">L2 Switch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#L3-Switch"><span class="nav-number">4.</span> <span class="nav-text">L3 Switch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Router"><span class="nav-number">5.</span> <span class="nav-text">Router</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -160,7 +162,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">148</span>
+          <span class="site-state-item-count">153</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -171,7 +173,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-count">128</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -244,7 +246,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Symbols count in article: </span>
-      <span>255</span>
+      <span>966</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -270,6 +272,19 @@
 以手上這台 totolink ac5 為例，只要將電腦跟公司內部 router 出來的實體網路線都插到中間三個 LAN port 即可。<br>
 <img src="https://imgur.com/9tIpqnX.png" alt></li>
 </ol>
+<p>補充一下基本知識<br>
+<img src="https://imgur.com/R2T6Rzc.png" alt></p>
+<h3 id="Hub、Switch、Router-共同點在於">Hub、Switch、Router 共同點在於</h3>
+<p>連結多台電腦、傳遞封包，延伸網路範圍、進行廣播。</p>
+<h3 id="Hub">Hub</h3>
+<p>集線器用一個 port 直接連到網路上，大部分是有 DHCP server，其餘電腦接在這集線器上，就能自動拿到 IP。集線器所有 port 共享一個頻寬，同樣的封包會傳送至集線器所連結的每一台電腦，造成過多的廣播封包，影響網路傳輸的整體效能。</p>
+<h3 id="L2-Switch">L2 Switch</h3>
+<p>交換器是一種負責網路橋接（network bridging）的網路硬體設備，會讀取網路卡的 MAC 位址來轉發資料，將資料準確地送達目的地。交換器的每個 port 都享有一個專屬的頻寬並具備資料交換功能，使得網路傳輸效能得於同一時間內所能傳輸的資料量較大</p>
+<h3 id="L3-Switch">L3 Switch</h3>
+<p>如果再把路由表的功能加入 L2 Switch，那麼它就會變成 L3 Switch，可以為 VLAN 建立適當的路由表，讓效能更加提昇。L3 的交換器又稱為 IP Switch 或 Switch Router，透過專屬的 ASIC 晶片來解析第三層表頭（如 IP Header）以達到傳送目的，因此通常可以提高到每秒百萬封包的效能以及數十個高速乙太網路連接埠之容量。L3 Switch 的路由表可以對 VLAN 做更有效的管制，讓廣播封包不會無限制的傳送。</p>
+<p>L3 Swtich 比較專注在企業內網的 LAN 環境應用，通常會有提供大量的 Port 數，對於封包轉送的效能高。</p>
+<h3 id="Router">Router</h3>
+<p>Router 通常定位在跨 WAN 的邊界連接用，可區隔不同的 IP 網段，可拿來當作 NAT、防火牆、負載平衡或 VoIP 等服務。通常不會有太多 Port (因為很少會有數十條 WAN 同時接進來)。雖軟體速度較硬體慢 (加上在網路協定中，越往上跑，封包要拆開越多層)，但在實際運用上較有彈性。</p>
 
     </div>
 
@@ -288,6 +303,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/Calico-Running-but-unready/" rel="next" title="Calico Running but Unready (Ready 0/1)">
+                  Calico Running but Unready (Ready 0/1) <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇文章記錄怎麼使用 cert-manager 為對外的 istio gateway 加上 https。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="為對外的 istio gateway 加上 https">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/add-https-to-istio-gateway/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="本篇文章記錄怎麼使用 cert-manager 為對外的 istio gateway 加上 https。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/L6mxIul.png">
+<meta property="og:image" content="https://imgur.com/yx8o1Xn.png">
+<meta property="og:image" content="https://imgur.com/EQdAiCO.png">
+<meta property="article:published_time" content="2022-05-19T01:11:00.000Z">
+<meta property="article:modified_time" content="2022-05-19T01:11:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Istio">
+<meta property="article:tag" content="cert-manager">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/L6mxIul.png">
+
+
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/add-https-to-istio-gateway/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/add-https-to-istio-gateway/","path":"add-https-to-istio-gateway/","title":"為對外的 istio gateway 加上 https"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>為對外的 istio gateway 加上 https | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%86%91%E8%AD%89%E5%88%86%E9%A1%9E"><span class="nav-number">1.</span> <span class="nav-text">憑證分類</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cert-manager"><span class="nav-number">2.</span> <span class="nav-text">cert-manager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Install"><span class="nav-number">3.</span> <span class="nav-text">Install</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Issuer"><span class="nav-number">4.</span> <span class="nav-text">Issuer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-Issuer"><span class="nav-number">5.</span> <span class="nav-text">Create Issuer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-Certificate"><span class="nav-number">6.</span> <span class="nav-text">Create Certificate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B8%A9%E5%9D%91%E5%9B%89"><span class="nav-number">7.</span> <span class="nav-text">踩坑囉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E5%BB%BA%E8%87%AA%E7%B0%BD%E6%86%91%E8%AD%89"><span class="nav-number">8.</span> <span class="nav-text">改建自簽憑證</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">153</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/add-https-to-istio-gateway/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          為對外的 istio gateway 加上 https
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-05-19 09:11:00" itemprop="dateCreated datePublished" datetime="2022-05-19T09:11:00+08:00">2022-05-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/Istio/" itemprop="url" rel="index"><span itemprop="name">Istio</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>2 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本篇文章記錄怎麼使用 cert-manager 為對外的 istio gateway 加上 https。</p>
+<span id="more"></span>
+<h3 id="憑證分類">憑證分類</h3>
+<ol>
+<li><strong>自簽憑證</strong>：某些不需要被公開存取、但希望達到資料傳輸能加密的內部服務，可以使用自簽憑證，Client 去存取的時候自己帶上 CA 憑證去驗證即可，例如 HashiCorp Vault, AWS RDS TLS 連線…等。</li>
+<li><strong>第三方 CA 機構簽發憑證</strong>：如果是公開的網路服務，就必須透過正規的 CA 機構來簽發，如需要收費的 Digicert, <a target="_blank" rel="external nofollow noopener noreferrer" href="http://SSL.com">SSL.com</a>, Symantec…等，或是免費的 Let’s Encrypt。</li>
+</ol>
+<h3 id="cert-manager">cert-manager</h3>
+<p><img src="https://imgur.com/L6mxIul.png" alt><br>
+cert-manager 是基於 Kubernetes 所開發的憑證管理工具，它可以可以幫忙發出來自各家的 TLS 憑證，例如上面所提到的 ACME (Let’s Encrypt), HashiCorp Vault, Venafi 或是自己簽發的憑證，而且它還可以確保 TLS 憑證一直維持在有效期限內。</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://medium.com/starbugs/%E4%BD%BF%E7%94%A8-cert-manager-%E7%AE%A1%E7%90%86-k8s-tls-%E6%86%91%E8%AD%89-ab6258af9195">Above Reference</a></p>
+<h3 id="Install">Install</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml</span><br><span class="line">$ kubectl get pods --namespace cert-manager</span><br><span class="line">  NAME                                       READY   STATUS    RESTARTS   AGE</span><br><span class="line">  cert-manager-5c6866597-zw7kh               1/1     Running   0          2m</span><br><span class="line">  cert-manager-cainjector-577f6d9fd7-tr77l   1/1     Running   0          2m</span><br><span class="line">  cert-manager-webhook-787858fcdb-nlzsq      1/1     Running   0          2m</span><br></pre></td></tr></table></figure>
+<h3 id="Issuer">Issuer</h3>
+<p>Issuer 用來頒發憑證，分為兩種資源類型：</p>
+<ul>
+<li>issuer：只作用於特定 namespace</li>
+<li>ClusterIssuer：作用於整個 k8s 集群</li>
+</ul>
+<p>cert-manager 有支援幾種的 issuer type：</p>
+<ul>
+<li>CA: 使用 x509 keypair 產生 certificate，存在 kubernetes secret</li>
+<li>Self Signed: 自簽 certificate</li>
+<li>ACME: 從 ACME (ex. Let’s Encrypt) server 取得 ceritificate</li>
+<li>Vault: 從 Vault PKI backend 頒發 certificate</li>
+<li>Venafi: Venafi Cloud</li>
+</ul>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://ithelp.ithome.com.tw/articles/10227274">Above Refenrence</a></p>
+<h3 id="Create-Issuer">Create Issuer</h3>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">cert-manager.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterIssuer</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="comment"># 創建的簽發機構的名稱，後面創建證書的時候會引用</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">letsencrypt-prod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">acme:</span></span><br><span class="line">  <span class="comment"># 證書快過期的時候會有郵件提醒，不過 cert-manager 會利用 acme 協議自動給我們重新頒發證書來續期</span></span><br><span class="line">    <span class="attr">email:</span> <span class="string">ulahsieh@nexaiot.com</span></span><br><span class="line">    <span class="attr">privateKeySecretRef:</span></span><br><span class="line">      <span class="comment"># Name of a secret used to store the ACME account private key 指示此簽發機構的私鑰將要存儲到哪個 Secret 中</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">letsencrypt-prod</span></span><br><span class="line">    <span class="comment"># The ACME server URL</span></span><br><span class="line">    <span class="attr">server:</span> <span class="string">https://acme-v02.api.letsencrypt.org/directory</span></span><br><span class="line">    <span class="attr">solvers:</span></span><br><span class="line">    <span class="comment"># 指示簽發機構使用 HTTP-01 的方式進行 acme 協議(還可以用 DNS 方式，acme 協議的目的是證明這台機器和域名都是屬於你的，然後才准許給你頒發證書)</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">http01:</span></span><br><span class="line">        <span class="attr">ingress:</span></span><br><span class="line">          <span class="attr">class:</span> <span class="string">istio</span></span><br></pre></td></tr></table></figure>
+<p>備註：</p>
+<ul>
+<li>letsencrypt 可以看到網路上有兩個不同名字的設定，一個是 letsencrypt-staging 用於測試，一個是 letsencrypt-prod 用於 production.</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ kubectl apply -f clusterIssuer.yaml</span><br><span class="line">$ kubectl describe clusterissuers.cert-manager.io</span><br></pre></td></tr></table></figure>
+<p>做完的時候發生了 server misbehaving 錯誤</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Events:</span><br><span class="line">  Type     Reason         Age                  From          Message</span><br><span class="line">  ----     ------         ----                 ----          -------</span><br><span class="line">  Warning  ErrInitIssuer  8m2s (x3 over 8m7s)  cert-manager  Error initializing issuer: Get <span class="string">&quot;https://acme-v02.api.letsencrypt.org/directory&quot;</span>: dial tcp: lookup acme-v02. api.letsencrypt.org on 10.96.0.10:53: server misbehaving</span><br></pre></td></tr></table></figure>
+<p>查了一下發現是 dns 解析的問題，便去自建的 dns server 改 /etc/named.conf 檔，發現在 option 中少加了 forwarders 欄位。</p>
+<p>forwarders 是指當本 DNS 解析不了的域名，要轉給誰來解析的意思，通常轉給再上一層，也就是外網本身的 DNS，簡單來說可直接使用 8.8.8.8，並添加 <code>allow-query any;</code>，讓集群內的網段都能來使用。</p>
+<p>改好之後回到 k8s 集群再次查看 clusterissuer 是否可以建成</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@k8sm1 cert-manager]<span class="comment"># kubectl describe clusterissuers.cert-manager.io</span></span><br><span class="line">Name:         letsencrypt-prod</span><br><span class="line">Namespace:</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  &lt;none&gt;</span><br><span class="line">API Version:  cert-manager.io/v1</span><br><span class="line">Kind:         ClusterIssuer</span><br><span class="line">Metadata:</span><br><span class="line">  Creation Timestamp:  2021-06-21T12:12:47Z</span><br><span class="line">  Generation:          1</span><br><span class="line">  Resource Version:    104200852</span><br><span class="line">  Self Link:           /apis/cert-manager.io/v1/clusterissuers/letsencrypt-prod</span><br><span class="line">  UID:                 f0e9ecc6-9a50-491c-af78-b88670885e18</span><br><span class="line">Spec:</span><br><span class="line">  Acme:</span><br><span class="line">    Email:            ulahsieh@nexaiot.com</span><br><span class="line">    Preferred Chain:</span><br><span class="line">    Private Key Secret Ref:</span><br><span class="line">      Name:  letsencrypt-prod</span><br><span class="line">    Server:  https://acme-v02.api.letsencrypt.org/directory</span><br><span class="line">    Solvers:</span><br><span class="line">      http01:</span><br><span class="line">        Ingress:</span><br><span class="line">          Class:  istio</span><br><span class="line">Status:</span><br><span class="line">  Acme:</span><br><span class="line">    Last Registered Email:  ulahsieh@nexaiot.com</span><br><span class="line">    Uri:                    https://acme-v02.api.letsencrypt.org/acme/acct/127768449</span><br><span class="line">  Conditions:</span><br><span class="line">    Last Transition Time:  2021-06-21T12:13:35Z</span><br><span class="line">    Message:               The ACME account was registered with the ACME server</span><br><span class="line">    Observed Generation:   1</span><br><span class="line">    Reason:                ACMEAccountRegistered</span><br><span class="line">    Status:                True</span><br><span class="line">    Type:                  Ready</span><br><span class="line">Events:                    &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="Create-Certificate">Create Certificate</h3>
+<p>透過 Issuer 申請 Certificate 憑證</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat istio-cert.yaml </span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">cert-manager.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Certificate</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">istio-cert</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">istio-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">commonName:</span> <span class="string">convergence.nexmasa.com</span></span><br><span class="line">  <span class="attr">dnsNames:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">convergence.nexmasa.com</span></span><br><span class="line">  <span class="attr">secretName:</span> <span class="string">istio-cert</span></span><br><span class="line">  <span class="attr">issuerRef:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">letsencrypt-prod</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">ClusterIssuer</span></span><br></pre></td></tr></table></figure>
+<p>說明：</p>
+<ul>
+<li>spec.secretName 指示證書最終存到哪個 Secret 中</li>
+<li>spec.issuerRef.kind 值為 ClusterIssuer 說明簽發機構不在本namespace 下，而是在全局</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://spec.issuerRef.name">spec.issuerRef.name</a> 我們創建的簽發機構的 Issuer 名稱</li>
+<li>spec.dnsNames 指示該證書的可以用於哪些域名</li>
+</ul>
+<h3 id="踩坑囉">踩坑囉</h3>
+<p>部屬 certificate 後一直卡在跟 letsencrypt issueing 這塊，錯誤訊息是:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ kubectl describe certificate -n istio-system istio-cert</span><br><span class="line">$ kubectl get event -n istio-system</span><br><span class="line">30s         Normal    Issuing           certificate/istio-cert                            Issuing certificate as Secret does not exist</span><br><span class="line">29s         Normal    Generated         certificate/istio-cert                            Stored new private key <span class="keyword">in</span> temporary Secret resource <span class="string">&quot;istio-cert-hrrgb&quot;</span></span><br><span class="line">29s         Normal    Requested         certificate/istio-cert                            Created new CertificateRequest resource <span class="string">&quot;istio-cert-89tj8&quot;</span></span><br><span class="line">3s          Warning   Failed            certificate/istio-cert                            The certificate request has failed to complete and will be retried: Failed to <span class="built_in">wait</span> <span class="keyword">for</span> order resource <span class="string">&quot;istio-     cert-89tj8-2838533447&quot;</span> to become ready: order is <span class="keyword">in</span> <span class="string">&quot;invalid&quot;</span> state:</span><br></pre></td></tr></table></figure>
+<p>試了很久，發現官網有寫 debug 過程，才發現要去看 challenge 的 log</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://cert-manager.io/docs/faq/acme/">https://cert-manager.io/docs/faq/acme/</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">$</span> <span class="string">kubectl</span> <span class="string">describe</span> <span class="string">challenges.acme.cert-manager.io</span> <span class="string">-n</span> <span class="string">istio-system</span> <span class="string">istio-cert-22gl9-2838533447-3373762545</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">Events:</span></span><br><span class="line">  <span class="string">Type</span>     <span class="string">Reason</span>     <span class="string">Age</span>   <span class="string">From</span>          <span class="string">Message</span></span><br><span class="line">  <span class="string">----</span>     <span class="string">------</span>     <span class="string">----</span>  <span class="string">----</span>          <span class="string">-------</span></span><br><span class="line">  <span class="string">Normal</span>   <span class="string">Started</span>    <span class="string">32m</span>   <span class="string">cert-manager</span>  <span class="string">Challenge</span> <span class="string">scheduled</span> <span class="string">for</span> <span class="string">processing</span></span><br><span class="line">  <span class="string">Normal</span>   <span class="string">Presented</span>  <span class="string">32m</span>   <span class="string">cert-manager</span>  <span class="string">Presented</span> <span class="string">challenge</span> <span class="string">using</span> <span class="string">HTTP-01</span> <span class="string">challenge</span> <span class="string">mechanism</span></span><br><span class="line">  <span class="attr">Warning  Failed     32m   cert-manager  Accepting challenge authorization failed: acme: authorization error for convergence.nexmasa.com: 400 urn:ietf:params:acme:error:                                  dns: DNS problem:</span> <span class="string">NXDOMAIN</span> <span class="string">looking</span> <span class="string">up</span> <span class="string">A</span> <span class="string">for</span> <span class="string">convergence.nexmasa.com</span> <span class="bullet">-</span> <span class="string">check</span> <span class="string">that</span> <span class="string">a</span> <span class="string">DNS</span> <span class="string">record</span> <span class="string">exists</span> <span class="string">for</span> <span class="string">this</span> <span class="string">domain</span></span><br></pre></td></tr></table></figure>
+<p>然後找了一下解答發現，letsencrypt 只適合用在網際網路存取到的 DNS 啊 … = =</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/jetstack/cert-manager/issues/3543">https://github.com/jetstack/cert-manager/issues/3543</a></p>
+<blockquote>
+<p>This error comes from Let’s Encrypt which cannot reach your domain (it tries to as .int is a public known TLD).<br>
+In order for Let’s Encrypt to work they need to have public access to verify the ownership of your domain.<br>
+For internal only domains you might want to look into using an internal CA.</p>
+</blockquote>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://serverfault.com/questions/1048678/check-that-a-dns-record-exists-for-this-domain">https://serverfault.com/questions/1048678/check-that-a-dns-record-exists-for-this-domain</a></p>
+<blockquote>
+<p>domain names that are in the global DNS tree</p>
+</blockquote>
+<p>不過這邊還是可以記錄幾篇可以參考使用 letsencrypt 的文章</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.qikqiak.com/k8strain/istio/cert-manager/">https://www.qikqiak.com/k8strain/istio/cert-manager/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://medium.com/intelligentmachines/istio-https-traffic-secure-your-service-mesh-using-ssl-certificate-ac20ec2b6cd6">https://medium.com/intelligentmachines/istio-https-traffic-secure-your-service-mesh-using-ssl-certificate-ac20ec2b6cd6</a></li>
+</ul>
+<h3 id="改建自簽憑證">改建自簽憑證</h3>
+<ul>
+<li>建立 Issuer</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">&lt;(echo</span> <span class="string">&quot;</span></span><br><span class="line"><span class="string">apiVersion: cert-manager.io/v1</span></span><br><span class="line"><span class="string">kind: Issuer</span></span><br><span class="line"><span class="string">metadata:</span></span><br><span class="line"><span class="string">  name: selfsigned</span></span><br><span class="line"><span class="string">  namespace: istio-system</span></span><br><span class="line"><span class="string">spec:</span></span><br><span class="line"><span class="string">  selfSigned: &#123;&#125;</span></span><br><span class="line"><span class="string">&quot;</span><span class="string">)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>建立 Certificate</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="string">&lt;(echo</span> <span class="string">&#x27;</span></span><br><span class="line"><span class="string">apiVersion: cert-manager.io/v1</span></span><br><span class="line"><span class="string">kind: Certificate</span></span><br><span class="line"><span class="string">metadata:</span></span><br><span class="line"><span class="string">  name: selfsigned-crt</span></span><br><span class="line"><span class="string">  namespace: istio-system</span></span><br><span class="line"><span class="string">spec:</span></span><br><span class="line"><span class="string">  secretName: tls-secret</span></span><br><span class="line"><span class="string">  duration: 175200h</span></span><br><span class="line"><span class="string">  renewBefore: 12h</span></span><br><span class="line"><span class="string">  issuerRef:</span></span><br><span class="line"><span class="string">    kind: Issuer</span></span><br><span class="line"><span class="string">    name: selfsigned</span></span><br><span class="line"><span class="string">  commonName: &quot;convergence.nexmasa.com&quot;</span></span><br><span class="line"><span class="string">  isCA: true</span></span><br><span class="line"><span class="string">  dnsNames:</span></span><br><span class="line"><span class="string">  - &quot;convergence.nexmasa.com&quot;</span></span><br><span class="line"><span class="string">&#x27;</span><span class="string">)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>查看憑證及金鑰的有效性</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get secrets/tls-secret -n istio-system -o <span class="string">&quot;jsonpath=&#123;.data[&#x27;tls\.crt&#x27;]&#125;&quot;</span> | base64 -d | openssl x509 -text -noout</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/yx8o1Xn.png" alt></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get secrets/tls-secret -n istio-system -o <span class="string">&quot;jsonpath=&#123;.data[&#x27;tls\.key&#x27;]&#125;&quot;</span> | base64 -D | openssl rsa -check</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/EQdAiCO.png" alt></p>
+<ul>
+<li>為服務加上憑證<br>
+修改 istio gateway，加上 https 的 protocol 並指定上面建立的 Secret Name。</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Gateway</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">converg-api-gw</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">converg-api</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">istio:</span> <span class="string">ingressgateway</span></span><br><span class="line">  <span class="attr">servers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">    <span class="attr">port:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">Port-80-M55Sa</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTP</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">    <span class="attr">port:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">https</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">443</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTPS</span></span><br><span class="line">    <span class="attr">tls:</span></span><br><span class="line">      <span class="attr">credentialName:</span> <span class="string">tls-secret</span></span><br><span class="line">      <span class="attr">mode:</span> <span class="string">SIMPLE</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Istio/" rel="tag"># Istio</a>
+              <a href="/tags/cert-manager/" rel="tag"># cert-manager</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/terraform-helm-release-set-array/" rel="prev" title="[Terraform] helm_release Pass Array/List to Set's Value">
+                  <i class="fa fa-chevron-left"></i> [Terraform] helm_release Pass Array/List to Set's Value
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/MongoDB-update-the-document/" rel="next" title="MongoDB 一次為舊有資料加上新增欄位">
+                  MongoDB 一次為舊有資料加上新增欄位 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

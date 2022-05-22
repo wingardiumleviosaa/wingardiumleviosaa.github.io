@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://wingardiumleviosaa.github.io/Helm-Migrate-stable-nginx-ingress-to-ingress-nginx/</loc>
+    <lastmod>2022-05-22</lastmod>
+  </url>
+  <url>
     <loc>https://wingardiumleviosaa.github.io/Kubernetes-Delete-Worker-Node/</loc>
     <lastmod>2022-05-19</lastmod>
   </url>
@@ -271,6 +275,10 @@
   <url>
     <loc>https://wingardiumleviosaa.github.io/Terraform-connection-refused-Error/</loc>
     <lastmod>2021-08-29</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Kubernetes-upgrade/</loc>
+    <lastmod>2021-08-22</lastmod>
   </url>
   <url>
     <loc>https://wingardiumleviosaa.github.io/Python-system-proformance-monitor/</loc>

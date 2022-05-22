@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="紀錄在現有 kubernetes 1.17 集群升級到 1.20 的過程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes 升級紀錄">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Kubernetes-upgrade/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="紀錄在現有 kubernetes 1.17 集群升級到 1.20 的過程。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/0nBoLHn.png">
+<meta property="og:image" content="https://imgur.com/yVk7FeI.png">
+<meta property="og:image" content="https://imgur.com/tthRTKH.png">
+<meta property="og:image" content="https://imgur.com/OMmi0Jk.png">
+<meta property="og:image" content="https://imgur.com/5jbXQGI.png">
+<meta property="og:image" content="https://imgur.com/w0o2djB.png">
+<meta property="article:published_time" content="2021-08-22T13:29:00.000Z">
+<meta property="article:modified_time" content="2021-08-22T13:29:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/0nBoLHn.png">
+
+
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Kubernetes-upgrade/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Kubernetes-upgrade/","path":"Kubernetes-upgrade/","title":"Kubernetes 升級紀錄"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kubernetes 升級紀錄 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%92%B0%E5%A2%83%E8%AA%AA%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">環境說明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kubernetes-Non-Active-Branch-History"><span class="nav-number">2.</span> <span class="nav-text">Kubernetes Non-Active Branch History</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%96%E5%82%99%E5%8D%87%E7%B4%9A"><span class="nav-number">3.</span> <span class="nav-text">準備升級</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E5%8D%87%E7%B4%9A%E7%9A%84%E5%BF%85%E8%A6%81"><span class="nav-number">3.1.</span> <span class="nav-text">版本升級的必要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%87%E7%B4%9A%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85"><span class="nav-number">3.2.</span> <span class="nav-text">升級注意事項</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%82%99%E4%BB%BD-etcd"><span class="nav-number">3.3.</span> <span class="nav-text">備份 etcd</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%96%8B%E5%A7%8B%E5%8D%87%E7%B4%9A"><span class="nav-number">4.</span> <span class="nav-text">開始升級</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-17-13-1-18-20"><span class="nav-number">4.1.</span> <span class="nav-text">1.17.13 ~ 1.18.20</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BB%E7%AF%80%E9%BB%9E"><span class="nav-number">4.1.1.</span> <span class="nav-text">主節點</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E7%AF%80%E9%BB%9E"><span class="nav-number">4.1.2.</span> <span class="nav-text">工作節點</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%9E-1-18-20-%E5%8D%87%E7%B4%9A%E5%88%B0-1-19-12"><span class="nav-number">4.2.</span> <span class="nav-text">從 1.18.20 升級到 1.19.12</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%9E-1-19-12-%E5%8D%87%E7%B4%9A%E5%88%B0-1-20-10"><span class="nav-number">4.3.</span> <span class="nav-text">從 1.19.12 升級到 1.20.10</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">155</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Kubernetes-upgrade/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! I am Ula. :-) Here's my travelogue - [ula's note](https://ulanotes.netlify.app/).">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes 升級紀錄
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-08-22 21:29:00" itemprop="dateCreated datePublished" datetime="2021-08-22T21:29:00+08:00">2021-08-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>紀錄在現有 kubernetes 1.17 集群升級到 1.20 的過程。</p>
+<span id="more"></span>
+<h3 id="環境說明">環境說明</h3>
+<ul>
+<li>集群配置</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>主機名</th>
+<th>系統</th>
+<th>IP Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vip</td>
+<td>Server   Load Balancer (SLB)</td>
+<td>10.1.5.140</td>
+</tr>
+<tr>
+<td>master1</td>
+<td>CentOS 7.8</td>
+<td>10.1.5.141</td>
+</tr>
+<tr>
+<td>Worker1</td>
+<td>CentOS 7.8</td>
+<td>10.1.5.142</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>當前運行版本</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>組件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kubeadm</td>
+<td>v1.17.13</td>
+</tr>
+<tr>
+<td>kubelet</td>
+<td>v1.17.13</td>
+</tr>
+<tr>
+<td>kubectl</td>
+<td>v1.17.13</td>
+</tr>
+<tr>
+<td>Container   Runtime - Docker</td>
+<td>v20.10.7</td>
+</tr>
+<tr>
+<td>etcd</td>
+<td>V3.4.3-0</td>
+</tr>
+<tr>
+<td>kube-apiserver</td>
+<td>v1.17.17</td>
+</tr>
+<tr>
+<td>kube-controller-manager</td>
+<td>v1.17.17</td>
+</tr>
+<tr>
+<td>kube-proxy</td>
+<td>v1.17.17</td>
+</tr>
+<tr>
+<td>kube-scheduler</td>
+<td>v1.17.17</td>
+</tr>
+<tr>
+<td>coredns</td>
+<td>v1.6.5</td>
+</tr>
+<tr>
+<td>pause</td>
+<td>v3.1</td>
+</tr>
+</tbody>
+</table>
+<p>查看版本的命令如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm version</span><br><span class="line">kubelet --version</span><br><span class="line">kubectl version</span><br><span class="line">kubectl get node master1 -o yaml</span><br></pre></td></tr></table></figure>
+<h3 id="Kubernetes-Non-Active-Branch-History">Kubernetes Non-Active Branch History</h3>
+<p>目前使用的 1.17 版已在 2021-01-13 EOL，final patch release 在 1.17.17，請參考官方 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/kubernetes/website/blob/main/content/en/releases/patch-releases.md#non-active-branch-history">repo</a> 說明。</p>
+<h3 id="準備升級">準備升級</h3>
+<h4 id="版本升級的必要">版本升級的必要</h4>
+<ul>
+<li>對於 Kubernetes 集群的使用者：</li>
+</ul>
+<p>更新的版本能有更新的功能、更加全面的安全補丁以及諸多的bugfix。</p>
+<ul>
+<li>對於 Kubernetes 集群的運維者：</li>
+</ul>
+<p>通過集群升級功能可以拉齊所管理的集群版本，減少集群版本的碎片化，從而減少管理成本和維護成本。</p>
+<h4 id="升級注意事項">升級注意事項</h4>
+<ul>
+<li>升級僅支持一個小版本號。也就是說，只能從 1.7 升級到 1.8 的最新版本，或是從 1.17.13 升級到 1.17.17，而不能從 1.7 直接升級到 1.9。</li>
+<li>一次更新一個節點，確保 Kubernetes 功能不會因為更新而中斷。</li>
+<li>升級後所有容器都會被重啟，避免服務中斷，需確保應用程式使用進階的 Kubernetes API 建立，如 Deployment，或是利用副本機制。</li>
+<li>kubeadm upgrade 不會影響工作負載，只會涉及Kubernetes 內部的組件，但為保險起見，仍然可以先備份 etcd 的狀態。</li>
+</ul>
+<h4 id="備份-etcd">備份 etcd</h4>
+<blockquote>
+<p>Snapshot 又稱為快照，就像照相一樣，在某個時間點，將硬碟目前的整個狀態儲存起來，以作為將來還原的備份依據。<br>
+Snapshot 是幾乎所有的儲存服務設備都會提供的功能，就像是幫你硬碟上的資料照張像一樣，把這個目前的狀態記錄下來，以備將來還原之用。</p>
+</blockquote>
+<p><code>etcd</code> 的備份有兩種方式：</p>
+<ol>
+<li>使用 etcdctl snapshot save 進行備份</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ kubectl -n kube-system <span class="built_in">exec</span> -it etcd-master1 -- sh -c <span class="string">&quot;ETCDCTL_API=3 ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt ETCDCTL_CERT=/etc/kubernetes/pki/etcd/server.crt ETCDCTL_KEY=/etc/kubernetes/pki/etcd/server.key etcdctl --endpoints=https://127.0.0.1:2379 snapshot save /var/lib/etcd/snapshot1.db&quot;</span></span><br></pre></td></tr></table></figure>
+<p>使用 etcdctl snapshot status查看備份</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ kubectl -n kube-system <span class="built_in">exec</span> -it etcd-master1 -- sh -c <span class="string">&quot;ETCDCTL_API=3  ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt ETCDCTL_CERT=/etc/kubernetes/pki/etcd/server.crt ETCDCTL_KEY=/etc/kubernetes/pki/etcd/server.key etcdctl --endpoints=https://127.0.0.1:2379 snapshot status -w table /var/lib/etcd/snapshot.db&quot;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/0nBoLHn.png" alt><br>
+檢視備份檔</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ls /var/lib/etcd/</span><br><span class="line">member  snapshot.db</span><br><span class="line">$ mkdir ~/backup</span><br><span class="line">$ cp /var/lib/etcd/snapshot.db ~/backup/	</span><br><span class="line"><span class="comment"># 備份 etcd 核心資料檔案</span></span><br><span class="line">$ cp -r /etc/kubernetes/pki/etcd <span class="variable">$HOME</span>/backup/</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用 docker etcd image 連線進入 etcd 內部下 command</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mkdir -vp /data/backup</span><br><span class="line">$ docker run --rm                                    \</span><br><span class="line">-v /data/backup:/backup                              \</span><br><span class="line">-v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd \</span><br><span class="line">--env ETCDCTL_API=3                                  \</span><br><span class="line">registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.4.13-0 \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl --endpoints=https://192.168.12.226:2379 \</span></span><br><span class="line"><span class="string">--cacert=/etc/kubernetes/pki/etcd/ca.crt                  \</span></span><br><span class="line"><span class="string">--key=/etc/kubernetes/pki/etcd/healthcheck-client.key     \</span></span><br><span class="line"><span class="string">--cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt    \</span></span><br><span class="line"><span class="string">snapshot save /backup/etcd-snapshot-1.19.13.db&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="開始升級">開始升級</h3>
+<h4 id="1-17-13-1-18-20">1.17.13 ~ 1.18.20</h4>
+<h5 id="主節點">主節點</h5>
+<p>確認可升級版本與升級方案</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yum list --showduplicates kubeadm --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure>
+<p>通過以上命令查詢到 1.18 當前最新版是 1.18.20-0 版本。master 如有三個節點可先從 master3 節點開始升級。</p>
+<p><img src="https://imgur.com/yVk7FeI.png" alt></p>
+<p>yum 升级 kubernetes 插件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ yum install kubeadm-1.18.20-0 kubelet-1.18.20-0 kubectl-1.18.20-0 --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure>
+<p>騰空節點檢查集群是否可升級</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ kubectl drain master1 --ignore-daemonsets</span><br><span class="line">$ kubeadm upgrade plan</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/tthRTKH.png" alt></p>
+<p>升級</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ kubeadm upgrade apply v1.18.20</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/OMmi0Jk.png" alt></p>
+<p>重啟 kubelet 取消節點保護</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ systemctl daemon-reload</span><br><span class="line">$ systemctl restart kubelet</span><br><span class="line">$ kubectl uncordon master1</span><br><span class="line">$ kubectl get nodes</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/5jbXQGI.png" alt></p>
+<p>經測試後雖然測試環境的集群的 master 只有一個，但升級單一這個 master 後好像不會造成 Pod 的影響。<br>
+<img src="https://imgur.com/w0o2djB.png" alt></p>
+<h5 id="工作節點">工作節點</h5>
+<p>切換到 worker node，yum升级kubernetes插件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在 worker node 節點操作</span></span><br><span class="line">$ ssh worker</span><br><span class="line">$ yum install kubeadm-1.18.20-0 kubelet-1.18.20-0 kubectl-1.18.20-0 --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure>
+<p>將節點標記為不可調度並逐出工作負載。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># master1</span></span><br><span class="line">$ kubectl drain worker1 --ignore-daemonsets</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以看見與下類似的輸出：</span></span><br><span class="line">node/ip-172-31-85-18 cordoned</span><br><span class="line">WARNING: ignoring DaemonSet-managed Pods: kube-system/kube-proxy-dj7d7, kube-system/weave-net-z65qx</span><br><span class="line">node/ip-172-31-85-18 drained</span><br></pre></td></tr></table></figure>
+<p>升級</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># worker1</span></span><br><span class="line">$ kubeadm upgrade node</span><br></pre></td></tr></table></figure>
+<p>重啟kubelet 並取消對節點的保護</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># worker1</span></span><br><span class="line">$ systemctl daemon-reload</span><br><span class="line">$ systemctl restart kubelet</span><br><span class="line"><span class="comment"># master1</span></span><br><span class="line">$ kubectl uncordon worker1</span><br><span class="line"><span class="comment"># 通過將節點標記為可調度，讓節點重新上線，如果有做保護節點的步驟的話在做。</span></span><br><span class="line">$ kubectl uncordon worker1</span><br></pre></td></tr></table></figure>
+<h4 id="從-1-18-20-升級到-1-19-12">從 1.18.20 升級到 1.19.12</h4>
+<p>重複以上動作</p>
+<h4 id="從-1-19-12-升級到-1-20-10">從 1.19.12 升級到 1.20.10</h4>
+<p>重複以上動作</p>
+<h3 id="Reference">Reference</h3>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://cloud.tencent.com/developer/article/1848150">https://cloud.tencent.com/developer/article/1848150</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://v1-18.docs.kubernetes.io/zh/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/">https://v1-18.docs.kubernetes.io/zh/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://xie.infoq.cn/article/6e47d96d4c4a4c6d47852adc8">https://xie.infoq.cn/article/6e47d96d4c4a4c6d47852adc8</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.796t.com/article.php?id=260536">https://www.796t.com/article.php?id=260536</a> for etcd backup</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"># Kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Python-system-proformance-monitor/" rel="prev" title="[Python] 系統效能監測">
+                  <i class="fa fa-chevron-left"></i> [Python] 系統效能監測
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Terraform-connection-refused-Error/" rel="next" title="Terraform connection refused Error">
+                  Terraform connection refused Error <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

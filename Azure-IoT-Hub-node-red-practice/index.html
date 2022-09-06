@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/ula-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/u3-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/u3-16.png">
+  <link rel="mask-icon" href="/images/ula-logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,700,700italic%7CAmatic+SC:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,500,700&display=swap&subset=chinese-traditional" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wingardiumleviosaa.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":"ture","bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇記錄如何使用 Node-Red 實作 Azure IoT Hub 的資料傳輸。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure IoT Hub node-red 實做">
+<meta property="og:url" content="https://wingardiumleviosaa.github.io/Azure-IoT-Hub-node-red-practice/">
+<meta property="og:site_name" content="Wingardium Leviosa">
+<meta property="og:description" content="本篇記錄如何使用 Node-Red 實作 Azure IoT Hub 的資料傳輸。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/ioBi49C.png">
+<meta property="og:image" content="https://imgur.com/3o16CS1.png">
+<meta property="og:image" content="https://imgur.com/vzQ65M2.png">
+<meta property="og:image" content="https://imgur.com/F8foKFR.png">
+<meta property="og:image" content="https://imgur.com/8MFPMbM.png">
+<meta property="og:image" content="https://imgur.com/JlPVBPT.png">
+<meta property="og:image" content="https://imgur.com/zuatlpk.png">
+<meta property="og:image" content="https://imgur.com/9C53Qoa.png">
+<meta property="og:image" content="https://imgur.com/Tg5Noge.png">
+<meta property="og:image" content="https://imgur.com/OjqPc7X.png">
+<meta property="og:image" content="https://imgur.com/At881eD.png">
+<meta property="og:image" content="https://imgur.com/gbgRCqm.png">
+<meta property="og:image" content="https://imgur.com/QxkXcvr.png">
+<meta property="og:image" content="https://imgur.com/wj3pOii.png">
+<meta property="og:image" content="https://imgur.com/vpVFzyT.png">
+<meta property="article:published_time" content="2022-05-30T02:07:00.000Z">
+<meta property="article:modified_time" content="2022-05-30T02:07:00.000Z">
+<meta property="article:author" content="Ula">
+<meta property="article:tag" content="Node-RED">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/ioBi49C.png">
+
+
+<link rel="canonical" href="https://wingardiumleviosaa.github.io/Azure-IoT-Hub-node-red-practice/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://wingardiumleviosaa.github.io/Azure-IoT-Hub-node-red-practice/","path":"Azure-IoT-Hub-node-red-practice/","title":"Azure IoT Hub node-red 實做"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Azure IoT Hub node-red 實做 | Wingardium Leviosa</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Wingardium Leviosa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Memory Leak</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="Searching..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Node-red"><span class="nav-number">1.</span> <span class="nav-text">安裝 Node-red</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-IoT-Hub"><span class="nav-number">2.</span> <span class="nav-text">建立 IoT Hub</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Node-Red-Node"><span class="nav-number">3.</span> <span class="nav-text">安裝 Node-Red Node</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%96%E5%82%99Local-Node-red-%E7%9A%84-workflow"><span class="nav-number">4.</span> <span class="nav-text">準備Local Node-red 的 workflow</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A8%BB%E5%86%8A-Device"><span class="nav-number">4.1.</span> <span class="nav-text">註冊 Device</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%99%BC%E9%80%81%E8%B3%87%E6%96%99"><span class="nav-number">4.2.</span> <span class="nav-text">發送資料</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%96%E5%82%99-Cloud-Node-red-%E7%9A%84-workflow"><span class="nav-number">5.</span> <span class="nav-text">準備 Cloud Node-red 的 workflow</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ula" src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Ula</p>
+  <div class="site-description" itemprop="description">Hello! I am Ula. :-)</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">131</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ulanotes.netlify.app/" title="https:&#x2F;&#x2F;ulanotes.netlify.app&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">UlaNotes</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://wingardiumleviosaa.github.io/Azure-IoT-Hub-node-red-practice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ula">
+      <meta itemprop="description" content="Hello! I am Ula. :-)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wingardium Leviosa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Azure IoT Hub node-red 實做
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-05-30 10:07:00" itemprop="dateCreated datePublished" datetime="2022-05-30T10:07:00+08:00">2022-05-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/Node-RED/" itemprop="url" rel="index"><span itemprop="name">Node-RED</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Symbols count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Symbols count in article: </span>
+      <span>704</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>1 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本篇記錄如何使用 Node-Red 實作 Azure IoT Hub 的資料傳輸。</p>
+<span id="more"></span>
+<h3 id="安裝-Node-red">安裝 Node-red</h3>
+<p>在雲端以及地端兩邊都準備好 node-red</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 安裝 nodejs &amp; npm</span><br><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt install nodejs -y</span><br><span class="line">$ sudo apt install npm -y</span><br><span class="line">$ sudo npm install npm@6.14.0 -g</span><br><span class="line">$ sudo npm cache clean -f</span><br><span class="line">$ sudo npm install -g n</span><br><span class="line">$ sudo n 10.22.0 stable</span><br><span class="line"></span><br><span class="line"># 安裝 node-red</span><br><span class="line">$ sudo npm install -g --unsafe-perm node-red</span><br><span class="line"></span><br><span class="line"># 啟動 node-red</span><br><span class="line">$ node-red</span><br></pre></td></tr></table></figure>
+<h3 id="建立-IoT-Hub">建立 IoT Hub</h3>
+<p>在 azure 建立一個 IoT Hub<br>
+<img src="https://imgur.com/ioBi49C.png" alt><br>
+<img src="https://imgur.com/3o16CS1.png" alt></p>
+<h3 id="安裝-Node-Red-Node">安裝 Node-Red Node</h3>
+<p>在雲端以及地端的機器中的 manage palette 安裝 node-red-contrib-azure-iot-hub<br>
+<img src="https://imgur.com/vzQ65M2.png" alt><br>
+<img src="https://imgur.com/F8foKFR.png" alt></p>
+<h3 id="準備Local-Node-red-的-workflow">準備Local Node-red 的 workflow</h3>
+<h4 id="註冊-Device">註冊 Device</h4>
+<p>需要將機器註冊到 Azure IoT Hub 中，準備了下面的 workflow<br>
+<img src="https://imgur.com/8MFPMbM.png" alt></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">[&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;8420253b.d369c8&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;tab&quot;</span>,<span class="attr">&quot;label&quot;</span>:<span class="string">&quot;Flow 1&quot;</span>,<span class="attr">&quot;disabled&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;info&quot;</span>:<span class="string">&quot;&quot;</span>&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;a937e034.afa3c&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;azureiothubregistry&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;8420253b.d369c8&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Azure IoT Hub Registry&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">410</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">180</span>,<span class="attr">&quot;wires&quot;</span>:[[<span class="string">&quot;b7a4e98a.e50b18&quot;</span>]]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;dbdd68fc.579708&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;inject&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;8420253b.d369c8&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Register Payload&quot;</span>,<span class="attr">&quot;props&quot;</span>:[&#123;<span class="attr">&quot;p&quot;</span>:<span class="string">&quot;payload&quot;</span>&#125;],<span class="attr">&quot;repeat&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;crontab&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;once&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;onceDelay&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;topic&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;payload&quot;</span>:<span class="string">&quot;&#123;\&quot;deviceId\&quot;:\&quot;hello\&quot;&#125;&quot;</span>,<span class="attr">&quot;payloadType&quot;</span>:<span class="string">&quot;json&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">180</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">180</span>,<span class="attr">&quot;wires&quot;</span>:[[<span class="string">&quot;a937e034.afa3c&quot;</span>]]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;b7a4e98a.e50b18&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;debug&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;8420253b.d369c8&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Log&quot;</span>,<span class="attr">&quot;active&quot;</span>:<span class="literal">true</span>,<span class="attr">&quot;console&quot;</span>:<span class="string">&quot;false&quot;</span>,<span class="attr">&quot;complete&quot;</span>:<span class="string">&quot;true&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">650</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">180</span>,<span class="attr">&quot;wires&quot;</span>:[]&#125;]</span><br></pre></td></tr></table></figure>
+<p>在 Azure IoT Hub Registry node 中貼上 IoT Hub 的 connectionString (primary 或 secondary 皆可行)<br>
+<img src="https://imgur.com/JlPVBPT.png" alt><br>
+<img src="https://imgur.com/zuatlpk.png" alt><br>
+在 inject node 中設定 device id<br>
+<img src="https://imgur.com/9C53Qoa.png" alt><br>
+Deploy 後按下 inject，便註冊 device 成功了，可以看到在 debug window 中回傳了該 device 的金鑰。<br>
+<img src="https://imgur.com/Tg5Noge.png" alt></p>
+<h4 id="發送資料">發送資料</h4>
+<p>註冊完機器後，開始準備丟資料，使用以下的 workflow<br>
+<img src="https://imgur.com/OjqPc7X.png" alt></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">[&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;7db92193.aed53&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;tab&quot;</span>,<span class="attr">&quot;label&quot;</span>:<span class="string">&quot;Flow 2&quot;</span>,<span class="attr">&quot;disabled&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;info&quot;</span>:<span class="string">&quot;&quot;</span>&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;897ffdd4.12ba3&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;debug&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;7db92193.aed53&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Log&quot;</span>,<span class="attr">&quot;active&quot;</span>:<span class="literal">true</span>,<span class="attr">&quot;console&quot;</span>:<span class="string">&quot;false&quot;</span>,<span class="attr">&quot;complete&quot;</span>:<span class="string">&quot;true&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">870</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">200</span>,<span class="attr">&quot;wires&quot;</span>:[]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;66c43e6.4f5f7c&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;azureiothub&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;7db92193.aed53&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Azure IoT Hub&quot;</span>,<span class="attr">&quot;protocol&quot;</span>:<span class="string">&quot;http&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">660</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">200</span>,<span class="attr">&quot;wires&quot;</span>:[[<span class="string">&quot;897ffdd4.12ba3&quot;</span>]]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;c5686695.31d5e8&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;inject&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;7db92193.aed53&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Send Payload&quot;</span>,<span class="attr">&quot;props&quot;</span>:[],<span class="attr">&quot;repeat&quot;</span>:<span class="string">&quot;5&quot;</span>,<span class="attr">&quot;crontab&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;once&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;onceDelay&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;topic&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">200</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">200</span>,<span class="attr">&quot;wires&quot;</span>:[[<span class="string">&quot;84141515.9a1188&quot;</span>]]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;84141515.9a1188&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;function&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;7db92193.aed53&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;func&quot;</span>:<span class="string">&quot;let a = Math.floor(Math.random()*100)+1;\nmsg.payload=&#123;\n    \&quot;deviceId\&quot;:\&quot;device1\&quot;,\n    \&quot;key\&quot;:\&quot;pOX7pNKnt2aJoTy5JX4BYXidsezO+fr1sEz0TQQt1YM=\&quot;,\n    \&quot;protocol\&quot;:\&quot;http\&quot;,\n    \&quot;data\&quot;: a\n&#125;\nreturn msg;&quot;</span>,<span class="attr">&quot;outputs&quot;</span>:<span class="number">1</span>,<span class="attr">&quot;noerr&quot;</span>:<span class="number">0</span>,<span class="attr">&quot;initialize&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;finalize&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">420</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">200</span>,<span class="attr">&quot;wires&quot;</span>:[[<span class="string">&quot;66c43e6.4f5f7c&quot;</span>]]&#125;]</span><br></pre></td></tr></table></figure>
+<p>在 Azure IoT Hub node 中設定 IoT Hub 的 hostname，並指定想要使用的 protocol<br>
+<img src="https://imgur.com/At881eD.png" alt><br>
+並在 msg.payload 中以 JSON 的形式指定下面訊息：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">msg.payload=&#123;</span><br><span class="line">    <span class="string">&quot;deviceId&quot;</span>:<span class="string">&quot;device1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;key&quot;</span>:<span class="string">&quot;pOX7pNKnt2aJoTy5JX4BYXidsezO+fr1sEz0TQQt1YM=&quot;</span>,</span><br><span class="line">    <span class="string">&quot;protocol&quot;</span>:<span class="string">&quot;http&quot;</span>,</span><br><span class="line">    <span class="string">&quot;data&quot;</span>: data</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>按下 Deploy 後便可以看到資料已經成功送出<br>
+<img src="https://imgur.com/gbgRCqm.png" alt></p>
+<h3 id="準備-Cloud-Node-red-的-workflow">準備 Cloud Node-red 的 workflow</h3>
+<p>為了將收到的資料呈現在 dashboard，在 manage palette 中安裝了 node-red-dashboard。<br>
+<img src="https://imgur.com/QxkXcvr.png" alt><br>
+準備　Azure IoT Hub Receiver 接收IoT Hub 中的資料，並接上 chart node，以 line chart 的方式將收到的資料呈現在 dashboard 上。<br>
+<img src="https://imgur.com/wj3pOii.png" alt></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">[&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;abefc0d0.8ba21&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;azureiothubreceiver&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;3664d073.9332c&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Azure IoT Hub Receiver&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">360</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">180</span>,<span class="attr">&quot;wires&quot;</span>:[[<span class="string">&quot;ac07fe9f.05a0c&quot;</span>]]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;935ce90f.e63358&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;debug&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;3664d073.9332c&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Log&quot;</span>,<span class="attr">&quot;active&quot;</span>:<span class="literal">true</span>,<span class="attr">&quot;tosidebar&quot;</span>:<span class="literal">true</span>,<span class="attr">&quot;console&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;tostatus&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;complete&quot;</span>:<span class="string">&quot;payload&quot;</span>,<span class="attr">&quot;targetType&quot;</span>:<span class="string">&quot;msg&quot;</span>,<span class="attr">&quot;statusVal&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;statusType&quot;</span>:<span class="string">&quot;auto&quot;</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">810</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">180</span>,<span class="attr">&quot;wires&quot;</span>:[]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;ac07fe9f.05a0c&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;ui_chart&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;3664d073.9332c&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;group&quot;</span>:<span class="string">&quot;9f102f5f.29f03&quot;</span>,<span class="attr">&quot;order&quot;</span>:<span class="number">0</span>,<span class="attr">&quot;width&quot;</span>:<span class="string">&quot;0&quot;</span>,<span class="attr">&quot;height&quot;</span>:<span class="string">&quot;0&quot;</span>,<span class="attr">&quot;label&quot;</span>:<span class="string">&quot;chart2&quot;</span>,<span class="attr">&quot;chartType&quot;</span>:<span class="string">&quot;line&quot;</span>,<span class="attr">&quot;legend&quot;</span>:<span class="string">&quot;false&quot;</span>,<span class="attr">&quot;xformat&quot;</span>:<span class="string">&quot;HH:mm:ss&quot;</span>,<span class="attr">&quot;interpolate&quot;</span>:<span class="string">&quot;linear&quot;</span>,<span class="attr">&quot;nodata&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;dot&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;ymin&quot;</span>:<span class="string">&quot;0&quot;</span>,<span class="attr">&quot;ymax&quot;</span>:<span class="string">&quot;100&quot;</span>,<span class="attr">&quot;removeOlder&quot;</span>:<span class="number">1</span>,<span class="attr">&quot;removeOlderPoints&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;removeOlderUnit&quot;</span>:<span class="string">&quot;3600&quot;</span>,<span class="attr">&quot;cutout&quot;</span>:<span class="number">0</span>,<span class="attr">&quot;useOneColor&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;useUTC&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;colors&quot;</span>:[<span class="string">&quot;#1f77b4&quot;</span>,<span class="string">&quot;#aec7e8&quot;</span>,<span class="string">&quot;#ff7f0e&quot;</span>,<span class="string">&quot;#2ca02c&quot;</span>,<span class="string">&quot;#98df8a&quot;</span>,<span class="string">&quot;#d62728&quot;</span>,<span class="string">&quot;#ff9896&quot;</span>,<span class="string">&quot;#9467bd&quot;</span>,<span class="string">&quot;#c5b0d5&quot;</span>],<span class="attr">&quot;useOldStyle&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;outputs&quot;</span>:<span class="number">1</span>,<span class="attr">&quot;x&quot;</span>:<span class="number">610</span>,<span class="attr">&quot;y&quot;</span>:<span class="number">180</span>,<span class="attr">&quot;wires&quot;</span>:[[<span class="string">&quot;935ce90f.e63358&quot;</span>]]&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;9f102f5f.29f03&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;ui_group&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Default&quot;</span>,<span class="attr">&quot;tab&quot;</span>:<span class="string">&quot;a79849a0.efb138&quot;</span>,<span class="attr">&quot;order&quot;</span>:<span class="number">1</span>,<span class="attr">&quot;disp&quot;</span>:<span class="literal">true</span>,<span class="attr">&quot;width&quot;</span>:<span class="string">&quot;15&quot;</span>,<span class="attr">&quot;collapse&quot;</span>:<span class="literal">false</span>&#125;,&#123;<span class="attr">&quot;id&quot;</span>:<span class="string">&quot;a79849a0.efb138&quot;</span>,<span class="attr">&quot;type&quot;</span>:<span class="string">&quot;ui_tab&quot;</span>,<span class="attr">&quot;z&quot;</span>:<span class="string">&quot;&quot;</span>,<span class="attr">&quot;name&quot;</span>:<span class="string">&quot;Home&quot;</span>,<span class="attr">&quot;icon&quot;</span>:<span class="string">&quot;dashboard&quot;</span>,<span class="attr">&quot;disabled&quot;</span>:<span class="literal">false</span>,<span class="attr">&quot;hidden&quot;</span>:<span class="literal">false</span>&#125;]</span><br></pre></td></tr></table></figure>
+<p>Deploy 之後可以看到 dashboard 成功呈現。<br>
+<img src="https://imgur.com/vpVFzyT.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Node-RED/" rel="tag"># Node-RED</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Helm-Migrate-stable-nginx-ingress-to-ingress-nginx/" rel="prev" title="Helm Migrate stable/nginx-ingress to ingress-nginx">
+                  <i class="fa fa-chevron-left"></i> Helm Migrate stable/nginx-ingress to ingress-nginx
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Kubernetes-Kustomize-Render-ConfigMap-Hashing-Name-CronJob-Resource/" rel="next" title="[Kubernetes] Kustomize Can’t Render the ConfigMap Hashing Name to CronJob Resource">
+                  [Kubernetes] Kustomize Can’t Render the ConfigMap Hashing Name to CronJob Resource <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-magnet"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ula</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    const options = {
+      bottom: '64px', // default: '32px'
+      right: 'unset', // default: '32px'
+      left: '32px', // default: 'unset'
+      time: '1s', // default: '0.3s'
+      mixColor: '#fff', // default: '#fff'
+      backgroundColor: '#fff',  // default: '#fff'
+      buttonColorDark: '#100f2c',  // default: '#100f2c'
+      buttonColorLight: '#fff', // default: '#fff'
+      saveInCookies: true, // default: true,
+      label: '🌓', // default: ''
+      autoMatchOsTheme: true // default: true
+    }
+    const darkmode = new Darkmode(options);
+    darkmode.showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

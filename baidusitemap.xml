@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://wingardiumleviosaa.github.io/Terraform-azurerm-key-vault-secret-Error-Provider-produced-inconsistent-result-after-apply/</loc>
+    <lastmod>2022-09-21</lastmod>
+  </url>
+  <url>
     <loc>https://wingardiumleviosaa.github.io/WSL2-Ubuntu-nsenter-cannot-open-proc-ns-time/</loc>
     <lastmod>2022-09-06</lastmod>
   </url>

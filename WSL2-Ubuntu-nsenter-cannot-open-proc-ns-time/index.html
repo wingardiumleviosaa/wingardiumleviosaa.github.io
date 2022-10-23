@@ -28,13 +28,19 @@
 <meta property="og:site_name" content="Wingardium Leviosa">
 <meta property="og:description" content="問題 在使用 https:&#x2F;&#x2F;github.com&#x2F;DamionGans&#x2F;ubuntu-wsl2-systemd-script.git 安裝 systemd 後，重啟 wsl，再開 terminal 時會遇到 cannot open &#x2F;proc&#x2F;xxx&#x2F;ns&#x2F;time: No such file or directory 的錯誤。">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://imgur.com/ACyTK2P.png">
+<meta property="og:image" content="https://imgur.com/e4UCZ6K.png">
+<meta property="og:image" content="https://imgur.com/Z3EfEW0.png">
+<meta property="og:image" content="https://imgur.com/thgGVtG.png">
+<meta property="og:image" content="https://imgur.com/XKjredF.png">
 <meta property="article:published_time" content="2022-09-06T13:17:00.000Z">
 <meta property="article:modified_time" content="2022-09-06T13:17:00.000Z">
 <meta property="article:author" content="Ula">
 <meta property="article:tag" content="Docker">
-<meta property="article:tag" content="Ubuntu">
 <meta property="article:tag" content="WSL">
+<meta property="article:tag" content="Ubuntu">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgur.com/ACyTK2P.png">
 
 
 <link rel="canonical" href="https://wingardiumleviosaa.github.io/WSL2-Ubuntu-nsenter-cannot-open-proc-ns-time/">
@@ -162,18 +168,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-count">47</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">133</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -269,7 +275,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Symbols count in article: </span>
-      <span>481</span>
+      <span>634</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -299,7 +305,18 @@
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">USER_HOME=<span class="string">&quot;<span class="subst">$(getent passwd | awk -F: &#x27;$1==<span class="string">&quot;&#x27;&quot;</span>$SUDO_USER<span class="string">&quot;&#x27;&quot;</span> &#123;print $6&#125;&#x27;)</span>&quot;</span></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">&quot;<span class="variable">$SYSTEMD_PID</span>&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="variable">$SYSTEMD_PID</span>&quot;</span> != <span class="string">&quot;1&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">if</span> [ -n <span class="string">&quot;<span class="variable">$1</span>&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> != <span class="string">&quot;bash --login&quot;</span> ] &amp;&amp; [ <span class="string">&quot;<span class="variable">$1</span>&quot;</span> != <span class="string">&quot;/bin/bash --login&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">exec</span> /usr/bin/nsenter -t <span class="string">&quot;<span class="variable">$SYSTEMD_PID</span>&quot;</span> -m -p \</span><br><span class="line">            /usr/bin/sudo -H -u <span class="string">&quot;<span class="variable">$SUDO_USER</span>&quot;</span> \</span><br><span class="line">            /bin/bash -c <span class="string">&#x27;set -a; [ -f &quot;$HOME/.systemd-env&quot; ] &amp;&amp; source &quot;$HOME/.systemd-env&quot;; set +a; exec bash -c &#x27;</span><span class="string">&quot;<span class="subst">$(printf <span class="string">&quot;%q&quot;</span> <span class="string">&quot;<span class="variable">$@</span>&quot;</span>)</span>&quot;</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">exec</span> /usr/bin/nsenter -t <span class="string">&quot;<span class="variable">$SYSTEMD_PID</span>&quot;</span> -m -p \</span><br><span class="line">            /bin/login -p -f <span class="string">&quot;<span class="variable">$SUDO_USER</span>&quot;</span> \</span><br><span class="line">            $([ -f <span class="string">&quot;<span class="variable">$USER_HOME</span>/.systemd-env&quot;</span> ] &amp;&amp; /bin/cat <span class="string">&quot;<span class="variable">$USER_HOME</span>/.systemd-env&quot;</span> | xargs <span class="built_in">printf</span> <span class="string">&#x27; %q&#x27;</span>)</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Existential crisis&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
 <p>退出 powershell terminal 之後再重新使用 wsl terminal 就可以順利進入系統。</p>
 <h3 id="補充">補充</h3>
-<p>在每次重開機後，WSL 的 docker 都不會自動被叫起來的處理方式為：</p>
+<p>在每次重開機後，WSL 的 docker 都不會自動被叫起來<br>
+<img src="https://imgur.com/ACyTK2P.png" alt></p>
+<p>處理方式為：<br>
+開啟 powershell，關閉對應 wsl</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wsl -t Ubuntu-22.04</span><br></pre></td></tr></table></figure>
+<p><img src="https://imgur.com/e4UCZ6K.png" alt><br>
+進入 Docker Desktop，取消對應的 wsl integration 勾選，按 <code>Apply &amp; Restart</code><br>
+<img src="https://imgur.com/Z3EfEW0.png" alt><br>
+重啟後再重複勾選 wsl integration，並重啟<br>
+<img src="https://imgur.com/thgGVtG.png" alt><br>
+回到 powershell，重新啟動 wsl <code>wsl -d Ubuntu-22.04</code> 後，就可以使用 docker 了。<br>
+<img src="https://imgur.com/XKjredF.png" alt></p>
 <h3 id="Reference">Reference</h3>
 <ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/DamionGans/ubuntu-wsl2-systemd-script/issues/76#issuecomment-1122717349">https://github.com/DamionGans/ubuntu-wsl2-systemd-script/issues/76#issuecomment-1122717349</a></li>
@@ -315,8 +332,8 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Docker/" rel="tag"># Docker</a>
-              <a href="/tags/Ubuntu/" rel="tag"># Ubuntu</a>
               <a href="/tags/WSL/" rel="tag"># WSL</a>
+              <a href="/tags/Ubuntu/" rel="tag"># Ubuntu</a>
           </div>
 
         

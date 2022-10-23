@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://wingardiumleviosaa.github.io/Kubernetes-CronJob-to-Run-the-Job-alpine-base-image-at-the-Last-Sunday-of-the-Month/</loc>
+    <lastmod>2022-10-23</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Kubernetes-Minikube-Pull-Image-from-Private-Repository-in-WSL2/</loc>
+    <lastmod>2022-10-23</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Run-Crond-as-Non-Root-in-Alpine-Container-on-Kubernetes-by-Pod-Deployment/</loc>
+    <lastmod>2022-10-23</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Run-Cronjob-as-non-root-user-in-alpine-docker-container/</loc>
+    <lastmod>2022-10-23</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Ansible-Windows-Update-with-Authenticated-Proxy/</loc>
+    <lastmod>2022-10-23</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Node-js-Get-Access-Token-Microsoft-Graph-API-AD-Application/</loc>
+    <lastmod>2022-10-23</lastmod>
+  </url>
+  <url>
+    <loc>https://wingardiumleviosaa.github.io/Ansible-couldnot-resolve-module-action-windows-win-powershell/</loc>
+    <lastmod>2022-10-23</lastmod>
+  </url>
+  <url>
     <loc>https://wingardiumleviosaa.github.io/Terraform-azurerm-key-vault-secret-Error-Provider-produced-inconsistent-result-after-apply/</loc>
     <lastmod>2022-09-21</lastmod>
   </url>
